@@ -6,3 +6,4 @@ This is the persoanl repository for sample Power BI using some open data sources
 - Basic Tables
     - Date Table
     - Last Refresh Date
+- Plex Movies
