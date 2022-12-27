@@ -6,10 +6,10 @@
 <em>Start Date</em>: Required, Type as Date
 
 ### Steps:
-1. Create a parameter **StartDate** for the <em>Start Date</em>
-1. Convert parameter to table and add <em>End Date</em>
-1. Create a list of date between <em>Start Date</em> and <em>End Date</em> using [<strong>each</strong>](https://learn.microsoft.com/en-us/powerquery-m/understanding-power-query-m-functions) keyword
-1. Add Columns for Year, Quarter, Month and Day
+1. Create a parameter **StartDate** for the <em>Start Date</em>;
+1. Convert parameter to table and add <em>End Date</em>;
+1. Create a list of date between <em>Start Date</em> and <em>End Date</em> using [**each**](https://learn.microsoft.com/en-us/powerquery-m/understanding-power-query-m-functions) keyword;
+1. Add Columns for Year, Quarter, Month and Day.
 
 ### Power Query Script:
 ```css
@@ -40,8 +40,8 @@ let
 ## 2. <em>Year</em> Table
 
 ### Steps:
-1. Reference from **Date** Table above
-1. Keep <em>Year</em> column only, and remove all duplicate records
+1. Reference from **Date** Table above;
+1. Keep <em>Year</em> column only, and remove all duplicate records.
 
 ### Power Query Script:
 ```css
@@ -56,7 +56,7 @@ in
 ## 3. <em> Last Refreshed Date</em> Table
 
 ### Steps:
-1. Create a table using <em>LocalNow()</em> 
+1. Create a table using <em>LocalNow()</em>.
 
 ### Power Query Script:
 ```css
