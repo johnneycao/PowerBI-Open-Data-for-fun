@@ -1,6 +1,6 @@
 # Basic Data
 
-## 1. Date Table
+## 1. <em>Date</em> Table
 
 ### Parameters
 <em>Start Date</em>: Required, Type as Date
@@ -12,7 +12,7 @@
 1. Add Columns for Year, Quarter, Month and Day
 
 ### Power Query Script:
-```fsharp
+```
 let
     Source = StartDate,
     #"Converted Parameter to Table" = #table(1, {{Source}}),
@@ -37,14 +37,14 @@ let
 ### Alternative Way
 - [Create date tables in Power BI Desktop](https://learn.microsoft.com/en-us/power-bi/guidance/model-date-tables)
 
-## 2. Year Table
+## 2. <em>Year</em> Table
 
 ### Steps:
-1. Reference from Datae Table
+1. Reference from **Date** Table above
 1. Keep <em>Year</em> column only, and remove duplicate records
 
 ### Power Query Script:
-```fsharp
+```
 let
     Source = DateTable,
     #"Removed Other Columns" = Table.SelectColumns(Source,{"Year"}),
@@ -53,13 +53,13 @@ in
     #"Removed Duplicates"
 ```
 
-## 3. Last Refreshed Date
+## 3. <em> Last Refreshed Date</em> Table
 
 ### Steps:
 1. Create a table using <em>LocalNow()</em> 
 
 ### Power Query Script:
-```fsharp
+```
  let
     Source = #table(type table[Last Refreshed Date=datetime], {{DateTime.LocalNow()}})
 in
