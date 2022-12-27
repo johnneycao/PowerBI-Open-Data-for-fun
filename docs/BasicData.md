@@ -59,7 +59,7 @@ in
 1. Create a table using <em>LocalNow()</em> 
 
 ### Power Query Script:
-```json
+```dax
  let
     Source = #table(type table[Last Refreshed Date=datetime], {{DateTime.LocalNow()}})
 in
