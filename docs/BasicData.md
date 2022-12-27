@@ -60,7 +60,7 @@ in
 
 ### Power Query Script:
 ```dax
- let
+let
     Source = #table(type table[Last Refreshed Date=datetime], {{DateTime.LocalNow()}})
 in
     Source
