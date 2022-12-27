@@ -12,7 +12,7 @@
 1. Add Columns for Year, Quarter, Month and Day
 
 ### Power Query Script:
-```fsharp
+```css
 let
     Source = StartDate,
     #"Converted Parameter to Table" = #table(1, {{Source}}),
@@ -59,7 +59,7 @@ in
 1. Create a table using <em>LocalNow()</em> 
 
 ### Power Query Script:
-```c#
+```css
 let
     Source = #table(type table[Last Refreshed Date=datetime], {{DateTime.LocalNow()}})
 in
