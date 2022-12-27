@@ -44,7 +44,7 @@ let
 1. Keep <em>Year</em> column only, and remove duplicate records
 
 ### Power Query Script:
-```xml
+```css
 let
     Source = DateTable,
     #"Removed Other Columns" = Table.SelectColumns(Source,{"Year"}),
@@ -59,7 +59,7 @@ in
 1. Create a table using <em>LocalNow()</em> 
 
 ### Power Query Script:
-```dax
+```c#
 let
     Source = #table(type table[Last Refreshed Date=datetime], {{DateTime.LocalNow()}})
 in
