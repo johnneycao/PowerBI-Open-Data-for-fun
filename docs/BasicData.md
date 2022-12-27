@@ -6,7 +6,7 @@
 <em>Start Date</em>: Required, Type as Date
 
 ### Steps:
-1. Create a parameter for the <em>Start Date</em>
+1. Create a parameter **StartDate** for the <em>Start Date</em>
 1. Convert parameter to table and add <em>End Date</em>
 1. Create a list of date between <em>Start Date</em> and <em>End Date</em> using [<strong>each</strong>](https://learn.microsoft.com/en-us/powerquery-m/understanding-power-query-m-functions) keyword
 1. Add Columns for Year, Quarter, Month and Day
@@ -41,7 +41,7 @@ let
 
 ### Steps:
 1. Reference from **Date** Table above
-1. Keep <em>Year</em> column only, and remove duplicate records
+1. Keep <em>Year</em> column only, and remove all duplicate records
 
 ### Power Query Script:
 ```css
