@@ -2,8 +2,9 @@
 
 ## 1. <em>Date</em> Table
 
-### Parameters
-<em>Start Date</em>: Required, Type as Date
+### Depedency
+#### Parameter
+**StarDate**: Required, Type as Date
 
 ### Steps:
 1. Create a parameter **StartDate** for the <em>Start Date</em>;
@@ -38,6 +39,10 @@ let
 - [Create date tables in Power BI Desktop](https://learn.microsoft.com/en-us/power-bi/guidance/model-date-tables)
 
 ## 2. <em>Year</em> Table
+
+### Dependency
+#### Table
+**Date** Table
 
 ### Steps:
 1. Reference from **Date** Table above;
