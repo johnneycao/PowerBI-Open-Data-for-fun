@@ -1,11 +1,13 @@
 # Basic Data
 
-## Tables
+## Data Tables
 
 ### 1. <em>Date</em> Table
 
 #### Depedency
+
 ##### Parameter
+
 **StarDate**: Required, Type as <em>Date</em>
 
 #### Steps
@@ -48,7 +50,7 @@ let
 
 #### Steps
 1. Reference from **Date** Table above;
-1. Keep <em>Year</em> column only, and remove all duplicate records.
+1. Keep <em>Year</em> column only, and remove duplicate records.
 
 #### Power Query Sample Script
 ```css
@@ -68,12 +70,17 @@ in
 #### Power Query Sample Script
 ```css
 let
-    Source = #table(type table[Last Refreshed Date=datetime], {{DateTime.LocalNow()}})
+    Source = #table(type table[LastRefresh=datetime], {{DateTime.LocalNow()}})
 in
     Source
 ```
 
-# Reference
-## Power Query Reference
+## Relationship
+Date / Year Table: Many to 1
+
+## Reference
+
+### Power Query Reference
+
 1. [Understanding Power Query M functions](https://learn.microsoft.com/en-us/powerquery-m/understanding-power-query-m-functions)
 1. [Using parameters](https://learn.microsoft.com/en-us/power-query/power-query-query-parameters)

@@ -1,6 +1,6 @@
-# Plex Movie Collections
+# Plex Movie Collections with IMDB 250
 
-## Tables
+## Data Tables
 
 ### 1 Basic Tables
 
@@ -45,9 +45,15 @@ in
 
 **IP address**: Required, Type as <em>Text</em>
 
-# Reference
-## Power Query Reference
+## Relationship
+
+## Reports
+
+## Reference
+
+### Power Query Reference
 1. [Fuzzy Matching](https://learn.microsoft.com/en-us/power-query/fuzzy-matching)
+
 ### Plex API
 1. [Get All Movies](https://www.plexopedia.com/plex-media-server/api/library/movies/)
 
