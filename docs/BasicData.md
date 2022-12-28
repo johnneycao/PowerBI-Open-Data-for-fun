@@ -1,18 +1,20 @@
 # Basic Data
 
-## 1. <em>Date</em> Table
+## Tables
 
-### Depedency
-#### Parameter
+### 1. <em>Date</em> Table
+
+#### Depedency
+##### Parameter
 **StarDate**: Required, Type as <em>Date</em>
 
-### Steps
+#### Steps
 1. Create a parameter **StartDate** for the <em>Start Date</em>;
 1. Convert parameter to table and add <em>End Date</em>;
 1. Create a list of date between <em>Start Date</em> and <em>End Date</em> using each keyword;
 1. Add Columns for Year, Quarter, Month and Day.
 
-### Power Query Script
+#### Power Query Sample Script
 ```css
 let
     Source = StartDate,
@@ -35,20 +37,20 @@ let
     #"Added QuarterName"'
 ```
 
-### Alternative Way
+#### Alternative Approach
 - [Create date tables in Power BI Desktop](https://learn.microsoft.com/en-us/power-bi/guidance/model-date-tables)
 
-## 2. <em>Year</em> Table
+### 2. <em>Year</em> Table
 
-### Dependency
-#### Table
+#### Dependency
+
 **Date** Table
 
-### Steps
+#### Steps
 1. Reference from **Date** Table above;
 1. Keep <em>Year</em> column only, and remove all duplicate records.
 
-### Power Query Script
+#### Power Query Sample Script
 ```css
 let
     Source = DateTable,
@@ -58,12 +60,12 @@ in
     #"Removed Duplicates"
 ```
 
-## 3. <em> LastRefreshed</em> Table
+### 3. <em> LastRefreshed</em> Table
 
-### Steps
+#### Steps
 1. Create a table using <em>LocalNow()</em>.
 
-### Power Query Script
+#### Power Query Sample Script
 ```css
 let
     Source = #table(type table[Last Refreshed Date=datetime], {{DateTime.LocalNow()}})
@@ -72,6 +74,6 @@ in
 ```
 
 # Reference
-### Power Query Reference
+## Power Query Reference
 1. [Understanding Power Query M functions](https://learn.microsoft.com/en-us/powerquery-m/understanding-power-query-m-functions)
 1. [Using parameters](https://learn.microsoft.com/en-us/power-query/power-query-query-parameters)

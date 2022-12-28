@@ -1,6 +1,8 @@
 # Plex Movie Collections
 
-## 1 Basic Tables
+## Tables
+
+### 1 Basic Tables
 
 #### Tables 
 [Basic Data](./BasicData.md)
@@ -11,15 +13,15 @@
 
 **LastRefreshed** Table
 
-## 2 <em> IMDB Top 250 List </em> Table
+### 2 <em> IMDB Top 250 List </em> Table
 
-### Steps
+#### Steps
 1. Download [IMDB Top 250](https://www.kaggle.com/datasets/mustafacicek/imdb-top-250-lists-1996-2020/download?datasetVersionNumber=3) from [Kaggle](https://www.kaggle.com/datasets/mustafacicek/imdb-top-250-lists-1996-2020?resource=download), and extract ZIP file into a folder, e.g. <em>c:\Plex</em>;
 1. Import <em>imdbTop250.csv</em> into Power BI
 1. Promote the first line to Header
 1. Add custom fields for RankingGroup, IMDB_ID and IMDB_URL
 
-### Power Query Scripts
+#### Power Query Scripts
 ```css
 let
     Source = Csv.Document(File.Contents("C:\Plex\imdbTop250.csv"),[Delimiter=",", Columns=16, Encoding=65001, QuoteStyle=QuoteStyle.None]),
@@ -33,18 +35,18 @@ in
     Add_IMDB_URL
 ```
 
-## 3 <em> Plex Library </em> Tables
+### 3 <em> Plex Library </em> Tables
 
-### Depedency
+#### Depedency
 
-#### Parameter
+##### Parameter
 
 **PlexToken**: Required, Type as <em>Date</em>; 
 
 **IP address**: Required, Type as <em>Text</em>
 
 # Reference
-### Power Query Reference
+## Power Query Reference
 1. [Fuzzy Matching](https://learn.microsoft.com/en-us/power-query/fuzzy-matching)
 ### Plex API
 1. [Get All Movies](https://www.plexopedia.com/plex-media-server/api/library/movies/)
