@@ -121,14 +121,18 @@ in
 
 **Plex Libraries** Table
 
-**Load Movie Content** Function
-
-#### Steps
+**Load Movie Content** Custom Function
 
 #### Steps
 1. Reference from **Plex Libraries** Table above;
-1. Filter type is <em>movie</em>
-1. 
+1. Filter **Type** = '<em>movie</em>' and **Scanner** = '<em>Plex Movie</em>';
+1. Invoke **Load Movie Content** Function from Library <em>URL</em> field;
+1. Add **Runtime** column and calculate base on <em>Duration</em> field, and format result into HH:MM:SS format by removing <em>Date</em> and <em>AM</em>;
+
+    `Text.From(#datetime(1970, 1, 1, 0, 0, 0) + #duration(0, 0, 0, [Duration]/1000))`
+1. Combine IP, Item Key and X-Plex-Token into **MetadatURL**;
+
+    `Table.AddColumn(#"Trimmed Text", "MetadataURL", each Text.Combine({"http://",IP,":32400", [key], "?X-Plex-Token=",#"X-Plex-Token"}), type text)`
 
 ## Relationship
 
