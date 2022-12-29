@@ -1,4 +1,6 @@
-# Plex Movie Collections with IMDB 250
+# Plex Movie Collections join with IMDB 250
+
+----------
 
 ## Parameters
 
@@ -6,6 +8,8 @@
 1. **X-Plex-Token**: Required, Type as <em>Text</em>
 1. **IP**: Required, Type as <em>Text</em>
 1. **LibraryURL**: Required, Type as <em>Text</em>
+
+----------
 
 ## Custom Function
 
@@ -40,6 +44,8 @@ in
     Source
 ```
 
+----------
+
 ## Data Tables
 
 ### 1 Basic Tables
@@ -59,7 +65,7 @@ in
 1. Download [IMDB Top 250](https://www.kaggle.com/datasets/mustafacicek/imdb-top-250-lists-1996-2020/download?datasetVersionNumber=3) from [Kaggle](https://www.kaggle.com/datasets/mustafacicek/imdb-top-250-lists-1996-2020?resource=download), and extract ZIP file into a folder, e.g. <em>c:\Plex</em>;
 1. Import <em>imdbTop250.csv</em> into Power BI
 1. Promote the first line to Header
-1. Add custom fields for RankingGroup, IMDB_ID and IMDB_URL
+1. Add custom fields for **RankingGroup**, **IMDB_ID** and **IMDB_URL**
 
 #### Power Query Sample Scripts
 ```css
@@ -86,7 +92,7 @@ in
 **IP**: Plex Server IP Address, e.g. '<em>10.10.10.2</em>'
 
 #### Steps
-1. Combine IP and X-Plex-Token into a Plex Libraries List URL, and retrive all libraries ('<em>Directory</em>');
+1. Combine IP and X-Plex-Token into a Plex Libraries List URL, and retrive all libraries ('**Directory**');
     `Xml.Tables(Web.Contents(Text.Combine({"http://",IP,":32400/library/sections?X-Plex-Token=",#"X-Plex-Token"})))`
 1. Drill down <em>Directory</em> into a table;
 1. Expand <em>Location</em> to Folder Path;
@@ -134,9 +140,15 @@ in
 
     `Table.AddColumn(#"Trimmed Text", "MetadataURL", each Text.Combine({"http://",IP,":32400", [key], "?X-Plex-Token=",#"X-Plex-Token"}), type text)`
 
+----------
+
 ## Relationship
 
+----------
+
 ## Reports
+
+----------
 
 ## Reference
 
@@ -148,7 +160,7 @@ in
 1. [Plex Media Server API Documentation](https://www.plexopedia.com/plex-media-server/api/)
 1. [Plex Media Server URL Command](https://support.plex.tv/articles/201638786-plex-media-server-url-commands/)
  
-    1. List Base Server Capabilities: http://[<em>IP</em>]:32400/?X-Plex-Token=[<em>X-Plex-Token</em>]
-    1. List Defined Libraries: http://[<em>IP</em>]:32400/library/sections/?X-Plex-Token=[<em>X-Plex-Token</em>]
-    1. List Library Contents: http://[<em>IP</em>]:32400/library/sections/[<em>Movies Library ID</em>]/all?X-Plex-Token=[<em>X-Plex-Token</em>]
-    1. List Detail of an Item: http://[<em>IP</em>]:32400/library/metadata/[<em>Item Key ID</em>]?X-Plex-Token=[<em>X-Plex-Token</em>]
+    - List Base Server Capabilities: http://[<em>IP</em>]:32400/?X-Plex-Token=[<em>X-Plex-Token</em>]
+    - List Defined Libraries: http://[<em>IP</em>]:32400/library/sections/?X-Plex-Token=[<em>X-Plex-Token</em>]
+    - List Library Contents: http://[<em>IP</em>]:32400/library/sections/[<em>Movies Library ID</em>]/all?X-Plex-Token=[<em>X-Plex-Token</em>]
+    - List Detail of an Item: http://[<em>IP</em>]:32400/library/metadata/[<em>Item Key ID</em>]?X-Plex-Token=[<em>X-Plex-Token</em>]

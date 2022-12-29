@@ -1,8 +1,12 @@
 # Basic Data
 
+----------
+
 ## Parameters
 
 1. **StarDate**: Required, Type as <em>Date</em>
+
+----------
 
 ## Data Tables
 
@@ -78,9 +82,12 @@ let
 in
     Source
 ```
+----------
 
 ## Relationship
 Date / Year Table: Many to 1
+
+----------
 
 ## Reference
 
