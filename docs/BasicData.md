@@ -1,5 +1,9 @@
 # Basic Data
 
+## Parameters
+
+1. **StarDate**: Required, Type as <em>Date</em>
+
 ## Data Tables
 
 ### 1. <em>Date</em> Table
@@ -8,7 +12,7 @@
 
 ##### Parameter
 
-**StarDate**: Required, Type as <em>Date</em>
+**StarDate**, set value '<em>1/1/1990</em>'
 
 #### Steps
 1. Create a parameter **StartDate** for the <em>Start Date</em>;

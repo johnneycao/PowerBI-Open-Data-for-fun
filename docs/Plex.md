@@ -1,5 +1,45 @@
 # Plex Movie Collections with IMDB 250
 
+## Parameters
+
+1. **StarDate**: Required, Type as <em>Date</em>
+1. **X-Plex-Token**: Required, Type as <em>Text</em>
+1. **IP**: Required, Type as <em>Text</em>
+1. **LibraryURL**: Required, Type as <em>Text</em>
+
+## Custom Function
+
+### <em> 1. Load Movie Content</em> Function
+
+#### Parameter
+
+**LibraryURL**: Format like http://[<em>IP</em>]:32400/library/sections/[<em>Movies Library ID</em>]/all?X-Plex-Token=[<em>X-Plex-Token</em>] (can be copied from **Plex Libraries** Table below)
+
+#### Steps
+
+1. Retrieve library detail from LibraryURL
+1. Expand Video into columns, and expand Video.Media and Video.Collection information
+
+#### Power Query Sample Scripts
+```css
+let
+    Source = (LibraryURL as any) => let
+    Source = Xml.Tables(Web.Contents(LibraryURL)),
+    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Attribute:size", Int64.Type}, {"Attribute:allowSync", Int64.Type}, {"Attribute:title1", type text}}),
+    #"Removed Other Columns" = Table.SelectColumns(#"Changed Type",{"Video", "Attribute:librarySectionTitle"}),
+    #"Reordered Columns" = Table.ReorderColumns(#"Removed Other Columns",{"Attribute:librarySectionTitle", "Video"}),
+    #"Expanded Video" = Table.ExpandTableColumn(#"Reordered Columns", "Video", {"Media", "Attribute:key", "Attribute:studio", "Attribute:type", "Attribute:title", "Attribute:contentRating", "Attribute:summary", "Attribute:audienceRating", "Attribute:year", "Attribute:tagline", "Attribute:duration", "Attribute:originallyAvailableAt", "Attribute:addedAt", "Attribute:updatedAt", "Collection", "Attribute:viewCount", "Attribute:chapterSource", "Attribute:titleSort", "Attribute:originalTitle"}, {"Video.Media", "Video.Attribute:key", "Video.Attribute:studio", "Video.Attribute:type", "Video.Attribute:title", "Video.Attribute:contentRating", "Video.Attribute:summary", "Video.Attribute:audienceRating", "Video.Attribute:year", "Video.Attribute:tagline", "Video.Attribute:duration", "Video.Attribute:originallyAvailableAt", "Video.Attribute:addedAt", "Video.Attribute:updatedAt", "Video.Collection", "Video.Attribute:viewCount", "Video.Attribute:chapterSource", "Video.Attribute:titleSort", "Video.Attribute:originalTitle"}),
+    #"Expanded Video.Media" = Table.ExpandTableColumn(#"Expanded Video", "Video.Media", {"Attribute:duration", "Attribute:bitrate", "Attribute:aspectRatio", "Attribute:audioChannels", "Attribute:audioCodec", "Attribute:videoCodec", "Attribute:videoResolution", "Attribute:videoFrameRate", "Attribute:audioProfile", "Attribute:videoProfile"}, {"Video.Media.Attribute:duration", "Video.Media.Attribute:bitrate", "Video.Media.Attribute:aspectRatio", "Video.Media.Attribute:audioChannels", "Video.Media.Attribute:audioCodec", "Video.Media.Attribute:videoCodec", "Video.Media.Attribute:videoResolution", "Video.Media.Attribute:videoFrameRate", "Video.Media.Attribute:audioProfile", "Video.Media.Attribute:videoProfile"}),
+    #"Expanded Video.Collection" = Table.ExpandTableColumn(#"Expanded Video.Media", "Video.Collection", {"Attribute:tag"}, {"Video.Collection.Attribute:tag"}),
+    #"Renamed Columns" = Table.RenameColumns(#"Expanded Video.Collection",{{"Attribute:librarySectionTitle", "Library"}, {"Video.Media.Attribute:duration", "Duration"}, {"Video.Media.Attribute:videoResolution", "Resolution"}, {"Video.Media.Attribute:videoFrameRate", "FrameRate"}, {"Video.Media.Attribute:audioProfile", "AudioProfile"}, {"Video.Media.Attribute:videoProfile", "VideoProfile"}, {"Video.Attribute:key", "key"}, {"Video.Attribute:studio", "Studio"}, {"Video.Attribute:type", "Type"}, {"Video.Attribute:title", "Title"}, {"Video.Attribute:contentRating", "ContentRating"}, {"Video.Attribute:summary", "Summary"}, {"Video.Attribute:audienceRating", "AudienceRating"}, {"Video.Attribute:year", "Year"}, {"Video.Attribute:tagline", "Tagline"}, {"Video.Attribute:duration", "IMDBduration"}, {"Video.Attribute:originallyAvailableAt", "OriginallyAvailableAt"}, {"Video.Collection.Attribute:tag", "Collection"}, {"Video.Attribute:titleSort", "TitleSort"}, {"Video.Attribute:originalTitle", "OriginalTitle"}, {"Video.Media.Attribute:bitrate", "Bitrate"}, {"Video.Media.Attribute:aspectRatio", "AspectRatio"}, {"Video.Media.Attribute:audioChannels", "AudioChannels"}, {"Video.Media.Attribute:audioCodec", "AudioCodec"}, {"Video.Media.Attribute:videoCodec", "VideoCodec"}, {"Video.Attribute:viewCount", "ViewCount"}}),
+    #"Removed Columns" = Table.RemoveColumns(#"Renamed Columns",{"Video.Attribute:addedAt", "Video.Attribute:updatedAt", "Video.Attribute:chapterSource"}),
+    #"Changed Type1" = Table.TransformColumnTypes(#"Removed Columns",{{"Library", type text}, {"Duration", Int64.Type}, {"Resolution", type text}, {"FrameRate", type text}, {"AudioProfile", type text}, {"VideoProfile", type text}, {"key", type text}, {"Studio", type text}, {"Type", type text}, {"Title", type text}, {"ContentRating", type text}, {"Summary", type text}, {"AudienceRating", type number}, {"Year", Int64.Type}, {"Tagline", type text}, {"IMDBduration", Int64.Type}, {"OriginallyAvailableAt", type date}, {"Collection", type text}, {"ViewCount", Int64.Type}, {"TitleSort", type text}, {"OriginalTitle", type text}})
+in
+    #"Changed Type1"
+in
+    Source
+```
+
 ## Data Tables
 
 ### 1 Basic Tables
@@ -21,7 +61,7 @@
 1. Promote the first line to Header
 1. Add custom fields for RankingGroup, IMDB_ID and IMDB_URL
 
-#### Power Query Scripts
+#### Power Query Sample Scripts
 ```css
 let
     Source = Csv.Document(File.Contents("C:\Plex\imdbTop250.csv"),[Delimiter=",", Columns=16, Encoding=65001, QuoteStyle=QuoteStyle.None]),
@@ -35,21 +75,60 @@ in
     Add_IMDB_URL
 ```
 
-### 3 <em> Plex Library </em> Table
+### 3 <em> Plex Libraries </em> Table
 
 #### Depedency
 
 ##### Parameter
 
-**PlexToken**: Required, Type as <em>Date</em>; 
+**X-Plex-Token**: [Finding an authentication token / X-Plex-Token](https://support.plex.tv/articles/204059436-finding-an-authentication-token-x-plex-token/) 
 
-**IP address**: Required, Type as <em>Text</em>
+**IP**: Plex Server IP Address, e.g. '<em>10.10.10.2</em>'
 
 #### Steps
-1. Combine IP Address and PlexToken into Library URL
+1. Combine IP and X-Plex-Token into a Plex Libraries List URL, and retrive all libraries ('<em>Directory</em>');
+    `Xml.Tables(Web.Contents(Text.Combine({"http://",IP,":32400/library/sections?X-Plex-Token=",#"X-Plex-Token"})))`
+1. Drill down <em>Directory</em> into a table;
+1. Expand <em>Location</em> to Folder Path;
+1. Combine IP and X-Plex-Token into Plex Content Library URL;
+    `Uri.Combine(Text.Combine({IP,":32400/"}) as text, Text.Combine({"library/sections/",Text.From([#"Attribute:key"]),"/all?X-Plex-Token=",#"X-Plex-Token"}) as text)`
+1. Split Location into columns and Parse as SMB format
 
-    `Text.Combine({"http://",IP,":32400/library/sections?X-Plex-Token=",#"X-Plex-Token"})`
-1. Extract <em>Directory</em> column, 
+#### Power Query Sample Scripts
+```css
+let
+    Source = Xml.Tables(Web.Contents(Text.Combine({"http://",IP,":32400/library/sections?X-Plex-Token=",#"X-Plex-Token"}))),
+    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Attribute:size", Int64.Type}, {"Attribute:allowSync", Int64.Type}, {"Attribute:title1", type text}}),
+    Directory = #"Changed Type"{0}[Directory],
+    #"Removed Other Columns" = Table.SelectColumns(Directory,{"Location", "Attribute:art", "Attribute:composite", "Attribute:key", "Attribute:type", "Attribute:title", "Attribute:agent", "Attribute:scanner", "Attribute:language", "Attribute:hidden"}),
+    #"Expanded Location" = Table.ExpandTableColumn(#"Removed Other Columns", "Location", {"Attribute:path"}, {"Location.Attribute:path"}),
+    #"Added Custom" = Table.AddColumn(#"Expanded Location", "URL", each Uri.Combine(
+    Text.Combine({IP,":32400/"}) as text,
+    Text.Combine({"library/sections/",Text.From([#"Attribute:key"]),"/all?X-Plex-Token=",#"X-Plex-Token"}) as text)
+as text),
+    #"Reordered Columns" = Table.ReorderColumns(#"Added Custom",{"Attribute:art", "Attribute:key", "Attribute:type", "Attribute:title", "Attribute:agent", "Attribute:scanner", "Attribute:language", "Attribute:hidden", "Location.Attribute:path", "URL"}),
+    #"Split Column by Delimiter" = Table.SplitColumn(#"Reordered Columns", "Location.Attribute:path", Splitter.SplitTextByDelimiter("/", QuoteStyle.Csv), {"Location.Attribute:path.1", "Location.Attribute:path.2", "Location.Attribute:path.3", "Location.Attribute:path.4", "Location.Attribute:path.5", "Location.Attribute:path.6"}),
+    #"Added Folder Column" = Table.AddColumn(#"Split Column by Delimiter", "Folder", each Text.From("\\") & IP & Text.From("\") & Text.Combine({[#"Location.Attribute:path.4"],[#"Location.Attribute:path.5"],[#"Location.Attribute:path.6"]},"\")),
+    #"Removed Columns" = Table.RemoveColumns(#"Added Folder Column",{"Location.Attribute:path.1", "Location.Attribute:path.2", "Location.Attribute:path.3", "Location.Attribute:path.4", "Location.Attribute:path.5", "Location.Attribute:path.6", "Attribute:art"}),
+    #"Renamed Columns" = Table.RenameColumns(#"Removed Columns",{{"Attribute:key", "Key"}, {"Attribute:type", "Type"}, {"Attribute:title", "Library"}, {"Attribute:agent", "Agent"}, {"Attribute:scanner", "Scanner"}, {"Attribute:language", "Language"}, {"Attribute:hidden", "Hidden"}})
+in
+    #"Renamed Columns"
+```
+
+### 4 <em> Plex Movies Content</em> Table
+
+#### Dependency
+
+**Plex Libraries** Table
+
+**Load Movie Content** Function
+
+#### Steps
+
+#### Steps
+1. Reference from **Plex Libraries** Table above;
+1. Filter type is <em>movie</em>
+1. 
 
 ## Relationship
 
@@ -61,11 +140,11 @@ in
 1. [Fuzzy Matching](https://learn.microsoft.com/en-us/power-query/fuzzy-matching)
 
 ### Plex API
-1. [Get Libraries](https://www.plexopedia.com/plex-media-server/api/server/libraries/)
+1. [Finding an authentication token / X-Plex-Token](https://support.plex.tv/articles/204059436-finding-an-authentication-token-x-plex-token/)
+1. [Plex Media Server API Documentation](https://www.plexopedia.com/plex-media-server/api/)
+1. [Plex Media Server URL Command](https://support.plex.tv/articles/201638786-plex-media-server-url-commands/)
  
-    GET http://[<em>IP address</em>]:32400/library/sections/?X-Plex-Token=[<em>PlexToken</em>]
- 
-1. [Get All Movies](https://www.plexopedia.com/plex-media-server/api/library/movies/)
-
-    GET http://[<em>IP address</em>]:32400/library/sections/[<em>Movies Library ID</em>]/all?X-Plex-Token=[<em>PlexToken</em>]
-1. 
+    1. List Base Server Capabilities: http://[<em>IP</em>]:32400/?X-Plex-Token=[<em>X-Plex-Token</em>]
+    1. List Defined Libraries: http://[<em>IP</em>]:32400/library/sections/?X-Plex-Token=[<em>X-Plex-Token</em>]
+    1. List Library Contents: http://[<em>IP</em>]:32400/library/sections/[<em>Movies Library ID</em>]/all?X-Plex-Token=[<em>X-Plex-Token</em>]
+    1. List Detail of an Item: http://[<em>IP</em>]:32400/library/metadata/[<em>Item Key ID</em>]?X-Plex-Token=[<em>X-Plex-Token</em>]
