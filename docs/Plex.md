@@ -17,7 +17,7 @@
 
 #### Parameter
 
-**LibraryURL**: Format like http://[<em> IP </em>]:32400/library/sections/[<em> Movies Library ID </em>]/all?X-Plex-Token=[<em> X-Plex-Token </em>] (can be copied from **Plex Libraries** Table below)
+**LibraryURL**: Format like http://[<em> IP </em>]:32400/library/sections/[<em> Movies Library ID </em>]/all?X-Plex-Token=[<em> X-Plex-Token </em>] (result copied from **Plex Libraries** Table below)
 
 #### Steps
 
