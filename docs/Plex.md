@@ -93,11 +93,11 @@ in
 
 #### Steps
 1. Combine IP and X-Plex-Token into a Plex Libraries List URL, and retrive all libraries ('**Directory**');
-    `Xml.Tables(Web.Contents(Text.Combine({"http://",IP,":32400/library/sections?X-Plex-Token=",#"X-Plex-Token"})))`
+    >Xml.Tables(Web.Contents(Text.Combine({"http://",IP,":32400/library/sections?X-Plex-Token=",#"X-Plex-Token"})))
 1. Drill down <em>Directory</em> into a table;
 1. Expand <em>Location</em> to Folder Path;
 1. Combine IP and X-Plex-Token into Plex Content Library URL;
-    `Uri.Combine(Text.Combine({IP,":32400/"}) as text, Text.Combine({"library/sections/",Text.From([#"Attribute:key"]),"/all?X-Plex-Token=",#"X-Plex-Token"}) as text)`
+    >Uri.Combine(Text.Combine({IP,":32400/"}) as text, Text.Combine({"library/sections/",Text.From([#"Attribute:key"]),"/all?X-Plex-Token=",#"X-Plex-Token"}) as text)
 1. Split Location into columns and Parse as SMB format
 
 #### Power Query Sample Scripts
@@ -135,10 +135,10 @@ in
 1. Invoke **Load Movie Content** Function from Library <em> URL </em> field;
 1. Add **Runtime** column and calculate base on <em>Duration</em> field, and format result into HH:MM:SS format by removing <em> Date </em> and <em> AM </em>;
 
-    `Text.From(#datetime(1970, 1, 1, 0, 0, 0) + #duration(0, 0, 0, [Duration]/1000))`
+    >Text.From(#datetime(1970, 1, 1, 0, 0, 0) + #duration(0, 0, 0, [Duration]/1000))
 1. Combine IP, Item Key and X-Plex-Token into **MetadatURL**;
 
-    `Table.AddColumn(#"Trimmed Text", "MetadataURL", each Text.Combine({"http://",IP,":32400", [key], "?X-Plex-Token=",#"X-Plex-Token"}), type text)`
+    >Table.AddColumn(#"Trimmed Text", "MetadataURL", each Text.Combine({"http://",IP,":32400", [key], "?X-Plex-Token=",#"X-Plex-Token"}), type text)
 
 ----------
 

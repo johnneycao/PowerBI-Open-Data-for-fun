@@ -29,7 +29,7 @@
 1. Add a Index column <em> UnicornId </em>;
 1. Add a merged column for City and Country
     
-    `Table.AddColumn(#"Reordered Columns", "City, Country", each Text.Combine({[City], [Country]}, ", "), type text)` 
+    >Table.AddColumn(#"Reordered Columns", "City, Country", each Text.Combine({[City], [Country]}, ", "), type text)
 
 #### Power Query Sample Scripts
 ```css
