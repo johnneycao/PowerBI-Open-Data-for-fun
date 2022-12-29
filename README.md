@@ -7,3 +7,4 @@ This is the persoanl repository for sample Power BI Dashboard / Reports using op
     - Date Table
     - Last Refresh Date
 - [Plex Movies](./docs/Plex.md)
+- [Unicorn](./docs/Unicorn.md)
