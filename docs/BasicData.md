@@ -4,7 +4,7 @@
 
 ## Parameters
 
-1. **StarDate**: Required, Type as <em>Date</em>
+1. **StarDate**: Required, Type as <em> Date </em>
 
 ----------
 
@@ -16,12 +16,12 @@
 
 ##### Parameter
 
-**StarDate**, set value '<em>1/1/1990</em>'
+**StarDate**, set value '<em> 1/1/1990 </em>'
 
 #### Steps
-1. Create a parameter **StartDate** for the <em>Start Date</em>;
-1. Convert parameter to table and add <em>End Date</em>;
-1. Create a list of date between <em>Start Date</em> and <em>End Date</em> using each keyword;
+1. Create a parameter **StartDate** for the <em> Start Date </em>;
+1. Convert parameter to table and add <em> End Date </em>;
+1. Create a list of date between <em> Start Date </em> and <em> End Date </em> using each keyword;
 1. Add Columns for Year, Quarter, Month and Day.
 
 #### Power Query Sample Script
@@ -73,7 +73,7 @@ in
 ### 3. <em> LastRefreshed</em> Table
 
 #### Steps
-1. Create a table using <em>LocalNow()</em>.
+1. Create a table using <em> LocalNow() </em>.
 
 #### Power Query Sample Script
 ```css

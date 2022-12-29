@@ -4,10 +4,10 @@
 
 ## Parameters
 
-1. **StarDate**: Required, Type as <em>Date</em>
-1. **X-Plex-Token**: Required, Type as <em>Text</em>
-1. **IP**: Required, Type as <em>Text</em>
-1. **LibraryURL**: Required, Type as <em>Text</em>
+1. **StarDate**: Required, Type as <em> Date </em>
+1. **X-Plex-Token**: Required, Type as <em> Text </em>
+1. **IP**: Required, Type as <em> Text </em>
+1. **LibraryURL**: Required, Type as <em> Text </em>
 
 ----------
 
@@ -17,7 +17,7 @@
 
 #### Parameter
 
-**LibraryURL**: Format like http://[<em> IP </em>]:32400/library/sections/[<em> Movies Library ID </em>]/all?X-Plex-Token=[<em>X-Plex-Token</em>] (can be copied from **Plex Libraries** Table below)
+**LibraryURL**: Format like http://[<em> IP </em>]:32400/library/sections/[<em> Movies Library ID </em>]/all?X-Plex-Token=[<em> X-Plex-Token </em>] (can be copied from **Plex Libraries** Table below)
 
 #### Steps
 
@@ -89,7 +89,7 @@ in
 
 **X-Plex-Token**: [Finding an authentication token / X-Plex-Token](https://support.plex.tv/articles/204059436-finding-an-authentication-token-x-plex-token/) 
 
-**IP**: Plex Server IP Address, e.g. '<em>10.10.10.2</em>'
+**IP**: Plex Server IP Address, e.g. '<em> 10.10.10.2 </em>'
 
 #### Steps
 1. Combine IP and X-Plex-Token into a Plex Libraries List URL, and retrive all libraries ('**Directory**');
@@ -131,9 +131,9 @@ in
 
 #### Steps
 1. Reference from **Plex Libraries** Table above;
-1. Filter **Type** = '<em>movie</em>' and **Scanner** = '<em>Plex Movie</em>';
-1. Invoke **Load Movie Content** Function from Library <em>URL</em> field;
-1. Add **Runtime** column and calculate base on <em>Duration</em> field, and format result into HH:MM:SS format by removing <em>Date</em> and <em>AM</em>;
+1. Filter **Type** = '<em>movie</em>' and **Scanner** = '<em> Plex Movie </em>';
+1. Invoke **Load Movie Content** Function from Library <em> URL </em> field;
+1. Add **Runtime** column and calculate base on <em>Duration</em> field, and format result into HH:MM:SS format by removing <em> Date </em> and <em> AM </em>;
 
     `Text.From(#datetime(1970, 1, 1, 0, 0, 0) + #duration(0, 0, 0, [Duration]/1000))`
 1. Combine IP, Item Key and X-Plex-Token into **MetadatURL**;
@@ -160,7 +160,7 @@ in
 1. [Plex Media Server API Documentation](https://www.plexopedia.com/plex-media-server/api/)
 1. [Plex Media Server URL Command](https://support.plex.tv/articles/201638786-plex-media-server-url-commands/)
  
-    - List Base Server Capabilities: http://[<em>IP</em>]:32400/?X-Plex-Token=[<em>X-Plex-Token</em>]
-    - List Defined Libraries: http://[<em>IP</em>]:32400/library/sections/?X-Plex-Token=[<em>X-Plex-Token</em>]
-    - List Library Contents: http://[<em>IP</em>]:32400/library/sections/[<em>Movies Library ID</em>]/all?X-Plex-Token=[<em>X-Plex-Token</em>]
-    - List Detail of an Item: http://[<em>IP</em>]:32400/library/metadata/[<em>Item Key ID</em>]?X-Plex-Token=[<em>X-Plex-Token</em>]
+    - List Base Server Capabilities: http://[<em> IP </em>]:32400/?X-Plex-Token=[<em> X-Plex-Token </em>]
+    - List Defined Libraries: http://[<em> IP </em>]:32400/library/sections/?X-Plex-Token=[<em> X-Plex-Token </em>]
+    - List Library Contents: http://[<em> IP </em>]:32400/library/sections/[<em>Movies Library ID</em>]/all?X-Plex-Token=[<em> X-Plex-Token </em>]
+    - List Detail of an Item: http://[<em> IP </em>]:32400/library/metadata/[<em>Item Key ID</em>]?X-Plex-Token=[<em> X-Plex-Token </em>]
