@@ -35,7 +35,7 @@ in
     Add_IMDB_URL
 ```
 
-### 3 <em> Plex Library </em> Tables
+### 3 <em> Plex Library </em> Table
 
 #### Depedency
 
@@ -44,6 +44,12 @@ in
 **PlexToken**: Required, Type as <em>Date</em>; 
 
 **IP address**: Required, Type as <em>Text</em>
+
+#### Steps
+1. Combine IP Address and PlexToken into Library URL
+
+    `Text.Combine({"http://",IP,":32400/library/sections?X-Plex-Token=",#"X-Plex-Token"})`
+1. Extract <em>Directory</em> column, 
 
 ## Relationship
 
@@ -55,7 +61,11 @@ in
 1. [Fuzzy Matching](https://learn.microsoft.com/en-us/power-query/fuzzy-matching)
 
 ### Plex API
+1. [Get Libraries](https://www.plexopedia.com/plex-media-server/api/server/libraries/)
+ 
+    GET http://[<em>IP address</em>]:32400/library/sections/?X-Plex-Token=[<em>PlexToken</em>]
+ 
 1. [Get All Movies](https://www.plexopedia.com/plex-media-server/api/library/movies/)
 
-    GET http://[<em>IP address</em>]:32400/library/sections/[Movies Library ID]/all?X-Plex-Token=[<em>PlexToken</em>]
+    GET http://[<em>IP address</em>]:32400/library/sections/[<em>Movies Library ID</em>]/all?X-Plex-Token=[<em>PlexToken</em>]
 1. 
