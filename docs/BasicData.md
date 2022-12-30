@@ -87,7 +87,7 @@ in
 ----------
 
 ## Relationship
-- Date / Year Table: Many to 1
+- **DateTable** / **YearTable** Table: Many to 1
 
 ----------
 

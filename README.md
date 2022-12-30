@@ -31,6 +31,7 @@ This project welcomes contributions and suggestions.
 - [United Nation Statistics](http://data.un.org/)
 - [World Bank - Data Catalog](https://datacatalog.worldbank.org/)
 - [NASA](https://data.nasa.gov/)
+- [CREA MLS HPI Tool](https://www.crea.ca/housing-market-stats/mls-home-price-index/hpi-tool/)
 - [Azure Open Datasets](https://learn.microsoft.com/en-CA/azure/open-datasets/dataset-catalog)
 - [Google Dataset Search](https://datasetsearch.research.google.com/)
 - [Google BigQuery public datasets](https://cloud.google.com/bigquery/public-data/)
