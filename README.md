@@ -9,10 +9,10 @@ This project welcomes contributions and suggestions.
 ## Table of Contents
 
 - [Basic Tables](./docs/BasicData.md)
-    - Date Table
+    - Date / Year Table
     - Last Refresh Date
 - [Plex Movies](./docs/Plex.md)
-- [Unicorn](./docs/Unicorn.md)
+- [Unicorn Analysis](./docs/Unicorn.md)
 
 ----------
 
