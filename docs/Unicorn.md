@@ -12,7 +12,7 @@
 
 ## Data Tables
 
-### 1 Basic Tables
+### 1. Basic Tables
 
 #### Tables 
 
@@ -22,7 +22,7 @@
 
 - **LastRefreshed** Table
 
-### 2 <em> Country / Region </em> Table
+### 2. <em> Country / Region </em> Table
 
 #### Data Source
 - [Worldbank Country API](http://api.worldbank.org/v2/country/)
@@ -56,7 +56,7 @@ in
     #"Sorted Rows"
 ```
 
-### 3 <em> Unicorn </em> Master Table
+### 3. <em> Unicorn </em> Master Table
 
 #### Data Source
 - [CBInsights](https://www.cbinsights.com/research-unicorn-companies)
@@ -83,7 +83,7 @@ in
     #"Reordered Columns"
 ```
 
-### 4 <em> Unicorn Investor </em>
+### 4. <em> Unicorn Investor </em>
 
 #### Dependency
 - **Unicorn Master** Table
@@ -116,7 +116,7 @@ in
 
 ## Reports
 
-### <em> Unicorn Analysis </em> Page
+### 1. <em> Unicorn Analysis </em> Page
 ![Screenshot](../_Asset%20Library/Unicorn_Screenshot.png)
 
 - Cards - Total Valuation ($B), Count of Company and Count of Investors
@@ -128,13 +128,11 @@ in
 - Line and stacked column chart - Valuation vs Count of company by Country
 - Stacked Bar Chart - Count of Company by Investor
 
-### <em> Unicorn Card </em> tooltips Page
+### 2. <em> Unicorn Card </em> tooltips Page
 ![Screenshot](../_Asset%20Library/Unicorn_Card.png)
 ----------
 
 ## Reference
-
-### Power Query Reference
 
 ### The World Bank
 
