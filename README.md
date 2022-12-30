@@ -1,5 +1,6 @@
 # Power-BI-Samples
-This is the personal repository for sample Power BI Dashboard / Reports using open data sources. 
+This personal repository contains a collection of personal built Power BI Dashboard / Reports sample files.  It includes datasets used for samples, tutorials and other contents. 
+This project welcomes contributions and suggestions.
 
 ----------
 
@@ -43,9 +44,3 @@ This is the personal repository for sample Power BI Dashboard / Reports using op
 - [opendatasoft](https://public.opendatasoft.com/explore/)
 - [Awesome Public Datasets](https://github.com/awesomedata/awesome-public-datasets)
 - [Big List of Free Open APIs](https://mixedanalytics.com/blog/list-actually-free-open-no-auth-needed-apis/)
-
------------
-# P.S.
-Please drop me a note with any feedback you have. 
-
-**Johnney Cao**
