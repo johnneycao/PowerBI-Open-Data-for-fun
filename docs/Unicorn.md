@@ -6,7 +6,7 @@
 
 ## Parameters
 
-1. **StarDate**: Required, Type as <em> Date </em>
+- **StarDate**: Required, Type as <em> Date </em>
 
 ----------
 
