@@ -16,11 +16,11 @@
 
 #### Tables 
 
-**Date** Table
+- **Date** Table
 
-**Year** Table
+- **Year** Table
 
-**LastRefreshed** Table
+- **LastRefreshed** Table
 
 ### 2 <em> Country / Region </em> Table
 

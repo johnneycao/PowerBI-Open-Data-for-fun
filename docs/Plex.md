@@ -4,10 +4,10 @@
 
 ## Parameters
 
-1. **StarDate**: Required, Type as <em> Date </em>
-1. **X-Plex-Token**: Required, Type as <em> Text </em>
-1. **IP**: Required, Type as <em> Text </em>
-1. **LibraryURL**: Required, Type as <em> Text </em>
+- **StarDate**: Required, Type as <em> Date </em>
+- **X-Plex-Token**: Required, Type as <em> Text </em>
+- **IP**: Required, Type as <em> Text </em>
+- **LibraryURL**: Required, Type as <em> Text </em>
 
 ----------
 
@@ -17,7 +17,7 @@
 
 #### Parameter
 
-**LibraryURL**: Format like http://[<em> IP </em>]:32400/library/sections/[<em> Movies Library ID </em>]/all?X-Plex-Token=[<em> X-Plex-Token </em>] (result copied from **Plex Libraries** Table below)
+- **LibraryURL**: Format like http://[<em> IP </em>]:32400/library/sections/[<em> Movies Library ID </em>]/all?X-Plex-Token=[<em> X-Plex-Token </em>] (result copied from **Plex Libraries** Table below)
 
 #### Steps
 
@@ -53,11 +53,11 @@ in
 #### Tables 
 [Basic Data](./BasicData.md)
 
-**Date** Table
+- **Date** Table
 
-**Year** Table
+- **Year** Table
 
-**LastRefreshed** Table
+- **LastRefreshed** Table
 
 ### 2 <em> IMDB Top 250 List </em> Table
 
@@ -90,9 +90,9 @@ in
 
 ##### Parameter
 
-**X-Plex-Token**: [Finding an authentication token / X-Plex-Token](https://support.plex.tv/articles/204059436-finding-an-authentication-token-x-plex-token/) 
+- **X-Plex-Token**: [Finding an authentication token / X-Plex-Token](https://support.plex.tv/articles/204059436-finding-an-authentication-token-x-plex-token/) 
 
-**IP**: Plex Server IP Address, e.g. '<em> 10.10.10.2 </em>'
+- **IP**: Plex Server IP Address, e.g. '<em> 10.10.10.2 </em>'
 
 #### Steps
 1. Combine IP and X-Plex-Token into a Plex Libraries List URL, and retrive all libraries ('**Directory**');
@@ -128,9 +128,9 @@ in
 
 #### Dependency
 
-**Plex Libraries** Table
+- **Plex Libraries** Table
 
-**Load Movie Content** Custom Function
+- **Load Movie Content** Custom Function
 
 #### Steps
 1. Reference from **Plex Libraries** Table above;
