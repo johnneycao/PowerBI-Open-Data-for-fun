@@ -2,7 +2,7 @@
 
 ----------
 
-[PBI Download Link](./_Asset Library/Source_Files/Baseline.pbix)
+[PBI Download Link](./_Asset%20Library/Source_Files/Baseline.pbix)
 
 ## Parameters
 
