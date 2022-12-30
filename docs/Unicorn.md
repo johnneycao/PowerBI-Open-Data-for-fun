@@ -15,7 +15,6 @@
 ### 1 Basic Tables
 
 #### Tables 
-[Download Baseline.pbix File](./_ABasicData.md)
 
 **Date** Table
 
@@ -30,11 +29,11 @@
 
 #### Steps
 1. Pull data from [Worldbank Country API](http://api.worldbank.org/v2/country/);
-1. Expand **Region**, and filter out those <em> empty </em> and <em> Aggregates </em>
-1. **AdminRegion**, **IncomeLevel**, **LendingType**, **CapitalCity**, **Longitude**, **Latitude**
+1. Expand **Region**, and filter out those <em> empty </em> and <em> Aggregates </em>;
+1. **AdminRegion**, **IncomeLevel**, **LendingType**, **CapitalCity**, **Longitude**, **Latitude**;
 1. Add color columns for **IncomeLevel**, **LendingType**
 
-#### Power Query Sample Scripts
+#### Power Query Sample Script
 ```css
 let
     Source = Xml.Tables(Web.Contents("http://api.worldbank.org/v2/country/" & "?per_page=500")),
@@ -70,7 +69,7 @@ in
     
     >Table.AddColumn(#"Reordered Columns", "City, Country", each Text.Combine({[City], [Country]}, ", "), type text)
 
-#### Power Query Sample Scripts
+#### Power Query Sample Script
 ```css
 let
     Source = Web.BrowserContents("https://www.cbinsights.com/research-unicorn-companies"),
@@ -86,8 +85,26 @@ in
 
 ### 4 <em> Unicorn Investor </em>
 
-#### Data Source 
-- Unicorn Master Table above
+#### Dependency
+- **Unicorn Master** Table
+
+#### Steps
+1. Reference from **Unicorn Master** Table;
+1. Keep only **UnicornId**, **Company** and **Select Investors**
+1. Split **Select Investors** into new rows and Trimmed the value
+
+
+#### Power Query Sample Script
+```css
+let
+    Source = #"Unicorn Master",
+    #"Removed Columns" = Table.RemoveColumns(Source,{"Valuation ($B)", "Date Joined", "Country", "City", "Industry", "City, Country"}),
+    #"Split Column by Delimiter" = Table.ExpandListColumn(Table.TransformColumns(#"Removed Columns", {{"Select Investors", Splitter.SplitTextByDelimiter(",", QuoteStyle.Csv), let itemType = (type nullable text) meta [Serialized.Text = true] in type {itemType}}}), "Select Investors"),
+    #"Changed Type" = Table.TransformColumnTypes(#"Split Column by Delimiter",{{"Select Investors", type text}}),
+    #"Trimmed Text" = Table.TransformColumns(#"Changed Type",{{"Select Investors", Text.Trim, type text}})
+in
+    #"Trimmed Text"
+```
 
 ----------
 

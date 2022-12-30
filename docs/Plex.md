@@ -24,7 +24,7 @@
 1. Retrieve library detail from LibraryURL
 1. Expand Video into columns, and expand Video.Media and Video.Collection information
 
-#### Power Query Sample Scripts
+#### Power Query Sample Script
 ```css
 let
     Source = (LibraryURL as any) => let
@@ -70,7 +70,7 @@ in
 1. Promote the first line to Header
 1. Add custom fields for **RankingGroup**, **IMDB_ID** and **IMDB_URL**
 
-#### Power Query Sample Scripts
+#### Power Query Sample Script
 ```css
 let
     Source = Csv.Document(File.Contents("C:\Plex\imdbTop250.csv"),[Delimiter=",", Columns=16, Encoding=65001, QuoteStyle=QuoteStyle.None]),
@@ -103,7 +103,7 @@ in
     >Uri.Combine(Text.Combine({IP,":32400/"}) as text, Text.Combine({"library/sections/",Text.From([#"Attribute:key"]),"/all?X-Plex-Token=",#"X-Plex-Token"}) as text)
 1. Split Location into columns and Parse as SMB format
 
-#### Power Query Sample Scripts
+#### Power Query Sample Script
 ```css
 let
     Source = Xml.Tables(Web.Contents(Text.Combine({"http://",IP,":32400/library/sections?X-Plex-Token=",#"X-Plex-Token"}))),

@@ -18,7 +18,7 @@
 
 ##### Parameter
 
-**StarDate**, set value '<em> 1/1/1990 </em>'
+- **StarDate**, set value '<em> 1/1/1990 </em>'
 
 #### Steps
 1. Create a parameter **StartDate** for the <em> Start Date </em>;
@@ -56,7 +56,7 @@ let
 
 #### Dependency
 
-**Date** Table
+- **Date** Table
 
 #### Steps
 1. Reference from **Date** Table above;
