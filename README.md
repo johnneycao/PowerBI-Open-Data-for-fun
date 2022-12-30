@@ -1,5 +1,5 @@
 # Power-BI-Samples
-This is the persoanl repository for sample Power BI Dashboard / Reports using open data sources. 
+This is the personal repository for sample Power BI Dashboard / Reports using open data sources. 
 
 ----------
 
@@ -46,6 +46,6 @@ This is the persoanl repository for sample Power BI Dashboard / Reports using op
 
 -----------
 # P.S.
-Please drop me an note with any feedback you have. 
+Please drop me a note with any feedback you have. 
 
 **Johnney Cao**
