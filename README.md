@@ -24,6 +24,8 @@ This is the persoanl repository for sample Power BI Dashboard / Reports using op
 
 - [U.S. Government's open data](https://data.gov/)
 - [Canada Open Government](https://open.canada.ca/en/open-data)
+- [European Union Data](https://data.europa.eu/en)
+- [United Nation Statistics](http://data.un.org/)
 - [World Bank - Data Catalog](https://datacatalog.worldbank.org/)
 - [NASA](https://data.nasa.gov/)
 - [Azure Open Datasets](https://learn.microsoft.com/en-CA/azure/open-datasets/dataset-catalog)
