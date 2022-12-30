@@ -2,8 +2,6 @@
 
 ----------
 
-![Screenshot](../_Asset%20Library/Unicorn_Screenshot.png)
-
 [PBI Download Link](../_Asset%20Library/Source_Files/Unicorn.pbix)
 
 ## Parameters
@@ -59,7 +57,7 @@ in
     #"Sorted Rows"
 ```
 
-### 2 <em> Unicorn </em> Master Table
+### 3 <em> Unicorn </em> Master Table
 
 #### Data Source
 - [CBInsights](https://www.cbinsights.com/research-unicorn-companies)
@@ -86,16 +84,35 @@ in
     #"Reordered Columns"
 ```
 
-### 3 <em> Unicorn Investor </em>
+### 4 <em> Unicorn Investor </em>
+
+#### Data Source 
+- Unicorn Master Table above
 
 ----------
 
 ## Relationship
+- Unicorn Master / CountryMaster Table: Many to 1
+- Unicorn Investor / Unicorn Master: Many to 1
 
 ----------
 
 ## Reports
 
+### <em> Unicorn Analysis </em> Page
+![Screenshot](../_Asset%20Library/Unicorn_Screenshot.png)
+
+- Cards - Total Valuation ($B), Count of Company and Count of Investors
+- Map - Geo Graphic view by Count of company per city / country
+- Scatter Chart - Count of company per industry by Year
+- Stacked Bar Chart - Company Valuation
+- Funnel - Count of company by Year
+- Ribbon chart - Count of company by Country
+- Line and stacked column chart - Valuation vs Count of company by Country
+- Stacked Bar Chart - Count of Company by Investor
+
+### <em> Unicorn Card </em> tooltips Page
+![Screenshot](../_Asset%20Library/Unicorn_Card.png)
 ----------
 
 ## Reference

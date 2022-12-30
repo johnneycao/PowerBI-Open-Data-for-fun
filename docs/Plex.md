@@ -61,6 +61,9 @@ in
 
 ### 2 <em> IMDB Top 250 List </em> Table
 
+#### Data Sources
+- [IMDB Top 250](https://www.kaggle.com/datasets/mustafacicek/imdb-top-250-lists-1996-2020/download?datasetVersionNumber=3)
+
 #### Steps
 1. Download [IMDB Top 250](https://www.kaggle.com/datasets/mustafacicek/imdb-top-250-lists-1996-2020/download?datasetVersionNumber=3) from [Kaggle](https://www.kaggle.com/datasets/mustafacicek/imdb-top-250-lists-1996-2020?resource=download), and extract ZIP file into a folder, e.g. <em>c:\Plex</em>;
 1. Import <em>imdbTop250.csv</em> into Power BI
