@@ -1,5 +1,7 @@
 # Power-BI-Samples
-This personal repository contains a collection of personal built Power BI Dashboard / Reports sample files.  It includes datasets used for samples, tutorials and other contents. 
+
+This personal repository contains a collection of Power BI Dashboard / Reports sample files.  It includes datasets used for samples, tutorials and other contents. 
+
 This project welcomes contributions and suggestions.
 
 ----------
