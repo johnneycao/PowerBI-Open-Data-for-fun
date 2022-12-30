@@ -31,12 +31,18 @@ This is the persoanl repository for sample Power BI Dashboard / Reports using op
 - [Azure Open Datasets](https://learn.microsoft.com/en-CA/azure/open-datasets/dataset-catalog)
 - [Google Dataset Search](https://datasetsearch.research.google.com/)
 - [Google BigQuery public datasets](https://cloud.google.com/bigquery/public-data/)
+- [Yahoo Finance API Guide & Examples](https://syncwith.com/yahoo-finance/yahoo-finance-api)
+- [Yahoo Finance Data for Python Documentation](https://python-yahoofinance.readthedocs.io/en/latest/index.html)
+- [Yahoo Finance API Unofficial documentation](./docs/YahooFinanceAPI.md) fork from [yahoo-finance-api](https://github.com/mxbi/yahoo-finance-api/blob/master/DOCUMENTATION.md)
 - [RapidAPI Hub](https://rapidapi.com/hub/)
 - [Open Group Library](https://publications.opengroup.org/)
 - [Exchange Rates API](https://exchangerate.host/#/docs)
 - [Kaggle](https://www.kaggle.com/datasets)
 - [DataHub.io](https://datahub.io/collections)
 - [Data Science Dojo](https://code.datasciencedojo.com/datasciencedojo/datasets)
+- [opendatasoft](https://public.opendatasoft.com/explore/)
+- [Awesome Public Datasets](https://github.com/awesomedata/awesome-public-datasets)
+- [Big List of Free Open APIs](https://mixedanalytics.com/blog/list-actually-free-open-no-auth-needed-apis/)
 
 -----------
 # P.S.
