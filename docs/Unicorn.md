@@ -93,7 +93,7 @@ in
     #"Sorted Rows"
 ```
 
-### 4. <em> Unicorn Investor </em>
+### 4. <em> Unicorn Investor </em> Table
 
 #### Dependency
 - **Unicorn Master** Table
