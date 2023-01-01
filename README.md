@@ -22,6 +22,7 @@ This project welcomes contributions and suggestions.
 
 - [Microsoft Power BI Workshops](https://github.com/microsoft/pbiworkshops)
 - [Power BI on Microsoft Learn](https://learn.microsoft.com/en-us/training/powerplatform/power-bi)
+- [PowerBI.tips](https://powerbi.tips/)
 
 ### Open Data
 
