@@ -156,12 +156,14 @@ in
 ## Reference
 
 ### Power Query Reference
-1. [Fuzzy Matching](https://learn.microsoft.com/en-us/power-query/fuzzy-matching)
+- [Learn more about Power Query functions](https://docs.microsoft.com/powerquery-m/understanding-power-query-m-functions)
+- [Fuzzy Matching](https://learn.microsoft.com/en-us/power-query/fuzzy-matching)
+
 
 ### Plex API
-1. [Finding an authentication token / X-Plex-Token](https://support.plex.tv/articles/204059436-finding-an-authentication-token-x-plex-token/)
-1. [Plex Media Server API Documentation](https://www.plexopedia.com/plex-media-server/api/)
-1. [Plex Media Server URL Command](https://support.plex.tv/articles/201638786-plex-media-server-url-commands/)
+- [Finding an authentication token / X-Plex-Token](https://support.plex.tv/articles/204059436-finding-an-authentication-token-x-plex-token/)
+- [Plex Media Server API Documentation](https://www.plexopedia.com/plex-media-server/api/)
+- [Plex Media Server URL Command](https://support.plex.tv/articles/201638786-plex-media-server-url-commands/)
  
     - List Base Server Capabilities: http://[<em> IP </em>]:32400/?X-Plex-Token=[<em> X-Plex-Token </em>]
     - List Defined Libraries: http://[<em> IP </em>]:32400/library/sections/?X-Plex-Token=[<em> X-Plex-Token </em>]
