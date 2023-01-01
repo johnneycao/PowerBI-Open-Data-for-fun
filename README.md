@@ -22,7 +22,13 @@ This project welcomes contributions and suggestions.
 
 - [Microsoft Power BI Workshops](https://github.com/microsoft/pbiworkshops)
 - [Power BI on Microsoft Learn](https://learn.microsoft.com/en-us/training/powerplatform/power-bi)
+- [Transform, shape, and model data in Power BI](https://learn.microsoft.com/en-us/power-bi/transform-model/)
 - [PowerBI.tips](https://powerbi.tips/)
+
+### DAX Reference
+- [Data Analysis Expressions (DAX) Reference](https://learn.microsoft.com/en-us/dax/)
+- [DAX Resource Center Wiki on TechNet](https://social.technet.microsoft.com/wiki/contents/articles/1088.dax-resource-center.aspx)
+- [DAX Cheat Sheet – Vidas Matelis](http://www.powerpivot-info.com/post/439-dax-cheat-sheet)
 
 ### Open Data
 
