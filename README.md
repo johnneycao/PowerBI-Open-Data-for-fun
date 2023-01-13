@@ -11,15 +11,15 @@ This project welcomes contributions and suggestions.
 - [Basic Tables](./docs/BasicData.md)
     - Date / Year Table
     - Last Refresh Date
-- [Unicorn Analysis](./docs/Unicorn.md)
+- [Analysis of Unicorn Data](./docs/Unicorn.md)
 
     ![Screenshot](./_Asset%20Library/Unicorn_Screenshot.png)
 
-- [WorldBank GDP/GNI per capita Analysis](./docs/WorldBank.md)
+- [Analysis of GDP/GNI per capita in Countries Using Wordbank Data](./docs/WorldBank.md)
 
     ![Screenshot](./_Asset%20Library/WorldBank_WorldMap_Screenshot.png)
 
-- [Plex Movies](./docs/Plex.md) (WIP)
+- [Analysis Movie Collections from Plex](./docs/Plex.md) (WIP)
 
 ----------
 

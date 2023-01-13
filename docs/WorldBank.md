@@ -1,4 +1,4 @@
-# Wordbank Country GDP per capita Analysis
+# Analysis of GDP/GNI per capita in Countries Using Wordbank Data
 
 ----------
 
