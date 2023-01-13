@@ -11,9 +11,10 @@ This project welcomes contributions and suggestions.
 - [Basic Tables](./docs/BasicData.md)
     - Date / Year Table
     - Last Refresh Date
-- [Plex Movies](./docs/Plex.md)
-- [WorldBank GDP/GNI per capita Analysis](./docs/WorldBank.md)
 - [Unicorn Analysis](./docs/Unicorn.md)
+- [WorldBank GDP/GNI per capita Analysis](./docs/WorldBank.md)
+- [Plex Movies](./docs/Plex.md) (WIP)
+
 ----------
 
 ## Reference
