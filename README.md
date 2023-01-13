@@ -12,7 +12,13 @@ This project welcomes contributions and suggestions.
     - Date / Year Table
     - Last Refresh Date
 - [Unicorn Analysis](./docs/Unicorn.md)
+
+    ![Screenshot](../_Asset%20Library/Unicorn_Screenshot.png)
+
 - [WorldBank GDP/GNI per capita Analysis](./docs/WorldBank.md)
+
+    ![Screenshot](../_Asset%20Library/WorldBank_WorldMap_Screenshot.png)
+
 - [Plex Movies](./docs/Plex.md) (WIP)
 
 ----------
