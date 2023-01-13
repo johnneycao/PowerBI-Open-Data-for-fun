@@ -13,6 +13,7 @@ This project welcomes contributions and suggestions.
     - Last Refresh Date
 - [Plex Movies](./docs/Plex.md)
 - [Unicorn Analysis](./docs/Unicorn.md)
+- [WorldBank Analysis](./docs/WorldBank.md)
 
 ----------
 

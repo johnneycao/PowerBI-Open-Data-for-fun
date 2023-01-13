@@ -25,10 +25,10 @@
 ### 2. <em> Country / Region </em> Master Table
 
 #### Data Source
-- [Worldbank Country API](http://api.worldbank.org/v2/country/)
+> [http://api.worldbank.org/v2/country](http://api.worldbank.org/v2/country/)
 
 #### Steps
-1. Pull data from [Worldbank Country API](http://api.worldbank.org/v2/country/);
+1. Retrieve data from [Worldbank Country API](http://api.worldbank.org/v2/country/) in XML format;
 1. Expand **Region**, and filter out those <em> empty </em> and <em> Aggregates </em>;
 1. **AdminRegion**, **IncomeLevel**, **LendingType**, **CapitalCity**, **Longitude**, **Latitude**;
 1. Add color columns for **IncomeLevel**, **LendingType**
@@ -59,11 +59,11 @@ in
 ### 3. <em> Unicorn </em> Master Table
 
 #### Data Source
-- [CBInsights](https://www.cbinsights.com/research-unicorn-companies)
+> [https://www.cbinsights.com/research-unicorn-companies](https://www.cbinsights.com/research-unicorn-companies)
 
 #### Steps
 
-1. Pull data from [CBInsights](https://www.cbinsights.com/research-unicorn-companies) and extracted table from HTML;
+1. Retrieve data from [CBInsights](https://www.cbinsights.com/research-unicorn-companies) and extracted table from HTML;
 1. Add a Index column <em> UnicornId </em>;
 1. Clean country name in **Country** column;
 1. Merge query from **CountryMaster** table above, and expand ISO code, Regions **IncomeLevel**, **LendingType**, **CapitalCity** columns
