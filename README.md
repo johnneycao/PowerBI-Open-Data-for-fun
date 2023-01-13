@@ -12,9 +12,8 @@ This project welcomes contributions and suggestions.
     - Date / Year Table
     - Last Refresh Date
 - [Plex Movies](./docs/Plex.md)
+- [WorldBank GDP/GNI per capita Analysis](./docs/WorldBank.md)
 - [Unicorn Analysis](./docs/Unicorn.md)
-- [WorldBank Analysis](./docs/WorldBank.md)
-
 ----------
 
 ## Reference
