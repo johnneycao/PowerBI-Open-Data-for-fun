@@ -12,10 +12,6 @@
 
 ## Data Tables
 
-### Dependency Map
-![Screenshot](../_Asset%20Library/WorldBank_Dependencies.png)
-
-
 ### 1. Basic Tables
 
 #### Tables 
@@ -239,7 +235,11 @@ in
 ----------
 
 ## Relationship
+### Dependency Map
+![Screenshot](../_Asset%20Library/WorldBank_Dependencies.png)
+
 - Country Detail / Country Master Table: Many to 1
+- Country Master / Region Master Table: Many to 1
 - Country Master / Year Table: Many to 1
 
 ----------
