@@ -1,4 +1,4 @@
-# Wordbank GDP and Population data
+# Wordbank Country GDP per capita Analysis
 
 ----------
 
