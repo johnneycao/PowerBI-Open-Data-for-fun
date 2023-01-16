@@ -52,6 +52,8 @@ in
 1. **AdminRegion**, **IncomeLevel**, **LendingType**, **CapitalCity**, **Longitude**, **Latitude**;
 1. Add color columns for **IncomeLevel**, **LendingType**
 
+    Note: [Color Name](https://htmlcolorcodes.com/color-names/)
+
 #### Power Query Sample Script
 ```css
 let
@@ -65,13 +67,14 @@ let
     #"Expanded longitude" = Table.ExpandTableColumn(#"Expanded capitalCity", "longitude", {"Element:Text"}, {"Longitude"}),
     #"Expanded latitude" = Table.ExpandTableColumn(#"Expanded longitude", "latitude", {"Element:Text"}, {"Latitude"}),
     #"Replaced Value" = Table.ReplaceValue(#"Expanded latitude"," income","",Replacer.ReplaceText,{"IncomeLevel"}),
-    #"Added IncomeLevelColor" = Table.AddColumn(#"Replaced Value", "IncomeLevelColor", each if [IncomeLevel3Code] = "HIC" then "Light Green" else if [IncomeLevel3Code] = "UMC" then "Light Blue" else if [IncomeLevel3Code] = "LMC" then "Light Yellow" else if [IncomeLevel3Code] = "LIC" then "Light Red" else null),
+    #"Added IncomeLevelColor" = Table.AddColumn(#"Replaced Value", "IncomeLevelColor", each if [IncomeLevel3Code] = "HIC" then "Light Green" else if [IncomeLevel3Code] = "UMC" then "Light Yellow" else if [IncomeLevel3Code] = "LMC" then "Peach Puff" else if [IncomeLevel3Code] = "LIC" then "Light Salmon" else null),
     #"Added RegionColor" = Table.AddColumn(#"Added IncomeLevelColor", "RegionColor", each if Text.StartsWith([RegionName], "East Asia") then "Salmon" else if Text.StartsWith([RegionName], "Europe") then "Plum" else if Text.StartsWith([RegionName], "North America") then "SkyBlue" else if Text.StartsWith([RegionName], "Latin America") then "LemonChiffon" else if Text.StartsWith([RegionName], "Middle East") then "Tan" else if Text.StartsWith([RegionName], "South Asia") then "PaleGreen" else if Text.StartsWith([RegionName], "Sub-Saharan") then "Silver" else null),
     #"Reordered Columns" = Table.ReorderColumns(#"Added RegionColor",{"CountryName", "Country3Code", "Country2Code", "RegionName", "Region3Code", "Region2Code", "RegionColor", "AdminRegion3Code", "AdminRegion2Code", "IncomeLevel", "IncomeLevel3Code", "IncomeLevel2Code", "IncomeLevelColor", "LendingType", "LendingType3Code", "LendingType2Code", "CapitalCity", "Longitude", "Latitude"}),
     #"Sorted Rows" = Table.Sort(#"Reordered Columns",{{"CountryName", Order.Ascending}})
 in
     #"Sorted Rows"
 ```
+
 #### Extra column / measure
 - GDP (Billion US$) PY:
     > = CALCULATE(AVERAGE('CountryDetail'[GDP (Billion US$)]),'CountryDetail'[Year]=MAX('CountryDetail'[Year]))
@@ -263,6 +266,9 @@ in
 ----------
 
 ## Reference
+
+### HTML Color Name
+- [Color Name](https://htmlcolorcodes.com/color-names/)
 
 ### The World Bank
 
