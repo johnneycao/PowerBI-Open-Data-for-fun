@@ -1,3 +1,10 @@
+---
+title: unicorn analysis
+author: Johnney Cao
+date updated: 2023-1-17
+keyword: [unicorn, parameter, web connector, xml, merge column, split column, html color, table reference]
+---
+
 # Analysis of Unicorn Data
 
 ----------
@@ -33,6 +40,7 @@
 1. **AdminRegion**, **IncomeLevel**, **LendingType**, **CapitalCity**, **Longitude**, **Latitude**;
 1. Add color columns for **IncomeLevel**, **LendingType**
 
+    Note: [Color Name](https://htmlcolorcodes.com/color-names/)
 #### Power Query Sample Script
 ```css
 let

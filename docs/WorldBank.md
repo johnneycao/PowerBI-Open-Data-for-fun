@@ -1,3 +1,10 @@
+---
+title: GDP per capita analysis
+author: Johnney Cao
+date updated: 2023-1-17
+keyword: [Worldbank API, GDP, GNI, parameter, web connector, xml, expand table, expand table columns, html color, table reference, DAX, related table]
+---
+
 # Analysis of GDP/GNI per capita in Countries Using Wordbank Data
 
 ----------
