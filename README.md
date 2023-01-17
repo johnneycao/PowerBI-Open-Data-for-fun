@@ -1,3 +1,9 @@
+---
+title: TOC and Reference
+author: Johnney Cao
+date updated: 2023-1-17
+---
+
 # Power-BI-Samples
 
 This personal repository contains a collection of Power BI Dashboard / Reports sample files.  It includes datasets used for samples, tutorials and other contents. 
@@ -45,6 +51,7 @@ This project welcomes contributions and suggestions.
 - [United Nation Statistics](http://data.un.org/)
 - [World Bank - Data Catalog](https://datacatalog.worldbank.org/)
 - [NASA](https://data.nasa.gov/)
+- [OpenWeather API](https://openweathermap.org/api)
 - [CREA MLS HPI Tool](https://www.crea.ca/housing-market-stats/mls-home-price-index/hpi-tool/)
 - [Azure Open Datasets](https://learn.microsoft.com/en-CA/azure/open-datasets/dataset-catalog)
 - [Google Dataset Search](https://datasetsearch.research.google.com/)
@@ -53,6 +60,7 @@ This project welcomes contributions and suggestions.
 - [Yahoo Finance Data for Python Documentation](https://python-yahoofinance.readthedocs.io/en/latest/index.html)
 - [Yahoo Finance API Unofficial documentation](./docs/YahooFinanceAPI.md) fork from [yahoo-finance-api](https://github.com/mxbi/yahoo-finance-api/blob/master/DOCUMENTATION.md)
 - [RapidAPI Hub](https://rapidapi.com/hub/)
+- [ALPHA VANTAGE Stock APIs](https://www.alphavantage.co/documentation/)
 - [Open Group Library](https://publications.opengroup.org/)
 - [Exchange Rates API](https://exchangerate.host/#/docs)
 - [Kaggle](https://www.kaggle.com/datasets)
