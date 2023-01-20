@@ -267,7 +267,7 @@ in
 
 ### 2. **GDP** Page
 ![Screenshot](../_Asset%20Library/WorldBank_GDP_Screenshot.png)
-- Scatter chart - YoY GDP and Population changes for Top 25 Countires
+- Scatter chart - YoY GDP per Capita and Population changes for Top 25 Countires
 - Table - List of all countries with ISO3code, Income Level, GDP, GNI, Population, GDP per capita, and sparklines for GDP and Population
 
 ----------
