@@ -51,6 +51,8 @@ This project welcomes contributions and suggestions.
 - [United Nation Statistics](http://data.un.org/)
 - [World Bank - Data Catalog](https://datacatalog.worldbank.org/)
 - [NASA](https://data.nasa.gov/)
+- [Nasdaq Data Line](https://docs.data.nasdaq.com/docs/getting-started)
+- [FRED](https://fred.stlouisfed.org/docs/api/fred/)
 - [OpenWeather API](https://openweathermap.org/api)
 - [CREA MLS HPI Tool](https://www.crea.ca/housing-market-stats/mls-home-price-index/hpi-tool/)
 - [Azure Open Datasets](https://learn.microsoft.com/en-CA/azure/open-datasets/dataset-catalog)
