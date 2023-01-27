@@ -34,11 +34,12 @@ keyword: [Worldbank API, unicorn, parameter, web connector, xml, merge column, s
 #### Data Source
  [Download link (Kaggle)](https://www.kaggle.com/datasets/swaptr/layoffs-2022)
 
-<em>Some data such as the sources, list of employees laid off and date of addition has been omitted here and the complete data can be found on [Layoffs.fyi](https://layoffs.fyi/). Credits: Roger Lee <em>
+<em>Some data such as the sources, list of employees laid off and date of addition has been omitted here and the complete data can be found on [Layoffs.fyi](https://layoffs.fyi/). Credits: Roger Lee </em>
 
 #### Steps
 
 1. Manual download the csv file from [Kaggle](https://www.kaggle.com/datasets/swaptr/layoffs-2022);
+1. Retrieve the data from downloaded csv file and promote first line as header
 1. Change **percentage_laid_off** to <em>Percentage</em>
 1. Trim and clean the text fields
 1. Add a merge column **Location** from **location_hq** and **country** ;
