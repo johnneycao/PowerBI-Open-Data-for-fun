@@ -154,7 +154,7 @@ in
 
 ### Power BI/Query Reference
 
-- [Web Connector Reference](https://learn.microsoft.com/en-us/power-query/connectors/web/)
+- [Web Connector Reference](https://learn.microsoft.com/en-us/power-query/connectors/web/web)
 - [Create tooltips based on report pages](https://learn.microsoft.com/en-us/power-bi/create-reports/desktop-tooltips?tabs=powerbi-desktop)
 
 ### The World Bank
