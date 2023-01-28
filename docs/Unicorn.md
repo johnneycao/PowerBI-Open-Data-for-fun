@@ -13,7 +13,7 @@ keyword: [Worldbank API, unicorn, parameter, web connector, xml, merge column, s
 
 ## Parameters
 
-- **StarDate**: Required, Type as <em> Date </em>
+- **StarDate**: Required, Type as *Date*
 
 ----------
 
@@ -29,16 +29,16 @@ keyword: [Worldbank API, unicorn, parameter, web connector, xml, merge column, s
 
 - **LastRefreshed** Table
 
-### 2. <em> Country / Region </em> Master Table
+### 2. *Country / Region* Master Table
 
 #### Data Source
 > [http://api.worldbank.org/v2/country](http://api.worldbank.org/v2/country/)
 
 #### Steps
 1. Retrieve data from [Worldbank Country API](http://api.worldbank.org/v2/country/) in XML format;
-1. Expand **Region**, and filter out those <em> empty </em> and <em> Aggregates </em>;
+1. Expand **Region**, and filter out those *empty* and *Aggregates*;
 1. **AdminRegion**, **IncomeLevel**, **LendingType**, **CapitalCity**, **Longitude**, **Latitude**;
-1. Add color columns for **IncomeLevel**, **LendingType**
+1. Add color columns for **IncomeLevel**, **LendingType**.
 
     Note: [Color Name](https://htmlcolorcodes.com/color-names/)
 #### Power Query Sample Script
@@ -64,7 +64,7 @@ in
     #"Sorted Rows"
 ```
 
-### 3. <em> Unicorn </em> Master Table
+### 3. *Unicorn* Master Table
 
 #### Data Source
 > [https://www.cbinsights.com/research-unicorn-companies](https://www.cbinsights.com/research-unicorn-companies)
@@ -72,10 +72,10 @@ in
 #### Steps
 
 1. Retrieve data from [CBInsights](https://www.cbinsights.com/research-unicorn-companies) and extracted table from HTML;
-1. Add a Index column <em> UnicornId </em>;
+1. Add a Index column *UnicornId*;
 1. Clean country name in **Country** column;
 1. Merge query from **CountryMaster** table above, and expand ISO code, Regions **IncomeLevel**, **LendingType**, **CapitalCity** columns;
-1. Add a merged column for City and Country, and Trim the value
+1. Add a merged column for City and Country, and Trim the value.
     
     >Table.AddColumn(#"Expanded CountryMaster", "City, Country", each Text.Combine({[City], ", ", [Country3Code]}), type text)
 
@@ -101,7 +101,7 @@ in
     #"Sorted Rows"
 ```
 
-### 4. <em> Unicorn Investor </em> Table
+### 4. *Unicorn Investors* Table
 
 #### Dependency
 - **Unicorn Master** Table
@@ -109,7 +109,7 @@ in
 #### Steps
 1. Reference from **Unicorn Master** Table;
 1. Keep only **UnicornId**, **Company** and **Select Investors**;
-1. Split **Select Investors** into new rows and Trimmed the value
+1. Split **Select Investors** into new rows and Trimmed the value.
 
 
 #### Power Query Sample Script
@@ -134,7 +134,7 @@ in
 
 ## Reports
 
-### 1. <em> Unicorn Analysis </em> Page
+### 1. *Unicorn Analysis* Page
 ![Screenshot](../_Asset%20Library/Unicorn_Screenshot.png)
 
 - Cards - Total Valuation ($B), Count of Company and Count of Investors
@@ -146,7 +146,7 @@ in
 - Line and stacked column chart - Valuation vs Count of company by Country and Income Level
 - Stacked Bar Chart - Count of Company by Investor
 
-### 2. <em> Unicorn Card </em> tooltips Page
+### 2. *Unicorn Card* tooltips Page
 ![Screenshot](../_Asset%20Library/Unicorn_Card.png)
 ----------
 

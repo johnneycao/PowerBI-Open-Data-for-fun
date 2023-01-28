@@ -4,20 +4,20 @@
 
 ## Parameters
 
-- **StarDate**: Required, Type as <em> Date </em>
-- **X-Plex-Token**: Required, Type as <em> Text </em>
-- **IP**: Required, Type as <em> Text </em>
-- **LibraryURL**: Required, Type as <em> Text </em>
+- **StarDate**: Required, Type as *Date*
+- **X-Plex-Token**: Required, Type as *Text*
+- **IP**: Required, Type as *Text*
+- **LibraryURL**: Required, Type as *Text*
 
 ----------
 
 ## Custom Function
 
-### <em> 1. Load Movie Content</em> Function
+### *1. Load Movie Content* Function
 
 #### Parameter
 
-- **LibraryURL**: Format like http://[<em> IP </em>]:32400/library/sections/[<em> Movies Library ID </em>]/all?X-Plex-Token=[<em> X-Plex-Token </em>] (result copied from **Plex Libraries** Table below)
+- **LibraryURL**: Format like http://[*IP*]:32400/library/sections/[*Movies Library ID*]/all?X-Plex-Token=[*X-Plex-Token*] (result copied from **Plex Libraries** Table below)
 
 #### Steps
 
@@ -59,14 +59,14 @@ in
 
 - **LastRefreshed** Table
 
-### 2 <em> IMDB Top 250 List </em> Table
+### 2 *IMDB Top 250 List* Table
 
 #### Data Sources
 - [IMDB Top 250](https://www.kaggle.com/datasets/mustafacicek/imdb-top-250-lists-1996-2020/download?datasetVersionNumber=3)
 
 #### Steps
-1. Download [IMDB Top 250](https://www.kaggle.com/datasets/mustafacicek/imdb-top-250-lists-1996-2020/download?datasetVersionNumber=3) from [Kaggle](https://www.kaggle.com/datasets/mustafacicek/imdb-top-250-lists-1996-2020?resource=download), and extract ZIP file into a folder, e.g. <em>c:\Plex</em>;
-1. Import <em>imdbTop250.csv</em> into Power BI
+1. Download [IMDB Top 250](https://www.kaggle.com/datasets/mustafacicek/imdb-top-250-lists-1996-2020/download?datasetVersionNumber=3) from [Kaggle](https://www.kaggle.com/datasets/mustafacicek/imdb-top-250-lists-1996-2020?resource=download), and extract ZIP file into a folder, e.g. *c:\Plex*;
+1. Import *imdbTop250.csv* into Power BI
 1. Promote the first line to Header
 1. Add custom fields for **RankingGroup**, **IMDB_ID** and **IMDB_URL**
 
@@ -84,7 +84,7 @@ in
     Add_IMDB_URL
 ```
 
-### 3 <em> Plex Libraries </em> Table
+### 3 *Plex Libraries* Table
 
 #### Depedency
 
@@ -92,13 +92,13 @@ in
 
 - **X-Plex-Token**: [Finding an authentication token / X-Plex-Token](https://support.plex.tv/articles/204059436-finding-an-authentication-token-x-plex-token/) 
 
-- **IP**: Plex Server IP Address, e.g. '<em> 10.10.10.2 </em>'
+- **IP**: Plex Server IP Address, e.g. '*10.10.10.2*'
 
 #### Steps
 1. Combine IP and X-Plex-Token into a Plex Libraries List URL, and retrive all libraries ('**Directory**');
     >Xml.Tables(Web.Contents(Text.Combine({"http://",IP,":32400/library/sections?X-Plex-Token=",#"X-Plex-Token"})))
-1. Drill down <em>Directory</em> into a table;
-1. Expand <em>Location</em> to Folder Path;
+1. Drill down *Directory* into a table;
+1. Expand *Location* to Folder Path;
 1. Combine IP and X-Plex-Token into Plex Content Library URL;
     >Uri.Combine(Text.Combine({IP,":32400/"}) as text, Text.Combine({"library/sections/",Text.From([#"Attribute:key"]),"/all?X-Plex-Token=",#"X-Plex-Token"}) as text)
 1. Split Location into columns and Parse as SMB format
@@ -124,7 +124,7 @@ in
     #"Renamed Columns"
 ```
 
-### 4 <em> Plex Movies Content</em> Table
+### 4 *Plex Movies Content* Table
 
 #### Dependency
 
@@ -134,9 +134,9 @@ in
 
 #### Steps
 1. Reference from **Plex Libraries** Table above;
-1. Filter **Type** = '<em>movie</em>' and **Scanner** = '<em> Plex Movie </em>';
-1. Invoke **Load Movie Content** Function from Library <em> URL </em> field;
-1. Add **Runtime** column and calculate base on <em>Duration</em> field, and format result into HH:MM:SS format by removing <em> Date </em> and <em> AM </em>;
+1. Filter **Type** = '*movie*' and **Scanner** = '*Plex Movie*';
+1. Invoke **Load Movie Content** Function from Library *URL* field;
+1. Add **Runtime** column and calculate base on *Duration* field, and format result into HH:MM:SS format by removing *Date* and *AM*;
 
     >Text.From(#datetime(1970, 1, 1, 0, 0, 0) + #duration(0, 0, 0, [Duration]/1000))
 1. Combine IP, Item Key and X-Plex-Token into **MetadatURL**;
@@ -165,7 +165,7 @@ in
 - [Plex Media Server API Documentation](https://www.plexopedia.com/plex-media-server/api/)
 - [Plex Media Server URL Command](https://support.plex.tv/articles/201638786-plex-media-server-url-commands/)
  
-    - List Base Server Capabilities: http://[<em> IP </em>]:32400/?X-Plex-Token=[<em> X-Plex-Token </em>]
-    - List Defined Libraries: http://[<em> IP </em>]:32400/library/sections/?X-Plex-Token=[<em> X-Plex-Token </em>]
-    - List Library Contents: http://[<em> IP </em>]:32400/library/sections/[<em>Movies Library ID</em>]/all?X-Plex-Token=[<em> X-Plex-Token </em>]
-    - List Detail of an Item: http://[<em> IP </em>]:32400/library/metadata/[<em>Item Key ID</em>]?X-Plex-Token=[<em> X-Plex-Token </em>]
+    - List Base Server Capabilities: http://[*IP*]:32400/?X-Plex-Token=[*X-Plex-Token*]
+    - List Defined Libraries: http://[*IP*]:32400/library/sections/?X-Plex-Token=[*X-Plex-Token*]
+    - List Library Contents: http://[*IP*]:32400/library/sections/[*Movies Library ID*]/all?X-Plex-Token=[*X-Plex-Token*]
+    - List Detail of an Item: http://[*IP*]:32400/library/metadata/[*Item Key ID*]?X-Plex-Token=[*X-Plex-Token*]
