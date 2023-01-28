@@ -1,3 +1,10 @@
+---
+title: Basic Data
+author: Johnney Cao
+date updated: 2023-1-28
+keyword: [Date Table, Parameter, LastRefresh Date]
+---
+
 # Basic Data
 
 ----------
@@ -6,53 +13,55 @@
 
 ## Parameters
 
-1. **StartDate**: Required, Type as <em> Date </em>
+1. **StartDate**: Required, Type as*Date*
 
 ----------
 
 ## Data Tables
 
-### 1. <em>Date</em> Table
+### 1. *Date* Table
 
 #### Depedency
 
 ##### Parameter
 
-- **StartDate**, set value '<em> 1/1/1990 </em>'
+- **StartDate**, set value *'1/1/1990'*
 
 #### Steps
-1. Create a parameter **StartDate** for the <em> Start Date </em>;
-1. Convert parameter to table and add <em> End Date </em>;
-1. Create a list of date between <em> Start Date </em> and <em> End Date </em> using each keyword;
-1. Add Columns for Year, Quarter, Month and Day.
+1. Create a parameter **StartDate** for the *Start Date*;
+1. Convert parameter to table and add **EndDate**;
+1. Create a list of date between **StartDate** and **EndDate** , and then delete **StartDate** and **EndDate** columns;
+1. Add Columns for Year, Quarter, Month and Day Columns;
+1. Set the table as Date Table (**Table tools** -> **Mark as data table**).
 
 #### Power Query Sample Script
 ```css
 let
-    Source = StartDate,
+    Source = if (StartDate = null) then #date(1990,1,1) else StartDate,
     #"Converted Parameter to Table" = #table(1, {{Source}}),
     #"Renamed StartDate" = Table.RenameColumns(#"Converted Parameter to Table",{{"Column1", "StartDate"}}),
     #"Added EndDate" = Table.AddColumn(#"Renamed StartDate", "EndDate", each Date.From(Date.EndOfYear(DateTime.LocalNow()))),
-    #"Changed to Date Type" = Table.TransformColumnTypes(#"Added EndDate",{{"StartDate", type date}, {"EndDate", type date}}),
-    #"Added Date List" = Table.AddColumn(#"Changed to Date Type", "Date", each {Number.From([StartDate])..Number.From([EndDate])}),
+    #"Changed fields to Date Type" = Table.TransformColumnTypes(#"Added EndDate",{{"StartDate", type date}, {"EndDate", type date}}),
+    #"Added Date List" = Table.AddColumn(#"Changed fields to Date Type", "Date", each {Number.From([StartDate])..Number.From([EndDate])}),
     #"Expanded Dates" = Table.ExpandListColumn(#"Added Date List", "Date"),
-    #"Changed List to Data Type" = Table.TransformColumnTypes(#"Expanded Dates",{{"Date", type date}}),
-    #"Keep Date List only" = Table.RemoveColumns(#"Changed List to Data Type",{"StartDate", "EndDate"}),
-    #"Added Year" = Table.AddColumn(#"Keep Date List only", "Year", each Date.Year([Date]), Int64.Type),
-    #"Added Month" = Table.AddColumn(#"Added Year", "Month", each Date.Month([Date]), Int64.Type),
-    #"Added MonthName" = Table.AddColumn(#"Added Month", "MonthName", each Date.MonthName([Date])),
-    #"Added ShortMonthName" = Table.AddColumn(#"Added MonthName", "ShortMonthName", each Text.Start([MonthName],3)),
-    #"Added Day" = Table.AddColumn(#"Added ShortMonthName", "Day", each Date.Day([Date]), Int64.Type),
-    #"Added Quarter" = Table.AddColumn(#"Added Day", "Quarter", each Date.QuarterOfYear([Date]), Int64.Type),
-    #"Added QuarterName" = Table.AddColumn(#"Added Quarter", "Qty", each Text.Combine({Text.From([Year], "en-US"), "-Q", Text.From([Quarter], "en-US")}), type text)
- in
-    #"Added QuarterName"'
+    #"Changed Date to Date Type" = Table.TransformColumnTypes(#"Expanded Dates",{{"Date", type date}}),
+    #"Removed Start End Date" = Table.RemoveColumns(#"Changed Date to Date Type",{"StartDate", "EndDate"}),
+    #"Added Year" = Table.AddColumn(#"Removed Start End Date", "Year", each Date.Year([Date]), Int64.Type),
+    #"Added MonthNum" = Table.AddColumn(#"Added Year", "MonthNum", each Date.Month([Date]), Int64.Type),
+    #"Added MonthFullName" = Table.AddColumn(#"Added MonthNum", "MonthFullName", each Date.MonthName([Date])),
+    #"Added MonthShortName" = Table.AddColumn(#"Added MonthFullName", "MonthShortName", each Text.Start([MonthFullName],3)),
+    #"Added Month" = Table.AddColumn(#"Added MonthShortName", "Mon", each Text.Combine({Text.From([Year], "en-US"), "-", Text.PadStart(Text.From([MonthNum], "en-US"), 2, "0")}), type text),
+    #"Added QuarterNum" = Table.AddColumn(#"Added Month", "QuarterNum", each Date.QuarterOfYear([Date]), Int64.Type),
+    #"Added Quarter" = Table.AddColumn(#"Added QuarterNum", "Qty", each Text.Combine({Text.From([Year], "en-US"), "-Q", Text.From([QuarterNum], "en-US")}), type text),
+    #"Added Day" = Table.AddColumn(#"Added Quarter", "Day", each Date.Day([Date]), Int64.Type)
+in
+    #"Added Day"
 ```
 
 #### Alternative Approach
 - [Create date tables in Power BI Desktop](https://learn.microsoft.com/en-us/power-bi/guidance/model-date-tables)
 
-### 2. <em>Year</em> Table
+### 2. *Year* Table
 
 #### Dependency
 
@@ -60,7 +69,7 @@ let
 
 #### Steps
 1. Reference from **Date** Table above;
-1. Keep <em>Year</em> column only, and remove duplicate records.
+1. Keep **Year** column only, and remove duplicate records.
 
 #### Power Query Sample Script
 ```css
@@ -72,10 +81,10 @@ in
     #"Removed Duplicates"
 ```
 
-### 3. <em> LastRefreshed</em> Table
+### 3. *Last Refreshed* Table
 
 #### Steps
-1. Create a table using <em> LocalNow() </em>.
+1. Create a table using *LocalNow()*.
 
 #### Power Query Sample Script
 ```css
@@ -87,7 +96,8 @@ in
 ----------
 
 ## Relationship
-- **DateTable** / **YearTable** Table: Many to 1
+- **DateTable**/**YearTable** Table: Many to 1
+- **LastRefresh**/**DateTable** Table: 1 to 1
 
 ----------
 
@@ -97,3 +107,4 @@ in
 
 1. [Understanding Power Query M functions](https://learn.microsoft.com/en-us/powerquery-m/understanding-power-query-m-functions)
 1. [Using parameters](https://learn.microsoft.com/en-us/power-query/power-query-query-parameters)
+1. [Auto date/time guidance in Power BI Desktop](https://learn.microsoft.com/en-us/power-bi/guidance/auto-date-time)

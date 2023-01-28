@@ -25,7 +25,7 @@ This project welcomes contributions and suggestions.
 
     ![Screenshot](./_Asset%20Library/Layoffs_Screenshot.png)
 
-- [Analysis of GDP/GNI per capita in Countries Using Wordbank Data](./docs/WorldBank.md)
+- [Analysis of GDP/GNI per capita in Countries Using Worldbank Data](./docs/WorldBank.md)
 
     ![Screenshot](./_Asset%20Library/WorldBank_WorldMap_Screenshot.png)
 
