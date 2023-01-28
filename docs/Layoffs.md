@@ -1,7 +1,7 @@
 ---
 title: tech layoff analysis
 author: Johnney Cao
-date updated: 2023-1-17
+date updated: 2023-1-27
 keyword: [tech layoffs, parameter, csv]
 ---
 
