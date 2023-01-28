@@ -2,7 +2,7 @@
 title: tech layoff analysis
 author: Johnney Cao
 date updated: 2023-1-17
-keyword: [Worldbank API, unicorn, parameter, web connector, xml, merge column, split column, html color, table reference]
+keyword: [tech layoffs, parameter, csv]
 ---
 
 # Analysis of Tech Layoffs Data
