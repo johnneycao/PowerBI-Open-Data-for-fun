@@ -41,7 +41,7 @@ keyword: [Worldbank API, unicorn, parameter, web connector, xml, merge column, s
 1. Manual download the csv file from [Kaggle](https://www.kaggle.com/datasets/swaptr/layoffs-2022) to local folder, e.g <em> c:\Downloads\ </em>;
 1. Retrieve the data from downloaded csv file; 
 1. Promote first line as header;
-1. Change **percentage_laid_off** to <em>Percentage</em>;
+1. Change **percentage_laid_off** to <em> Percentage </em> type;
 1. Trim and clean the text fields;
 1. Remove the duplicate record from table;
 1. Replace empty value in **industry** to <em> Other </em>
