@@ -55,7 +55,7 @@ in
 - **Country WorldBank** Table
 
 #### Steps
-1. Load data from **Country WorldBank** Table, and filter out those **region.Element:Text** is <em> empty </em> or <em> Aggregates </em>;
+1. Load data from **Country WorldBank** Table, and filter out those **region.Element:Text** is <em> empty </em> or <em> Aggregates</em>;
 1. **AdminRegion**, **IncomeLevel**, **LendingType**, **CapitalCity**, **Longitude**, **Latitude**;
 1. Add color columns for **IncomeLevel**, **LendingType**
 
@@ -122,9 +122,9 @@ in
 - **Year** Table
 
 #### Steps
-1. Calculate the <em> startYear </em> and <em> endYear </em> from **Year** Table use 'List.Min' and 'List.Max' functions
+1. Calculate the <em> startYear </em> and <em> endYear </em> from **Year** Table use 'List.Min' and 'List.Max' functions;
 1. Retrieve the data from [Worldbank GDP Data API](http://api.worldbank.org/v2/country/all/indicator/NY.GDP.MKTP.CD) in XML format;
-1. Expand <em> country </em> columns
+1. Expand <em> country </em> columns;
 1. Convert <em> GDP US$ </em> column to <em> GDP Billion US$ </em>
 
 
@@ -154,9 +154,9 @@ in
 - **Year** Table
 
 #### Steps
-1. Calculate the <em> startYear </em> and <em> endYear </em> from **Year** Table use 'List.Min' and 'List.Max' functions
+1. Calculate the <em> startYear </em> and <em> endYear </em> from **Year** Table use 'List.Min' and 'List.Max' functions;
 1. Retrieve the data from [Worldbank GNI Data API](http://api.worldbank.org/v2/country/all/indicator/NY.GNP.MKTP.CD) in XML format;
-1. Expand <em> country </em> columns
+1. Expand <em> country </em> columns;
 1. Convert <em> GNI US$ </em> column to <em> GDP Billion US$ </em>
 
 #### Power Query Sample Script
@@ -185,7 +185,7 @@ in
 - **Year** Table
 
 #### Steps
-1. Calculate the <em> startYear </em> and <em> endYear </em> from **Year** Table use 'List.Min' and 'List.Max' functions
+1. Calculate the <em> startYear </em> and <em> endYear </em> from **Year** Table use 'List.Min' and 'List.Max' functions;
 1. Retrieve the data from [Worldbank Population Data API](http://api.worldbank.org/v2/country/all/indicator/SP.POP.TOTL) in XML format;
 1. Expand <em> indicator </em> and <em> country </em> 
 
@@ -214,9 +214,9 @@ in
 - **Country Population** Table
 
 #### Steps
-1. Merge three table using **country code", "Country ISO" and "Year" columns
-1. Expand "GNI Billion US$" and "Population" Column
-1. Filter out empty **Country ISO" records
+1. Merge three table using **country code", "Country ISO" and "Year" columns;
+1. Expand "GNI Billion US$" and "Population" Column;
+1. Filter out empty **Country ISO" records;
 1. Add *GDP per capita" using formula
 
     > [#"GDP (Billion US$)"]* 1000000000 /[Population]

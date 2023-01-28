@@ -74,7 +74,7 @@ in
 1. Retrieve data from [CBInsights](https://www.cbinsights.com/research-unicorn-companies) and extracted table from HTML;
 1. Add a Index column <em> UnicornId </em>;
 1. Clean country name in **Country** column;
-1. Merge query from **CountryMaster** table above, and expand ISO code, Regions **IncomeLevel**, **LendingType**, **CapitalCity** columns
+1. Merge query from **CountryMaster** table above, and expand ISO code, Regions **IncomeLevel**, **LendingType**, **CapitalCity** columns;
 1. Add a merged column for City and Country, and Trim the value
     
     >Table.AddColumn(#"Expanded CountryMaster", "City, Country", each Text.Combine({[City], ", ", [Country3Code]}), type text)
@@ -108,7 +108,7 @@ in
 
 #### Steps
 1. Reference from **Unicorn Master** Table;
-1. Keep only **UnicornId**, **Company** and **Select Investors**
+1. Keep only **UnicornId**, **Company** and **Select Investors**;
 1. Split **Select Investors** into new rows and Trimmed the value
 
 

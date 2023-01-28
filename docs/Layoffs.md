@@ -39,11 +39,11 @@ keyword: [Worldbank API, unicorn, parameter, web connector, xml, merge column, s
 #### Steps
 
 1. Manual download the csv file from [Kaggle](https://www.kaggle.com/datasets/swaptr/layoffs-2022) to local folder, e.g <em> c:\Downloads\ </em>;
-1. Retrieve the data from downloaded csv file and 
-1. Promote first line as header
-1. Change **percentage_laid_off** to <em>Percentage</em>
-1. Trim and clean the text fields
-1. Remove the duplicate record from table
+1. Retrieve the data from downloaded csv file; 
+1. Promote first line as header;
+1. Change **percentage_laid_off** to <em>Percentage</em>;
+1. Trim and clean the text fields;
+1. Remove the duplicate record from table;
 1. Replace empty value in **industry** to <em> Other </em>
 
 #### Power Query Sample Script
@@ -77,7 +77,10 @@ in
 - Line and Stacked Column Chart - Count of company and number of Layoffs by Company Stage and country
 - Stacked Bar Chart - number of Layoffs by company and country
 
-### 2. <em> Unicorn Card </em> tooltips Page
+### 2. <em> Layoffs Analysis </em> Mobile View
+![Screenshot](../_Asset%20Library/Layoffs_MobileView.png)
+
+### 3. <em> Unicorn Card </em> tooltips Page
 ![Screenshot](../_Asset%20Library/Layoffs_Card.png)
 ----------
 
