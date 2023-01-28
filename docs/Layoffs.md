@@ -38,11 +38,11 @@ keyword: [Worldbank API, unicorn, parameter, web connector, xml, merge column, s
 
 #### Steps
 
-1. Manual download the csv file from [Kaggle](https://www.kaggle.com/datasets/swaptr/layoffs-2022);
-1. Retrieve the data from downloaded csv file and promote first line as header
+1. Manual download the csv file from [Kaggle](https://www.kaggle.com/datasets/swaptr/layoffs-2022) to local folder, e.g <em> c:\Downloads\ </em>;
+1. Retrieve the data from downloaded csv file and 
+1. Promote first line as header
 1. Change **percentage_laid_off** to <em>Percentage</em>
 1. Trim and clean the text fields
-1. Add a merge column **Location** from **location_hq** and **country** ;
 1. Remove the duplicate record from table
 1. Replace empty value in **industry** to <em> Other </em>
 
@@ -52,11 +52,10 @@ let
     Source = Csv.Document(File.Contents("C:\Downloads\layoffs.csv"),[Delimiter=",", Columns=9, Encoding=65001, QuoteStyle=QuoteStyle.None]),
     #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
     #"Filtered Rows" = Table.SelectRows(#"Promoted Headers", each true),
-    #"Changed Type" = Table.TransformColumnTypes(#"Filtered Rows",{{"company", type text}, {"location_hq", type text}, {"industry", type text}, {"total_laid_off", Int64.Type}, {"percentage_laid_off", Percentage.Type}, {"date", type date}, {"stage", type text}, {"country", type text}, {"funds_raised", Int64.Type}}),
-    #"Trimmed Text" = Table.TransformColumns(#"Changed Type",{{"location_hq", Text.Trim, type text}, {"industry", Text.Trim, type text}, {"country", Text.Trim, type text}, {"stage", Text.Trim, type text}}),
-    #"Cleaned Text" = Table.TransformColumns(#"Trimmed Text",{{"location_hq", Text.Clean, type text}, {"industry", Text.Clean, type text}, {"country", Text.Clean, type text}, {"stage", Text.Clean, type text}}),
-    #"Inserted Merged Column" = Table.AddColumn(#"Cleaned Text", "Location", each Text.Combine({[location_hq], ", ", [country]}), type text),
-    #"Removed Duplicates" = Table.Distinct(#"Inserted Merged Column", {"company", "date", "total_laid_off","country"}),
+    #"Changed Type" = Table.TransformColumnTypes(#"Filtered Rows",{{"company", type text}, {"location", type text}, {"industry", type text}, {"total_laid_off", Int64.Type}, {"percentage_laid_off", Percentage.Type}, {"date", type date}, {"stage", type text}, {"country", type text}, {"funds_raised", Int64.Type}}),
+    #"Trimmed Text" = Table.TransformColumns(#"Changed Type",{{"location", Text.Trim, type text}, {"industry", Text.Trim, type text}, {"country", Text.Trim, type text}, {"stage", Text.Trim, type text}}),
+    #"Cleaned Text" = Table.TransformColumns(#"Trimmed Text",{{"location", Text.Clean, type text}, {"industry", Text.Clean, type text}, {"country", Text.Clean, type text}, {"stage", Text.Clean, type text}}),
+    #"Removed Duplicates" = Table.Distinct(#"Cleaned Text", {"company", "date", "total_laid_off","country"}),
     #"Replaced Value" = Table.ReplaceValue(#"Removed Duplicates","","Other",Replacer.ReplaceValue,{"industry"})
 in
     #"Replaced Value"
