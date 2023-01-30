@@ -69,6 +69,7 @@ This project welcomes contributions and suggestions.
 - [ALPHA VANTAGE Stock APIs](https://www.alphavantage.co/documentation/)
 - [Open Group Library](https://publications.opengroup.org/)
 - [Exchange Rates API](https://exchangerate.host/#/docs)
+- [Common Crawl](https://commoncrawl.org/)
 - [Kaggle](https://www.kaggle.com/datasets)
 - [DataHub.io](https://datahub.io/collections)
 - [Data Science Dojo](https://code.datasciencedojo.com/datasciencedojo/datasets)
