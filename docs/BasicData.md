@@ -53,7 +53,10 @@ let
     #"Added Month" = Table.AddColumn(#"Added MonthShortName", "Mon", each Text.Combine({Text.From([Year], "en-US"), "-", Text.PadStart(Text.From([MonthNum], "en-US"), 2, "0")}), type text),
     #"Added QuarterNum" = Table.AddColumn(#"Added Month", "QuarterNum", each Date.QuarterOfYear([Date]), Int64.Type),
     #"Added Quarter" = Table.AddColumn(#"Added QuarterNum", "Qty", each Text.Combine({Text.From([Year], "en-US"), "-Q", Text.From([QuarterNum], "en-US")}), type text),
-    #"Added Day" = Table.AddColumn(#"Added Quarter", "Day", each Date.Day([Date]), Int64.Type)
+    #"Added WeekNum" = Table.AddColumn(#"Added Quarter", "WeekNum", each Date.WeekOfYear([Date])),
+    #"Added WeekName" = Table.AddColumn(#"Added WeekNum", "WeekName", each Text.Combine({"W", Text.PadStart(Text.From([WeekNum], "en-US"), 2, "0")}), type text),
+    #"Added Week" = Table.AddColumn(#"Added WeekName", "Week", each Text.Combine({Text.From([Year], "en-US"), "-", [WeekName]}), type text),
+    #"Added Day" = Table.AddColumn(#"Added Week", "Day", each Date.Day([Date]), Int64.Type)
 in
     #"Added Day"
 ```
