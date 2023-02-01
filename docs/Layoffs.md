@@ -70,7 +70,7 @@ in
 ## Relationship
 Tables | Relationship
 ---- | -----
-Layoffs Master / Date Table | Many to 1
+**Layoffs** / **DateTable** | Many to 1
 
 ----------
 
