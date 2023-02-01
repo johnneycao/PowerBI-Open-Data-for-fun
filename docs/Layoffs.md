@@ -55,14 +55,16 @@ let
     #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
     #"Filtered Rows" = Table.SelectRows(#"Promoted Headers", each true),
     #"Changed Type" = Table.TransformColumnTypes(#"Filtered Rows",{{"company", type text}, {"location", type text}, {"industry", type text}, {"total_laid_off", Int64.Type}, {"percentage_laid_off", Percentage.Type}, {"date", type date}, {"stage", type text}, {"country", type text}, {"funds_raised", Int64.Type}}),
-    #"Replaced Value" = Table.ReplaceValue(#"Changed Type","","Other",Replacer.ReplaceValue,{"industry"}),
-    #"Trimmed Text" = Table.TransformColumns(#"Replaced Value",{{"location", Text.Trim, type text}, {"industry", Text.Trim, type text}, {"country", Text.Trim, type text}, {"stage", Text.Trim, type text}}),
-    #"Cleaned Text" = Table.TransformColumns(#"Trimmed Text",{{"location", Text.Clean, type text}, {"industry", Text.Clean, type text}, {"country", Text.Clean, type text}, {"stage", Text.Clean, type text}}),
+    #"Replaced Other Industry" = Table.ReplaceValue(#"Changed Type","","Other",Replacer.ReplaceValue,{"industry"}),
+    #"Replaced Unknown stage" = Table.ReplaceValue(#"Replaced Other Industry","","Unknown",Replacer.ReplaceValue,{"stage"}),
+    #"Trimmed Text" = Table.TransformColumns(#"Replaced Unknown stage",{{"company", Text.Trim, type text}, {"location", Text.Trim, type text}, {"industry", Text.Trim, type text}, {"country", Text.Trim, type text}, {"stage", Text.Trim, type text}}),
+    #"Cleaned Text" = Table.TransformColumns(#"Trimmed Text",{{"company", Text.Clean, type text}, {"location", Text.Clean, type text}, {"industry", Text.Clean, type text}, {"country", Text.Clean, type text}, {"stage", Text.Clean, type text}}),
     #"Renamed Columns" = Table.RenameColumns(#"Cleaned Text",{{"location", "city"}}),
     #"Inserted Merged Column" = Table.AddColumn(#"Renamed Columns", "location", each Text.Combine({[city], ", ", [country]}), type text),
-    #"Removed Duplicates" = Table.Distinct(#"Inserted Merged Column", {"company", "total_laid_off", "percentage_laid_off", "date", "location"})
+    #"Removed Duplicates" = Table.Distinct(#"Inserted Merged Column", {"company", "total_laid_off", "percentage_laid_off", "date", "location"}),
+    #"Added Stage Ranking" = Table.AddColumn(#"Removed Duplicates", "Stage Ranking", each if [stage] = "IPO" then 90 else if [stage] = "Private Equity" then 80 else if [stage] = "Seed" then 40 else if [stage] = "Acquired" then 30 else if [stage] = "Merged" then 30 else if [stage] = "Subsidiary" then 20 else if [stage] = "Series A" then 50 else if [stage] = "Series B" then 50 else if [stage] = "Series C" then 50 else if Text.StartsWith([stage], "Series") then 60 else 0)
 in
-    #"Removed Duplicates"
+    #"Added Stage Ranking"
 ```
 
 ## Relationship
