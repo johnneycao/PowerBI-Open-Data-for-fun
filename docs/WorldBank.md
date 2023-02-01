@@ -247,10 +247,11 @@ in
 ## Relationship
 ### Dependency Map
 ![Screenshot](../_Asset%20Library/WorldBank_Dependencies.png)
-
-- Country Detail / Country Master Table: Many to 1
-- Country Master / Region Master Table: Many to 1
-- Country Master / Year Table: Many to 1
+Tables | Relationship
+---- | -----
+**CountryDetail** / **CountryMaster** |Many to 1
+**CountryMaster** / **RegionMaster** | Many to 1
+**CountryMaster** / **Year** | Many to 1
 
 ----------
 

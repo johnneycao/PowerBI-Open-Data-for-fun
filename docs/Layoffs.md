@@ -68,7 +68,9 @@ in
 ```
 
 ## Relationship
-- Layoffs Master / Date Table: Many to 1
+Tables | Relationship
+---- | -----
+Layoffs Master / Date Table | Many to 1
 
 ----------
 

@@ -99,8 +99,10 @@ in
 ----------
 
 ## Relationship
-- **DateTable**/**YearTable** Table: Many to 1
-- **LastRefresh**/**DateTable** Table: 1 to 1
+Tables | Relationship
+---- | -----
+**DateTable** / **YearTable** | Many to 1
+**LastRefresh** / **DateTable** | 1 to 1
 
 ----------
 

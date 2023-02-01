@@ -127,8 +127,10 @@ in
 ----------
 
 ## Relationship
-- Unicorn Master / CountryMaster Table: Many to 1
-- Unicorn Investor / Unicorn Master: Many to 1
+Tables | Relationship
+---- | -----
+**Unicorn Master** / **CountryMaster** | Many to 1
+**Unicorn Investor** / **Unicorn Master** | Many to 1
 
 ----------
 
