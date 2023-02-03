@@ -1,7 +1,7 @@
 ---
 title: Basic Data
 author: Johnney Cao
-date updated: 2023-1-28
+date updated: 2023-2-3
 keyword: [Date Table, Parameter, LastRefresh Date]
 ---
 
@@ -9,7 +9,7 @@ keyword: [Date Table, Parameter, LastRefresh Date]
 
 ----------
 
-[PBI Download Link](../_Asset%20Library/Source_Files/Baseline.pbix)
+[PBI Download Link](../_Asset%20Library/Source_Files/Baseline.pbit)
 
 ## Parameters
 

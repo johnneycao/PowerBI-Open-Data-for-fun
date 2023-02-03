@@ -1,7 +1,7 @@
 ---
 title: GDP per capita analysis
 author: Johnney Cao
-date updated: 2023-1-17
+date updated: 2023-2-3
 keyword: [Worldbank API, GDP, GNI, parameter, web connector, xml, expand table, expand table columns, html color, table reference, DAX, related table]
 ---
 
@@ -9,7 +9,7 @@ keyword: [Worldbank API, GDP, GNI, parameter, web connector, xml, expand table, 
 
 ----------
 
-[PBI Download Link](../_Asset%20Library/Source_Files/WorldBank.pbix)
+[PBI Download Link](../_Asset%20Library/Source_Files/WorldBank.pbit)
 
 ## Parameters
 

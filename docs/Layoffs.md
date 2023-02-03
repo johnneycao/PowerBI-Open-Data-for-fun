@@ -1,7 +1,7 @@
 ---
 title: tech layoff analysis
 author: Johnney Cao
-date updated: 2023-1-27
+date updated: 2023-2-3
 keyword: [tech layoffs, parameter, csv]
 ---
 
@@ -9,7 +9,7 @@ keyword: [tech layoffs, parameter, csv]
 
 ----------
 
-[PBI Download Link](../_Asset%20Library/Source_Files/Layoffs.pbix)
+[PBI Download Link](../_Asset%20Library/Source_Files/Layoffs.pbit)
 
 ## Parameters
 

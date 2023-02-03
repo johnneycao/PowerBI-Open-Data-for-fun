@@ -1,7 +1,7 @@
 ---
 title: unicorn analysis
 author: Johnney Cao
-date updated: 2023-1-17
+date updated: 2023-2-3
 keyword: [Worldbank API, unicorn, parameter, web connector, xml, merge column, split column, html color, table reference]
 ---
 
@@ -9,7 +9,7 @@ keyword: [Worldbank API, unicorn, parameter, web connector, xml, merge column, s
 
 ----------
 
-[PBI Download Link](../_Asset%20Library/Source_Files/Unicorn.pbix)
+[PBI Download Link](../_Asset%20Library/Source_Files/Unicorn.pbit)
 
 ## Parameters
 
