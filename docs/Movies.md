@@ -1,4 +1,15 @@
-# Analysis Movie Collections from Plex - WIP
+---
+title: Movie collections analysis
+author: Johnney Cao
+date updated: 2023-2-5
+keyword: [IMDB, Plex API, parameter, web connector, Python, pandas, bs4, custom function, Image URL, Web URL, html color, table reference, conditional format]
+---
+
+# Analysis of Movie Collections from IMDB Top 250 and Plex - WIP
+
+----------
+
+[PBI Download Link](../_Asset%20Library/Source_Files/Movies.pbit)
 
 ----------
 
@@ -51,7 +62,6 @@ in
 ### 1 Basic Tables
 
 #### Tables 
-[Basic Data](./BasicData.md)
 
 - **Date** Table
 
@@ -62,10 +72,83 @@ in
 ### 2 *IMDB Top 250 List* Table
 
 #### Data Sources
-- [IMDB Top 250](https://www.kaggle.com/datasets/mustafacicek/imdb-top-250-lists-1996-2020/download?datasetVersionNumber=3)
+> [https://www.imdb.com/chart/top](https://www.imdb.com/chart/top)
 
 #### Steps
-1. Download [IMDB Top 250](https://www.kaggle.com/datasets/mustafacicek/imdb-top-250-lists-1996-2020/download?datasetVersionNumber=3) from [Kaggle](https://www.kaggle.com/datasets/mustafacicek/imdb-top-250-lists-1996-2020?resource=download), and extract ZIP file into a folder, e.g. *c:\Plex*;
+1. Use python code below to pull data from [IMDB Top 250 Site](https://www.imdb.com/chart/top);
+    ```python
+    import requests
+    from bs4 import BeautifulSoup
+    import pandas as pd
+    
+    # Send a GET request to the URL
+    url = "https://www.imdb.com/chart/top"
+    response = requests.get(url)
+    
+    # Use BeautifulSoup to parse the HTML
+    soup = BeautifulSoup(response.text, 'html.parser')
+    
+    # Find the table with the data
+    table = soup.find("tbody", class_="lister-list")
+    
+    # Create a list to store the data
+    data = []
+    
+    # Loop through each row in the table
+    for tr in table.find_all("tr"):
+    
+        # Find the title and original title
+        title = tr.find("td", class_="titleColumn").a.get_text()
+        
+        # Find the Rank
+        rank = tr.find("td", class_="titleColumn").get_text().split(".")[0]
+    
+        # Find the IMDB ID
+        imdb_id = tr.find("td", class_="posterColumn").a["href"].split("/")[2]
+        
+        # Find the year
+        year = tr.find("span", class_="secondaryInfo").get_text().strip("()")
+        
+        # Find the rating
+        rating = tr.find("strong").get_text()
+        
+        # Find the image URL
+        image_url = tr.find("td", class_="posterColumn").img["src"]
+    
+        # Add the data to the list
+        data.append([rank, title, imdb_id, year, rating, image_url])
+    
+    # Convert the list to a pandas dataframe
+    df = pd.DataFrame(data, columns=["Rank", "Title", "IMDB ID", "Year", "Rating", "Image URL"])
+    
+    # Return the dataframe as a table
+    df
+    
+    ```
+1. Change **Rank** and **Year** to *Whole Number* and **Rating** to *Decimal Number*;
+1. Insert a merged column for **Year** and *Original Title**;
+1. Add **IMDB URL** and setup Data category (Ribbon bar -> Format -> Data catagory = *Web URL*);
+1. Setup Data category for **Image URL**  (Ribbon bar -> Format -> Data catagory = *Image URL*).
+
+#### Power Query Sample Script
+```css
+let
+    Source = Python.Execute("import requests#(lf)from bs4 import BeautifulSoup#(lf)import pandas as pd#(lf)#(lf)# Send a GET request to the URL#(lf)url = ""https://www.imdb.com/chart/top""#(lf)response = requests.get(url)#(lf)#(lf)# Use BeautifulSoup to parse the HTML#(lf)soup = BeautifulSoup(response.text, 'html.parser')#(lf)#(lf)# Find the table with the data#(lf)table = soup.find(""tbody"", class_=""lister-list"")#(lf)#(lf)# Create a list to store the data#(lf)data = []#(lf)#(lf)# Loop through each row in the table#(lf)for tr in table.find_all(""tr""):#(lf)#(lf)    # Find the title and original title#(lf)    title = tr.find(""td"", class_=""titleColumn"").a.get_text()#(lf)    #(lf)    # Find the Rank#(lf)    rank = tr.find(""td"", class_=""titleColumn"").get_text().split(""."")[0]#(lf)#(lf)    # Find the IMDB ID#(lf)    imdb_id = tr.find(""td"", class_=""posterColumn"").a[""href""].split(""/"")[2]#(lf)    #(lf)    # Find the year#(lf)    year = tr.find(""span"", class_=""secondaryInfo"").get_text().strip(""()"")#(lf)    #(lf)    # Find the rating#(lf)    rating = tr.find(""strong"").get_text()#(lf)    #(lf)    # Find the image URL#(lf)    image_url = tr.find(""td"", class_=""posterColumn"").img[""src""]#(lf)#(lf)    # Add the data to the list#(lf)    data.append([rank, title, imdb_id, year, rating, image_url])#(lf)#(lf)# Convert the list to a pandas dataframe#(lf)df = pd.DataFrame(data, columns=[""Rank"", ""Original Title"", ""IMDB ID"", ""Year"", ""Rating"", ""Image URL""])#(lf)#(lf)# Return the dataframe as a table#(lf)df"),
+    df1 = Source{[Name="df"]}[Value],
+    #"Changed Type" = Table.TransformColumnTypes(df1,{{"Year", Int64.Type}, {"Rating", type number}, {"Rank", Int64.Type}}),
+    #"Inserted IMDB_URL" = Table.AddColumn(#"Changed Type", "IMDB URL", each Text.Combine({"https://www.imdb.com/title/", [IMDB ID]}), type text),
+    #"Inserted Year_TItle" = Table.AddColumn(#"Inserted IMDB_URL", "Year Title", each Text.Combine({Text.From([Year], "en-US"), " / ", [Original Title]}), type text)
+in
+    #"Inserted Year_TItle"
+```
+
+### 2 *IMDB Top 250 List* Table - Alternative
+
+#### Data Sources
+> [Kaggle Dataset](https://www.kaggle.com/datasets/mustafacicek/imdb-top-250-lists-1996-2020/download?datasetVersionNumber=3)
+
+##### Steps
+1. Download [IMDB Top 250](https://www.kaggle.com/datasets/mustafacicek/imdb-top-250-lists-1996-2020/download?datasetVersionNumber=3) from [Kaggle](https://www.kaggle.com/datasets/mustafacicek/imdb-top-250-lists-1996-2020?resource=download), and extract ZIP file into a folder, e.g. *c:\Downloads*;
 1. Import *imdbTop250.csv* into Power BI
 1. Promote the first line to Header
 1. Add custom fields for **RankingGroup**, **IMDB_ID** and **IMDB_URL**
@@ -73,7 +156,7 @@ in
 #### Power Query Sample Script
 ```css
 let
-    Source = Csv.Document(File.Contents("C:\Plex\imdbTop250.csv"),[Delimiter=",", Columns=16, Encoding=65001, QuoteStyle=QuoteStyle.None]),
+    Source = Csv.Document(File.Contents("C:\Downloads\imdbTop250.csv"),[Delimiter=",", Columns=16, Encoding=65001, QuoteStyle=QuoteStyle.None]),
     #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
     #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"Ranking", Int64.Type}, {"IMDByear", Int64.Type}, {"IMDBlink", type text}, {"Title", type text}, {"Date", Int64.Type}, {"RunTime", Int64.Type}, {"Genre", type text}, {"Rating", type number}, {"Score", Int64.Type}, {"Votes", Int64.Type}, {"Gross", type number}, {"Director", type text}, {"Cast1", type text}, {"Cast2", type text}, {"Cast3", type text}, {"Cast4", type text}}),
     #"Added RankingGroup" = Table.AddColumn(#"Changed Type", "RankingGroup", each if [Ranking] < 50 then 1 else if [Ranking] <100 then 2 else if [Ranking] < 150 then 3 else if [Ranking] < 200 then 4 else 5),

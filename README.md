@@ -29,7 +29,7 @@ This project welcomes contributions and suggestions.
 
     ![Screenshot](./_Asset%20Library/WorldBank_WorldMap_Screenshot.png)
 
-- [Analysis Movie Collections from Plex](./docs/Plex.md) (WIP)
+- [Analysis of Movie Collections](./docs/Movies.md) (WIP)
 
 ----------
 
