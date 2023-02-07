@@ -34,6 +34,8 @@ keyword: [Worldbank API, unicorn, parameter, web connector, xml, merge column, s
 #### Data Source
 > [http://api.worldbank.org/v2/country](http://api.worldbank.org/v2/country/)
 
+License: *The World Bank Group makes data publicly available according to [open data standards](http://opendefinition.org/) and licenses datasets under the [Creative Commons Attribution 4.0 International license](https://creativecommons.org/licenses/by/4.0) (CC-BY 4.0).*
+
 #### Steps
 1. Retrieve data from [Worldbank Country API](http://api.worldbank.org/v2/country/) in XML format;
 1. Expand **Region**, and filter out those *empty* and *Aggregates*;

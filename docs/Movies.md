@@ -74,6 +74,8 @@ in
 #### Data Sources
 > [https://www.imdb.com/chart/top](https://www.imdb.com/chart/top)
 
+*This data scraped from IMDB, and historical data can be found [here](https://www.imdb.com/user/ur48187336/lists).*
+
 #### Steps
 1. Use python code below to pull data from [IMDB Top 250 Site](https://www.imdb.com/chart/top);
     ```python

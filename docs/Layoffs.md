@@ -32,7 +32,7 @@ keyword: [tech layoffs, parameter, csv]
 ### 2. *Layoffs* Master Table
 
 #### Data Source
- [Download link (Kaggle)](https://www.kaggle.com/datasets/swaptr/layoffs-2022)
+ [Download link (Kaggle)](https://www.kaggle.com/datasets/swaptr/layoffs-2022), License: *[Open Database, Contents: © Original Authors](http://opendatacommons.org/licenses/odbl/1.0/)*
 
 *Some data such as the sources, list of employees laid off and date of addition has been omitted here and the complete data can be found on [Layoffs.fyi](https://layoffs.fyi/). Credits: Roger Lee*
 
