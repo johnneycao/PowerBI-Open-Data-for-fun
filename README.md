@@ -1,10 +1,10 @@
 ---
 title: TOC and Reference
 author: Johnney Cao
-date updated: 2023-2-5
+date updated: 2023-2-23
 ---
 
-# Power-BI-Samples:
+# Power BI Samples
 
 This personal repository contains a collection of Power BI Dashboard / Reports sample files.  It includes datasets used for samples, tutorials and other contents. 
 
@@ -35,9 +35,9 @@ This project welcomes contributions and suggestions.
 
 ----------
 
-## Reference:
+## Reference
 
-### Microsoft Learn - Learning Path / Online Training
+### Microsoft Training Course and Learning Path
 
 - [Power Platform online training](http://aka.ms/powerplatform)
 - [Becoming a Data Analyst with Power BI](https://aka.ms/learnpowerbi)
@@ -45,7 +45,8 @@ This project welcomes contributions and suggestions.
 - [Power Platform Instructor-led training](https://aka.ms/PowerPlatformILT)
 - [Dashboard in a Day](https://aka.ms/DIAD)
 - [Paginated Reports in a Day](https://aka.ms/priad-online-course)
-- [Microsoft Power BI Workshops](https://github.com/microsoft/pbiworkshops)
+- GitHub [Microsoft Power BI Workshops](https://github.com/microsoft/pbiworkshops) and [Power BI Desktop Samples](https://github.com/microsoft/powerbi-desktop-samples)
+- [OpenEducationAnalytics](https://aka.ms/oea)
  
 ### Power BI Reference
 
