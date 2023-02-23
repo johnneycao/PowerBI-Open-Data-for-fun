@@ -43,6 +43,7 @@ This project welcomes contributions and suggestions.
 - [Becoming a Data Analyst with Power BI](https://aka.ms/learnpowerbi)
 - [Use DAX in Power BI Desktop](https://aka.ms/learndax)
 - [Power Platform Instructor-led training](https://aka.ms/PowerPlatformILT)
+- [Power BI Instructor-led training](https://powerbi.microsoft.com/en-us/instructor-led-training/)
 - [Dashboard in a Day](https://aka.ms/DIAD)
 - [Paginated Reports in a Day](https://aka.ms/priad-online-course)
 - GitHub [Microsoft Power BI Workshops](https://github.com/microsoft/pbiworkshops) and [Power BI Desktop Samples](https://github.com/microsoft/powerbi-desktop-samples)
