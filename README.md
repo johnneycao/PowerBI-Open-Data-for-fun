@@ -37,17 +37,25 @@ This project welcomes contributions and suggestions.
 
 ## Reference
 
+### Microsoft Learn - Learning Path / Online Training
+
+- [Power Platform online training](http://aka.ms/powerplatform)
+- [Becoming a Data Analyst with Power BI](https://aka.ms/learnpowerbi)
+- [Use DAX in Power BI Desktop](https://aka.ms/learndax)
+- [Power Platform Instructor-led training](https://aka.ms/PowerPlatformILT)
+- [Dashboard in a Day](https://aka.ms/DIAD)
+- [Paginated Reports in a Day](https://aka.ms/priad-online-course)
+- [Microsoft Power BI Workshops](https://github.com/microsoft/pbiworkshops)
+ 
 ### Power BI Reference
 
-- [Microsoft Power BI Workshops](https://github.com/microsoft/pbiworkshops)
 - [Power BI on Microsoft Learn](https://learn.microsoft.com/en-us/training/powerplatform/power-bi)
 - [Transform, shape, and model data in Power BI](https://learn.microsoft.com/en-us/power-bi/transform-model/)
-- [PowerBI.tips](https://powerbi.tips/)
-
-### DAX Reference
-- [Data Analysis Expressions (DAX) Reference](https://learn.microsoft.com/en-us/dax/)
+- [Power Query M function reference](https://learn.microsoft.com/en-us/powerquery-m/power-query-m-function-reference)
+- [Data Analysis Expressions (DAX) Reference](https://aka.ms/dax)
 - [DAX Resource Center Wiki on TechNet](https://social.technet.microsoft.com/wiki/contents/articles/1088.dax-resource-center.aspx)
 - [DAX Cheat Sheet – Vidas Matelis](http://www.powerpivot-info.com/post/439-dax-cheat-sheet)
+- [PowerBI.tips](https://powerbi.tips/)
 
 ### Open Data
 
