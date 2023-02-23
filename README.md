@@ -4,7 +4,7 @@ author: Johnney Cao
 date updated: 2023-2-5
 ---
 
-# Power-BI-Samples
+# Power-BI-Samples:
 
 This personal repository contains a collection of Power BI Dashboard / Reports sample files.  It includes datasets used for samples, tutorials and other contents. 
 
@@ -14,28 +14,28 @@ This project welcomes contributions and suggestions.
 
 ## Table of Contents
 
-- [Basic Tables](./docs/BasicData.md)
+- ### [Basic Tables](./docs/BasicData.md)
     - Date / Year Table
     - Last Refresh Date
-- [Analysis of Unicorn Data](./docs/Unicorn.md)
+- ### [Analysis of Unicorn Data](./docs/Unicorn.md)
 
     ![Screenshot](./_Asset%20Library/Unicorn_Screenshot.png)
 
-- [Analysis of Tech Layoffs Data](./docs/Layoffs.md)
+- ### [Analysis of Tech Layoffs Data](./docs/Layoffs.md)
 
     ![Screenshot](./_Asset%20Library/Layoffs_Screenshot.png)
 
-- [Analysis of GDP/GNI per capita in Countries Using Worldbank Data](./docs/WorldBank.md)
+- ### [Analysis of GDP/GNI per capita in Countries Using Worldbank Data](./docs/WorldBank.md)
 
     ![Screenshot](./_Asset%20Library/WorldBank_WorldMap_Screenshot.png)
 
-- [Analysis of Movie Collections](./docs/Movies.md) (WIP)
-- 
+- ### [Analysis of Movie Collections](./docs/Movies.md) (WIP)
+
     ![Screenshot](./_Asset%20Library/IMDB_Top250_Screenshot.png)
 
 ----------
 
-## Reference
+## Reference:
 
 ### Microsoft Learn - Learning Path / Online Training
 
