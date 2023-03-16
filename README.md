@@ -66,6 +66,7 @@ This project welcomes contributions and suggestions.
 - [European Union Data](https://data.europa.eu/en)
 - [United Nation Statistics](http://data.un.org/)
 - [World Bank - Data Catalog](https://datacatalog.worldbank.org/)
+- [Our World in Data](https://ourworldindata.org/)
 - [NASA](https://data.nasa.gov/)
 - [Nasdaq Data Line](https://docs.data.nasdaq.com/docs/getting-started)
 - [FRED](https://fred.stlouisfed.org/docs/api/fred/)
