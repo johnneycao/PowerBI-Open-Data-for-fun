@@ -141,7 +141,7 @@ Tables | Relationship
 - Scatter Chart - Count of company and number of layoffs by Industry
 - Stacked Bar Chart - number of Layoffs by company and country
 
-### 2. *Layoff vs Percentage* Page
+### 2. *Layoff vs Percentage* MoM Page
 ![Screenshot](../_Asset%20Library/Layoffs_MonthlyDetail.png)
 - Scatter Chart - Count of company and number of layoffs by Industry
 
