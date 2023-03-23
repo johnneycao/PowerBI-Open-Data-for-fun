@@ -1,7 +1,7 @@
 ---
 title: tech layoff analysis
 author: Johnney Cao
-date updated: 2023-2-3
+date updated: 2023-3-22
 keyword: [tech layoffs, parameter, csv, conditional column, conditional formatting, append queries, multiple sources, web URL]
 ---
 
@@ -33,9 +33,10 @@ keyword: [tech layoffs, parameter, csv, conditional column, conditional formatti
 ### 2. *Layoffs* Master Tables
 
 #### Data Source
- [Download link 1 (Kaggle)](https://www.kaggle.com/datasets/swaptr/layoffs-2022), License: *[Open Database, Contents: © Original Authors](http://opendatacommons.org/licenses/odbl/1.0/)*
+- [Download link 1 (Kaggle)](https://www.kaggle.com/datasets/swaptr/layoffs-2022),
+- [Download link 2 (Kaggle)](https://www.kaggle.com/datasets/theakhilb/layoffs-data-2022)
 
- [Download link 2 (Kaggle)](https://www.kaggle.com/datasets/theakhilb/layoffs-data-2022), License: *[Open Database, Contents: © Original Authors](http://opendatacommons.org/licenses/odbl/1.0/)*
+License: *[Open Database, Contents: © Original Authors](http://opendatacommons.org/licenses/odbl/1.0/)*. 
 
 *Some data such as the sources, list of employees laid off and date of addition has been omitted here and the complete data can be found on [Layoffs.fyi](https://layoffs.fyi/). Credits: Roger Lee*
 
@@ -60,7 +61,7 @@ keyword: [tech layoffs, parameter, csv, conditional column, conditional formatti
 1. Combine **Company** and **date** to a Primary **Key**;
     > =Text.Combine({[Company], "|", Date.ToText([Date], "yyyy"),Date.ToText([Date], "MM"), Date.ToText([Date], "dd")})
 1. Remove the duplicate record from table;
-1. Append two tables into a new table, and *disable load* for two source tables;
+1. Append two source tables into a new table, and unselect *enable load* for both source tables;
 1. Remove duplicate records base on **Key**
 1. Changed **source** field to *Web URL* in *Data Catagory*
 
@@ -70,11 +71,10 @@ keyword: [tech layoffs, parameter, csv, conditional column, conditional formatti
 ##### Source 1
 ```css
 let
-    Source = Csv.Document(File.Contents(FileFolder & "\layoffs.csv"),[Delimiter=",", Columns=9, Encoding=65001, QuoteStyle=QuoteStyle.None]),
+    Source = Csv.Document(File.Contents("C:\Downloads\Course Sample and Exercise Files\layoffs\layoffs.csv"),[Delimiter=",", Columns=9, Encoding=65001, QuoteStyle=QuoteStyle.None]),
     #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
     #"Filtered Rows" = Table.SelectRows(#"Promoted Headers", each true),
-    #"Remove Empty Company" = Table.SelectRows(#"Filtered Rows", each ([company] <> null and [company] <> "" and [company] <> "#Paid" and [company] <> "&Open")),
-    #"Changed Type" = Table.TransformColumnTypes(#"Remove Empty Company",{{"company", type text}, {"location", type text}, {"industry", type text}, {"total_laid_off", Int64.Type}, {"percentage_laid_off", Percentage.Type}, {"date", type date}, {"stage", type text}, {"country", type text}, {"funds_raised", Int64.Type}}),
+    #"Changed Type" = Table.TransformColumnTypes(#"Filtered Rows",{{"company", type text}, {"location", type text}, {"industry", type text}, {"total_laid_off", Int64.Type}, {"percentage_laid_off", Percentage.Type}, {"date", type date}, {"stage", type text}, {"country", type text}, {"funds_raised", Int64.Type}}),
     #"Replaced Other Industry" = Table.ReplaceValue(#"Changed Type","","Other",Replacer.ReplaceValue,{"industry"}),
     #"Replaced Unknown stage" = Table.ReplaceValue(#"Replaced Other Industry","","Unknown",Replacer.ReplaceValue,{"stage"}),
     #"Trimmed Text" = Table.TransformColumns(#"Replaced Unknown stage",{{"company", Text.Trim, type text}, {"location", Text.Trim, type text}, {"industry", Text.Trim, type text}, {"country", Text.Trim, type text}, {"stage", Text.Trim, type text}}),
@@ -83,18 +83,19 @@ let
     #"Inserted Merged Column" = Table.AddColumn(#"Renamed Columns", "location", each Text.Combine({[city], ", ", [country]}), type text),
     #"Removed Duplicates" = Table.Distinct(#"Inserted Merged Column", {"company", "total_laid_off", "percentage_laid_off", "date", "location"}),
     #"Added Stage Ranking" = Table.AddColumn(#"Removed Duplicates", "Stage Ranking", each if Text.Contains([stage], "IPO") then 90 else if Text.Contains([stage], "Private") then 80 else if Text.Contains([stage], "Subsidiary") then 20 else if Text.Contains([stage], "Acquired") then 30 else if Text.Contains([stage], "Merged") then 30 else if [stage] = "Seed" then 40 else if [stage] = "Series A" then 50 else if [stage] = "Series B" then 50 else if [stage] = "Series C" then 50 else if Text.StartsWith([stage], "Series") then 60 else 0),
-    #"Filtered empty lines" = Table.SelectRows(#"Added Stage Ranking", each [total_laid_off] > 1)
+    #"Filtered Empty Lines" = Table.SelectRows(#"Added Stage Ranking", each ([company] <> null and [company] <> "" and [company] <> "#Paid" and [company] <> "&Open")),
+    #"Added Custom" = Table.AddColumn(#"Filtered Empty Lines", "Key", each Text.Combine({[company], "|", Date.ToText([date], "yyyy"),Date.ToText([date], "MM"), Date.ToText([date], "dd")}))
 in
-    #"Filtered empty lines"
+    #"Added Custom"
 ```
 ##### Source 2
 ```css
 let
-    Source = Csv.Document(File.Contents(FileFolder & "\layoffs_data.csv"),[Delimiter=",", Columns=11, Encoding=65001, QuoteStyle=QuoteStyle.None]),
+    Source = Csv.Document(File.Contents("C:\Downloads\Course Sample and Exercise Files\layoffs\layoffs_data.csv"),[Delimiter=",", Columns=11, Encoding=65001, QuoteStyle=QuoteStyle.None]),
     #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
     #"Filtered Rows" = Table.SelectRows(#"Promoted Headers", each true),
-    #"Remove Empty Company" = Table.SelectRows(#"Filtered Rows", each ([Company] <> null and [Company] <> "" and [Company] <> "#Paid" and [Company] <> "&Open")),
-    #"Replaced Other Industry" = Table.ReplaceValue(#"Remove Empty Company","","Other",Replacer.ReplaceValue,{"Industry"}),
+    #"Remove Empty Lines" = Table.SelectRows(#"Filtered Rows", each ([Company] <> null and [Company] <> "" and [Company] <> "#Paid" and [Company] <> "&Open")),
+    #"Replaced Other Industry" = Table.ReplaceValue(#"Remove Empty Lines","","Other",Replacer.ReplaceValue,{"Industry"}),
     #"Replaced Unknown stage" = Table.ReplaceValue(#"Replaced Other Industry","","Unknown",Replacer.ReplaceValue,{"Stage"}),
     #"Trimmed Text" = Table.TransformColumns(#"Replaced Unknown stage",{{"Company", Text.Trim, type text}, {"Location_HQ", Text.Trim, type text}, {"Industry", Text.Trim, type text}, {"Country", Text.Trim, type text}, {"Stage", Text.Trim, type text}, {"Source", Text.Trim, type text}}),
     #"Cleaned Text" = Table.TransformColumns(#"Trimmed Text",{{"Company", Text.Clean, type text}, {"Location_HQ", Text.Clean, type text}, {"Industry", Text.Clean, type text}, {"Country", Text.Clean, type text}, {"Stage", Text.Clean, type text}, {"Source", Text.Clean, type text}}),
@@ -115,9 +116,10 @@ in
 let
     Source = Table.Combine({layoffs_source2, layoffs_source1}),
     #"Reordered Columns" = Table.ReorderColumns(Source,{"Key", "company", "city", "industry", "total_laid_off", "date", "source", "funds_raised", "stage", "date_added", "country", "percentage_laid_off", "location", "Stage Ranking"}),
-    #"Removed Duplicates" = Table.Distinct(#"Reordered Columns", {"Key"})
+    #"Removed Duplicates" = Table.Distinct(#"Reordered Columns", {"Key"}),
+    #"Replaced Value" = Table.ReplaceValue(#"Removed Duplicates",null,0,Replacer.ReplaceValue,{"percentage_laid_off"})
 in
-    #"Removed Duplicates"
+    #"Replaced Value"
 ```
 
 ## Relationship
@@ -139,10 +141,14 @@ Tables | Relationship
 - Scatter Chart - Count of company and number of layoffs by Industry
 - Stacked Bar Chart - number of Layoffs by company and country
 
-### 2. *Layoffs Analysis* Mobile View
+### 2. *Layoff vs Percentage* Page
+![Screenshot](../_Asset%20Library/Layoffs_MonthlyDetail.png)
+- Scatter Chart - Count of company and number of layoffs by Industry
+
+### 3. *Layoffs Analysis* Mobile View
 ![Screenshot](../_Asset%20Library/Layoffs_MobileView.png)
 
-### 3. *Unicorn Card* tooltips Page
+### 4. *Unicorn Card* tooltips Page
 ![Screenshot](../_Asset%20Library/Layoffs_Card.png)
 ----------
 
