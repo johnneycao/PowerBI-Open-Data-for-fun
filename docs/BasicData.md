@@ -31,7 +31,7 @@ keyword: [Date Table, Parameter, LastRefresh Date]
 1. Create a parameter **StartDate** for the *Start Date*;
 1. Convert parameter to table and add **EndDate**;
 1. Create a list of date between **StartDate** and **EndDate** , and then delete **StartDate** and **EndDate** columns;
-1. Add Columns for Year, Quarter, Month and Day Columns;
+1. Add Columns for Year, Quarter, Month, Week and Day Columns;
 1. Set the table as Date Table (**Table tools** -> **Mark as data table**).
 
 #### Power Query Sample Script
@@ -61,10 +61,12 @@ in
     #"Added Day"
 ```
 
-#### Alternative Approach
-- [Create date tables in Power BI Desktop](https://learn.microsoft.com/en-us/power-bi/guidance/model-date-tables)
+### 2. *Calendar* Table - Alternative Approach using DAX
+1. Use [CALENDAR](https://learn.microsoft.com/en-us/dax/calendar-function-dax) or [CALENDARAUTO](https://learn.microsoft.com/en-us/dax/calendarauto-function-dax) DAX functions to [Create date tables in Power BI Desktop](https://learn.microsoft.com/en-us/power-bi/guidance/model-date-tables);
+1. Add Columns for Year, Quarter, Month, Week and Day Columns;
+1. Set the table as Date Table (**Table tools** -> **Mark as data table**).
 
-### 2. *Year* Table
+### 3. *Year* Table
 
 #### Dependency
 
