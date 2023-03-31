@@ -34,13 +34,17 @@ keyword: [Power Automate Desktop, Flow, Power BI]
 1. Set variable **FullName**;
 
     >FullName =  %FileFolder%%FileName%.PBIX
-1. Run the Power BI report use default application
-1. Wait for the report to open, and **Refresh** button is *Enabled*, and then click on **Refresh** button to refresh data;
+1. Run the Power BI report above in default application
+1. Wait for the report is open and **Refresh** button is ready, and then click on **Refresh** button to refresh data;
 1. Wait **Refresh** popup is closed, and then click on **Save** button to save the changes;
-1. Wait **Publish** button is *Enabled*, and then click on **Publish** button to start publishing report; 
+1. Wait **Publish** button is ready, and then click on **Publish** button to start publishing report; 
 1. Wait **Publish to Power BI** form is popup, and click on **Select** button to use the default workspace;
 1. Wait **Replace this dataset** form is popup, and click on **Replace** button to replace the exiting dataset. On error, skip the step and continue next action;
-1. Wait **Publishing to Power BI** form is popup, and then click on the URI to open the report from Power BI Service;
+1. Wait **Publishing to Power BI** form is popup, and then click on the *URI* to open the report from Power BI Service;
+   1. Change the attribue below in UI Element which *ends with* **PBIX" in Power BI**
+    
+    ![Screenshot](../_Asset%20Library/AutoRefreshWindowUIElement2.png)
+1. Click on **Got it** to close **Publishing to Power BI** popup
 1. Close Power BI Desktop.
 
     ![Screenshot](../_Asset%20Library/AutoRefreshFlow.png)
