@@ -13,7 +13,7 @@ keyword: [Date Table, Parameter, LastRefresh Date]
 
 ## Parameters
 
-1. **StartDate**: Required, Type as*Date*
+1. **StartDate**: Required, Type as *Date*
 
 ----------
 

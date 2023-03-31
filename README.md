@@ -6,7 +6,7 @@ date updated: 2023-2-23
 
 # Power BI Samples
 
-This personal repository contains a collection of Power BI Dashboard / Reports sample files.  It includes datasets used for samples, tutorials and other contents. 
+This personal repository contains a collection of Power BI Dashboard / Report sample files.  It includes datasets used for samples, tutorials and other contents. 
 
 This project welcomes contributions and suggestions.
 
@@ -32,6 +32,11 @@ This project welcomes contributions and suggestions.
 - ### [Analysis of Movie Collections](./docs/Movies.md) (WIP)
 
     ![Screenshot](./_Asset%20Library/IMDB_Top250_Screenshot.png)
+
+----------
+
+## Power Automate Flows
+- [Auto refresh and publish report to default workspace using Power Automate Desktop](./docs/FlowAutoRefresh.md)
 
 ----------
 
