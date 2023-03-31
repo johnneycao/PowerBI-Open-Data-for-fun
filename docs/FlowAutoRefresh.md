@@ -30,6 +30,7 @@ keyword: [Power Automate Desktop, Flow, Power BI]
 
 ### 1. Refresh Power BI Report and Publsih to Cloud
 
+![Screenshot](../_Asset%20Library/AutoRefreshFlow.png)
 #### Steps
 1. Set variable **FullName**;
 
@@ -46,9 +47,6 @@ keyword: [Power Automate Desktop, Flow, Power BI]
     ![Screenshot](../_Asset%20Library/AutoRefreshWindowUIElement2.png)
 1. Click on **Got it** to close **Publishing to Power BI** popup
 1. Close Power BI Desktop.
-
-    ![Screenshot](../_Asset%20Library/AutoRefreshFlow.png)
-
 
 ----------
 
