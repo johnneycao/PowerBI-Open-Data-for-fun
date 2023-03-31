@@ -12,31 +12,35 @@ This project welcomes contributions and suggestions.
 
 ----------
 
-## Table of Contents
+## Contents 
+    (Please find the below link for detail processes)
 
-- ### [Basic Tables](./docs/BasicData.md)
+### Power BI Reports
+
+- [Basic Tables](./docs/BasicData.md)
     - Date / Year Table
     - Last Refresh Date
-- ### [Analysis of Unicorn Data](./docs/Unicorn.md)
+- [Analysis of Unicorn Data](./docs/Unicorn.md)
 
     ![Screenshot](./_Asset%20Library/Unicorn_Screenshot.png)
 
-- ### [Analysis of Tech Layoffs Data](./docs/Layoffs.md)
+- [Analysis of Tech Layoffs Data](./docs/Layoffs.md)
 
     ![Screenshot](./_Asset%20Library/Layoffs_Screenshot.png)
 
-- ### [Analysis of GDP/GNI per capita in Countries Using Worldbank Data](./docs/WorldBank.md)
+- [Analysis of GDP/GNI per capita in Countries Using Worldbank Data](./docs/WorldBank.md)
 
     ![Screenshot](./_Asset%20Library/WorldBank_WorldMap_Screenshot.png)
 
-- ### [Analysis of Movie Collections](./docs/Movies.md) (WIP)
+- [Analysis of Movie Collections](./docs/Movies.md) (WIP)
 
     ![Screenshot](./_Asset%20Library/IMDB_Top250_Screenshot.png)
 
 ----------
 
-## Power Automate Flows
+### Power Automate Flows
 - [Auto refresh and publish report to default workspace using Power Automate Desktop](./docs/FlowAutoRefresh.md)
+    ![Screenshot](./_Asset%20Library/AutoRefreshFlow.png)
 
 ----------
 
