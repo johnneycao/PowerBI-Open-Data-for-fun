@@ -12,8 +12,9 @@ This project welcomes contributions and suggestions.
 
 ----------
 
-## Contents 
-    (Please find the below link for detail processes)
+## Contents
+
+(Please find the below links for detail processes)
 
 ### Power BI Reports
 

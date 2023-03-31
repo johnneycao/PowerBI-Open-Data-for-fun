@@ -29,8 +29,9 @@ keyword: [Power Automate Desktop, Flow, Power BI]
 ## Flows
 
 ### 1. Refresh Power BI Report and Publsih to Cloud
+    
+   ![Screenshot](../_Asset%20Library/AutoRefreshFlow.png)
 
-![Screenshot](../_Asset%20Library/AutoRefreshFlow.png)
 #### Steps
 1. Set variable **FullName**;
 
