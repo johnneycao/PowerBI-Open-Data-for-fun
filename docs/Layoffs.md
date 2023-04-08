@@ -71,7 +71,7 @@ License: *[Open Database, Contents: © Original Authors](http://opendatacommons.
 ##### Source 1
 ```css
 let
-    Source = Csv.Document(File.Contents("C:\Downloads\Course Sample and Exercise Files\layoffs\layoffs.csv"),[Delimiter=",", Columns=9, Encoding=65001, QuoteStyle=QuoteStyle.None]),
+    Source = Csv.Document(File.Contents(FileFolder&"\layoffs.csv"),[Delimiter=",", Columns=9, Encoding=65001, QuoteStyle=QuoteStyle.None]),
     #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
     #"Filtered Rows" = Table.SelectRows(#"Promoted Headers", each true),
     #"Changed Type" = Table.TransformColumnTypes(#"Filtered Rows",{{"company", type text}, {"location", type text}, {"industry", type text}, {"total_laid_off", Int64.Type}, {"percentage_laid_off", Percentage.Type}, {"date", type date}, {"stage", type text}, {"country", type text}, {"funds_raised", Int64.Type}}),
@@ -91,7 +91,7 @@ in
 ##### Source 2
 ```css
 let
-    Source = Csv.Document(File.Contents("C:\Downloads\Course Sample and Exercise Files\layoffs\layoffs_data.csv"),[Delimiter=",", Columns=11, Encoding=65001, QuoteStyle=QuoteStyle.None]),
+    Source = Csv.Document(File.Contents(FileFolder&"\layoffs_data.csv"),[Delimiter=",", Columns=11, Encoding=65001, QuoteStyle=QuoteStyle.None]),
     #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
     #"Filtered Rows" = Table.SelectRows(#"Promoted Headers", each true),
     #"Remove Empty Lines" = Table.SelectRows(#"Filtered Rows", each ([Company] <> null and [Company] <> "" and [Company] <> "#Paid" and [Company] <> "&Open")),
