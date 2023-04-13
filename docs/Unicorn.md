@@ -13,7 +13,7 @@ keyword: [Worldbank API, unicorn, parameter, web connector, xml, merge column, s
 
 ## Parameters
 
-- **StarDate**: Required, Type as *Date*
+- **StarDate**: Required, Type as `Date`
 
 ----------
 
@@ -38,7 +38,7 @@ License: *The World Bank Group makes data publicly available according to [open 
 
 #### Steps
 1. Retrieve data from [Worldbank Country API](http://api.worldbank.org/v2/country/) in XML format;
-1. Expand **Region**, and filter out those *empty* and *Aggregates*;
+1. Expand **Region**, and filter out those *`empty`* and *`Aggregates`*;
 1. **AdminRegion**, **IncomeLevel**, **LendingType**, **CapitalCity**, **Longitude**, **Latitude**;
 1. Add color columns for **IncomeLevel**, **LendingType**.
 
@@ -74,10 +74,10 @@ in
 #### Steps
 
 1. Retrieve data from [CBInsights](https://www.cbinsights.com/research-unicorn-companies) and extracted table from HTML;
-1. Add a Index column *UnicornId*;
+1. Add a Index column **UnicornId**;
 1. Clean country name in **Country** column;
-1. Merge query from **CountryMaster** table above, and expand ISO code, Regions **IncomeLevel**, **LendingType**, **CapitalCity** columns;
-1. Add a merged column for City and Country, and Trim the value.
+1. Merge query from **CountryMaster** table above, and expand *ISO codes*, Regions **IncomeLevel**, **LendingType**, **CapitalCity** columns;
+1. Add a merged column for **City** and **Country**, and Trim the value.
     
     >Table.AddColumn(#"Expanded CountryMaster", "City, Country", each Text.Combine({[City], ", ", [Country3Code]}), type text)
 
@@ -110,7 +110,7 @@ in
 
 #### Steps
 1. Reference from **Unicorn Master** Table;
-1. Keep only **UnicornId**, **Company** and **Select Investors**;
+1. Keep **UnicornId**, **Company** and **Select Investors** columns only;
 1. Split **Select Investors** into new rows and Trimmed the value.
 
 

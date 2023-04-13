@@ -13,8 +13,8 @@ keyword: [tech layoffs, parameter, csv, conditional column, conditional formatti
 
 ## Parameters
 
-- **StarDate**: Required, Type as *Date*
-- **FileFolder**: Required, Type as *Text*
+- **StarDate**: Required, Type as `Date`
+- **FileFolder**: Required, Type as `Text`
 
 ----------
 
@@ -42,13 +42,13 @@ License: *[Open Database, Contents: © Original Authors](http://opendatacommons.
 
 #### Steps
 
-1. Manual download the csv files from  [Source 1 (Kaggle)](https://www.kaggle.com/datasets/swaptr/layoffs-2022) and [Source 2 (Kaggle)](https://www.kaggle.com/datasets/theakhilb/layoffs-data-2022) to a local folder (same as **FileFolder** parameter), e.g *c:\Downloads*;
+1. Manual download the csv files from  [Source 1 (Kaggle)](https://www.kaggle.com/datasets/swaptr/layoffs-2022) and [Source 2 (Kaggle)](https://www.kaggle.com/datasets/theakhilb/layoffs-data-2022) to a local folder (same as **FileFolder** parameter), e.g *`c:\Downloads`*;
 1. Retrieve the data from downloaded csv file; 
 1. Promote first line as header;
 1. Clean up empty Company from list;
-1. Change **percentage_laid_off** to *Percentage* type and **date** or **date_added** to *Date* type;
+1. Change **percentage_laid_off** to *Percentage* type and **date** or **date_added** to `Date` type;
 1. Trim and clean all the text fields;
-1. Replace empty value in **industry** to *Other*;
+1. Replace empty value in **industry** to `Other`;
 1. Add a **location** column from **city** and **country**;
 1. Add a **Stage Ranking** column from **stage**;
     1. *Subsidiary* as 20,
@@ -61,9 +61,9 @@ License: *[Open Database, Contents: © Original Authors](http://opendatacommons.
 1. Combine **Company** and **date** to a Primary **Key**;
     > =Text.Combine({[Company], "|", Date.ToText([Date], "yyyy"),Date.ToText([Date], "MM"), Date.ToText([Date], "dd")})
 1. Remove the duplicate record from table;
-1. Append two source tables into a new table, and unselect *enable load* for both source tables;
+1. Append two source tables into a new table, and unselect `enable load` for both source tables;
 1. Remove duplicate records base on **Key**
-1. Changed **source** field to *Web URL* in *Data Catagory*
+1. Changed **source** field to `Web URL` in **Data Catagory**
 
 
 #### Power Query Sample Script

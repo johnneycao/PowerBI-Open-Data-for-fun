@@ -13,7 +13,7 @@ keyword: [Date Table, Parameter, LastRefresh Date]
 
 ## Parameters
 
-1. **StartDate**: Required, Type as *Date*
+1. **StartDate**: Required, Type as `Date`
 
 ----------
 
@@ -25,14 +25,14 @@ keyword: [Date Table, Parameter, LastRefresh Date]
 
 ##### Parameter
 
-- **StartDate**, set value *'1/1/1990'*
+- **StartDate**, set value `1/1/1990`
 
 #### Steps
-1. Create a parameter **StartDate** for the *Start Date*;
+1. Start from parameter **StartDate**;
 1. Convert parameter to table and add **EndDate**;
 1. Create a list of date between **StartDate** and **EndDate** , and then delete **StartDate** and **EndDate** columns;
 1. Add Columns for Year, Quarter, Month, Week and Day Columns;
-1. Set the table as Date Table (**Table tools** -> **Mark as data table**).
+1. Set the table as Date Table (**Table tools** -> Mark as `date table`).
 
 #### Power Query Sample Script
 ```css
@@ -63,8 +63,8 @@ in
 
 ### 2. *Calendar* Table - Alternative Approach using DAX
 1. Use [CALENDAR](https://learn.microsoft.com/en-us/dax/calendar-function-dax) or [CALENDARAUTO](https://learn.microsoft.com/en-us/dax/calendarauto-function-dax) DAX functions to [Create date tables in Power BI Desktop](https://learn.microsoft.com/en-us/power-bi/guidance/model-date-tables);
-1. Add Columns for Year, Quarter, Month, Week and Day Columns;
-1. Set the table as Date Table (**Table tools** -> **Mark as data table**).
+1. Add Columns for **Year**, **Quarter**, **Month**, **Week** and **Day** Columns;
+1. Set the table as Date Table (**Table tools** -> Mark as `date table`).
 
 ### 3. *Year* Table
 
@@ -89,7 +89,7 @@ in
 ### 3. *Last Refreshed* Table
 
 #### Steps
-1. Create a table using *LocalNow()*.
+1. Create a table using `LocalNow()`
 
 #### Power Query Sample Script
 ```css
