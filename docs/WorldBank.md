@@ -1,7 +1,7 @@
 ---
 title: GDP per capita analysis
 author: Johnney Cao
-date updated: 2023-2-3
+date updated: 2023-4-24
 keyword: [Worldbank API, GDP, GNI, parameter, web connector, xml, expand table, expand table columns, html color, table reference, DAX, related table]
 ---
 
@@ -9,7 +9,12 @@ keyword: [Worldbank API, GDP, GNI, parameter, web connector, xml, expand table, 
 
 ----------
 
+## Summary 
+This page provides a detailed guide on how to analyze GDP/GNI per capita in countries using World Bank data with Power BI, including data sources, parameters, and steps for retrieving and processing data from the World Bank API.
+
 [PBI Download Link](../_Asset%20Library/Source_Files/WorldBank.pbit)
+
+----------
 
 ## Parameters
 

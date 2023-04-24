@@ -15,25 +15,27 @@ keyword: [IMDB, Plex API, parameter, web connector, Python, pandas, bs4, custom 
 
 ## Parameters
 
-- **StarDate**: Required, Type as *Date*
-- **X-Plex-Token**: Required, Type as *Text*
-- **IP**: Required, Type as *Text*
-- **LibraryURL**: Required, Type as *Text*
+- **StarDate**: Required, Type as `Date`
+- **X-Plex-Token**: Required, Type as `Text`
+- **PlexServer**: Required, Type as `Text`
 
 ----------
 
-## Custom Function
+## Custom Functions
 
 ### *1. Load Movie Content* Function
 
+NOTE: it returns result from [Library Section](https://www.plexopedia.com/plex-media-server/api/library/movies/) List not Movie Metadata
+
 #### Parameter
 
-- **LibraryURL**: Format like http://[*IP*]:32400/library/sections/[*Movies Library ID*]/all?X-Plex-Token=[*X-Plex-Token*] (result copied from **Plex Libraries** Table below)
+- **X-Plex-Token**: Required, token key to access Plex Server endpoints or XML
+- **LibraryURL**: Required, Format like `[PLEX_URL]/library/sections/{key}/all?X-Plex-Token=[PLEX_TOKEN]` (can be copied from **Plex Libraries** Table below)
 
 #### Steps
 
-1. Retrieve library detail from LibraryURL
-1. Expand Video into columns, and expand Video.Media and Video.Collection information
+1. Retrieve library detail from **LibraryURL** Parameter
+1. Expand **Video** into columns, and expand Video.Media and Video.Collection information
 
 #### Power Query Sample Script
 ```css
@@ -356,17 +358,15 @@ in
 
 ### 5 *Plex Libraries* Table
 
-#### Depedency
-
 ##### Parameter
 
 - **X-Plex-Token**: [Finding an authentication token / X-Plex-Token](https://support.plex.tv/articles/204059436-finding-an-authentication-token-x-plex-token/) 
 
-- **IP**: Plex Server IP Address, e.g. '*10.10.10.2*'
+- **PlexServer**: Plex Server IP Address with Port Number e.g., `http://your_ip_address:32400` or `https://your_ip_address:32400`
 
 #### Steps
 1. Combine IP and X-Plex-Token into a Plex Libraries List URL, and retrive all libraries ('**Directory**');
-    >Xml.Tables(Web.Contents(Text.Combine({"http://",IP,":32400/library/sections?X-Plex-Token=",#"X-Plex-Token"})))
+    >Xml.Tables(Web.Contents(Text.Combine({PlexServer,"/library/sections?X-Plex-Token=",#"X-Plex-Token"})))
 1. Drill down *Directory* into a table;
 1. Expand *Location* to Folder Path;
 1. Combine IP and X-Plex-Token into Plex Content Library URL;
@@ -376,7 +376,7 @@ in
 #### Power Query Sample Script
 ```css
 let
-    Source = Xml.Tables(Web.Contents(Text.Combine({"http://",IP,":32400/library/sections?X-Plex-Token=",#"X-Plex-Token"}))),
+    Source = Xml.Tables(Web.Contents(Text.Combine({PlexServer,"/library/sections?X-Plex-Token=",#"X-Plex-Token"}))),
     #"Changed Type" = Table.TransformColumnTypes(Source,{{"Attribute:size", Int64.Type}, {"Attribute:allowSync", Int64.Type}, {"Attribute:title1", type text}}),
     Directory = #"Changed Type"{0}[Directory],
     #"Removed Other Columns" = Table.SelectColumns(Directory,{"Location", "Attribute:art", "Attribute:composite", "Attribute:key", "Attribute:type", "Attribute:title", "Attribute:agent", "Attribute:scanner", "Attribute:language", "Attribute:hidden"}),

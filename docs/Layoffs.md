@@ -1,7 +1,7 @@
 ---
 title: tech layoff analysis
 author: Johnney Cao
-date updated: 2023-3-22
+date updated: 2023-4-24
 keyword: [tech layoffs, parameter, csv, conditional column, conditional formatting, append queries, multiple sources, web URL]
 ---
 
@@ -9,7 +9,13 @@ keyword: [tech layoffs, parameter, csv, conditional column, conditional formatti
 
 ----------
 
+## Summary 
+
+This page provides a detailed guide on how to analyze tech layoffs data using Power BI. It includes information on data sources, parameters, and steps for retrieving and processing data from Kaggle. The document also includes sample Power Query scripts and a description of the reports that can be generated from the data.
+
 [PBI Download Link](../_Asset%20Library/Source_Files/Layoffs.pbit)
+
+----------
 
 ## Parameters
 

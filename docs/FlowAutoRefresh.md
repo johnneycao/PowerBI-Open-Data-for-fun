@@ -1,12 +1,18 @@
 ---
 title: Auto refresh and publish report to default workspace using Power Automate Desktop
 author: Johnney Cao
-date updated: 2023-3-31
+date updated: 2023-4-24
 keyword: [Power Automate Desktop, Flow, Power BI]
 ---
 
 # Auto refresh and publish report to default workspace using Power Automate Desktop
 
+----------
+
+## Summary
+
+This page describes how to use Power Automate Desktop to automatically refresh and publish a Power BI report to the default workspace. It includes information on input/output variables, flow variables, and the steps involved in refreshing the report, publishing it to the cloud, and replacing an existing dataset.
+    
 ----------
 
 ## Variables
