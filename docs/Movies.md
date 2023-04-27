@@ -15,24 +15,102 @@ keyword: [IMDB, Plex API, parameter, web connector, Python, pandas, bs4, custom 
 
 ## Parameters
 
-- **StarDate**: Required, Type as `Date`
-- **X-Plex-Token**: Required, Type as `Text`
-- **PlexServer**: Required, Type as `Text`
+
+|Parameter  |Description  |Data Type  |Reference  |
+|:--------|:--------|:--------|:--------|
+|**StarDate**  | Start Date for the report| Required, Type as `Date`  |    |
+|**X-Plex-Token**  |token key to access Plex Server endpoints or XML|Required, Type as `Text`  |[Finding an authentication token / X-Plex-Token](https://support.plex.tv/articles/204059436-finding-an-authentication-token-x-plex-token/)  | 
+|**PlexServer**  |Plex Server IP Address with Port Number e.g., `http://your_ip_address:32400` or `https://your_ip_address:32400`|Required, Type as `Text`  |    |
+|
 
 ----------
 
-## Custom Functions
+## Data Tables
 
-### *1. Load Movie Content* Function
+### 1 Basic Tables
 
-NOTE: it returns result from [Library Section](https://www.plexopedia.com/plex-media-server/api/library/movies/) List not Movie Metadata
+#### Tables 
 
-#### Parameter
+- **Date** Table
 
-- **X-Plex-Token**: Required, token key to access Plex Server endpoints or XML
-- **LibraryURL**: Required, Format like `[PLEX_URL]/library/sections/{key}/all?X-Plex-Token=[PLEX_TOKEN]` (can be copied from **Plex Libraries** Table below)
+- **Year** Table
 
-#### Steps
+- **LastRefreshed** Table
+
+### 2 Plex Tables
+
+There are couple of options to load the movie contents from Plex Server:
+
+1. Load data from Plex Server using **official** [Plex API](https://www.plexopedia.com/plex-media-server/api/) directly, the API commands can be run from any Web browser, sample as below: 
+
+    > Library List: [PlexServer]/library/sections?X-Plex-Token=[X-Plex-Token]
+    
+    > Library Section List: [PlexServer]/library/sections/{key}/all?X-Plex-Token=[X-Plex-Token]
+    
+    > Movie MetaData: [PlexServer]/library/metadata/{ratingKey}?X-Plex-Token=[X-Plex-Token]
+
+1. Load data using Python [PlexAPI](https://pypi.org/project/PlexAPI/) [Project GitHu](https://github.com/pkkid/python-plexapi), which is **unofficial** Python bindings for the Plex API; 
+
+1. Run the Python job using [PlexAPI](https://pypi.org/project/PlexAPI/) above and export result in csv file, then use it as datasource in Power BI.
+
+Here below is the Pros / Cons for each options:
+
+|Option  |Description  |Pros  |Cons  |
+|:-------:|:--------|:--------|:--------|
+|Option 1    |Load data from Plex Server using Plex API directly  |- Direct access: Bypasses the need for any third-party libraries or tools. <br/>- Real-time data: Fetches the most up-to-date data directly from the server.  |- More complex setup: Requires manual handling of HTTP requests and parsing API responses.<br/> - Some metadata, e.g. IMDB_ID, Audio, Video, Subtitles are stored in Movie Metadata not in Library Section, need a seperate custom function to fetch data from each item|
+|Option 2    |Load data using Python PlexAPI library in python script  |- Easier implementation: The library simplifies interactions with the Plex API.<br/>- Better error handling: The library is more likely to handle errors and edge cases gracefully.<br/>- Community support: Updates to the library will accommodate changes in the Plex API.  |- Dependency on external library: Need to ensure the library stays up-to-date and compatible with system.<br/>- Slower execution: Using a library cause slightly slower compared to direct API calls, depending on its implementation.  |
+|Option 3    |Use Python PlexAPI and export result in csv file, then use it as data source in Power BI  |- Separation of concerns: Data extraction and processing are separated, making it easier to manage and troubleshoot.<br/>- CSV compatibility: CSV files can be easily used by various tools and platforms, providing flexibility in data analysis and visualization.  |- Not real-time: The data will only be as recent as the last time you exported the CSV file.<br/>- Additional steps: Exporting to a CSV file and importing into Power BI adds extra overhead to workflow.<br/>- Potential storage issues: Depending on the size of the dataset, you may face storage limitations or performance issues when dealing with large CSV files.  |
+|
+
+Consider about the volumn of Plex Library as well as the required columns, I am using Option 3 as primary datasource in the sample, but keep the Queries for Option 1 and Option 2 (set limit to 20 records) in the PBIX for reference.
+
+#### 2.1.1 Option 1 - *Plex Libraries* Table
+
+##### Parameter
+
+- **X-Plex-Token** 
+- **PlexServer**
+
+##### Steps
+1. Combine IP and X-Plex-Token into a Plex Libraries List URL, and retrive all libraries ('**Directory**');
+    >Xml.Tables(Web.Contents(Text.Combine({PlexServer,"/library/sections?X-Plex-Token=",#"X-Plex-Token"})))
+1. Drill down *Directory* into a table;
+1. Expand *Location* to Folder Path;
+1. Combine IP and X-Plex-Token into Plex Content Library URL;
+    >Uri.Combine(Text.Combine({IP,":32400/"}) as text, Text.Combine({"library/sections/",Text.From([#"Attribute:key"]),"/all?X-Plex-Token=",#"X-Plex-Token"}) as text)
+1. Split Location into columns and Parse as SMB File Folder format
+
+##### Power Query Sample Script
+```css
+let
+    Source = Xml.Tables(Web.Contents(Text.Combine({PlexServer,"/library/sections?X-Plex-Token=",#"X-Plex-Token"}))),
+    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Attribute:size", Int64.Type}, {"Attribute:allowSync", Int64.Type}, {"Attribute:title1", type text}}),
+    Directory = #"Changed Type"{0}[Directory],
+    #"Removed Other Columns" = Table.SelectColumns(Directory,{"Location", "Attribute:art", "Attribute:composite", "Attribute:key", "Attribute:type", "Attribute:title", "Attribute:agent", "Attribute:scanner", "Attribute:language", "Attribute:hidden"}),
+    #"Expanded Location" = Table.ExpandTableColumn(#"Removed Other Columns", "Location", {"Attribute:path"}, {"Location.Attribute:path"}),
+    #"Added Custom" = Table.AddColumn(#"Expanded Location", "URL", each Uri.Combine(
+    PlexServer,
+    Text.Combine({"/library/sections/",Text.From([#"Attribute:key"]),"/all?X-Plex-Token=",#"X-Plex-Token"}) as text)
+as text),
+    #"Reordered Columns" = Table.ReorderColumns(#"Added Custom",{"Attribute:art", "Attribute:key", "Attribute:type", "Attribute:title", "Attribute:agent", "Attribute:scanner", "Attribute:language", "Attribute:hidden", "Location.Attribute:path", "URL"}),
+    #"Split Column by Delimiter" = Table.SplitColumn(#"Reordered Columns", "Location.Attribute:path", Splitter.SplitTextByDelimiter("/", QuoteStyle.Csv), {"Location.Attribute:path.1", "Location.Attribute:path.2", "Location.Attribute:path.3", "Location.Attribute:path.4", "Location.Attribute:path.5", "Location.Attribute:path.6"}),
+    #"Inserted Folder Name" = Table.AddColumn(#"Split Column by Delimiter", "Folder", each Text.Combine({Text.BetweenDelimiters(PlexServer, "http://", ":32400"), "\", [#"Location.Attribute:path.4"], "\", [#"Location.Attribute:path.5"]}), type text),
+    #"Clean Up Columns" = Table.RemoveColumns(#"Inserted Folder Name",{"Location.Attribute:path.1", "Location.Attribute:path.2", "Location.Attribute:path.3", "Location.Attribute:path.4", "Location.Attribute:path.5", "Location.Attribute:path.6", "Attribute:art"}),
+    #"Renamed Columns" = Table.RenameColumns(#"Clean Up Columns",{{"Attribute:key", "Key"}, {"Attribute:type", "Type"}, {"Attribute:title", "Library"}, {"Attribute:agent", "Agent"}, {"Attribute:scanner", "Scanner"}, {"Attribute:language", "Language"}, {"Attribute:hidden", "Hidden"}})
+in
+    #"Renamed Columns"
+```
+
+#### 2.1.2 Option 1 - Custom Function - *Load Movie Contents*
+
+NOTE: it only returns result from [Library Section](https://www.plexopedia.com/plex-media-server/api/library/movies/) not Movie Metadata, therefore no detail about **Audio**, **Video**, **Subtitles**, **IMDB_ID**, **TMDB_ID** or **TVDB_ID** information.
+
+###### Parameter
+
+- **X-Plex-Token**; 
+- **LibraryURL**: Required, Format like `[PLEX_URL]/library/sections/{key}/all?X-Plex-Token=[PLEX_TOKEN]` (can be copied from **Plex Libraries** Table above)
+
+###### Steps
 
 1. Retrieve library detail from **LibraryURL** Parameter
 1. Expand **Video** into columns, and expand Video.Media and Video.Collection information
@@ -57,21 +135,325 @@ in
     Source
 ```
 
-----------
+#### 2.1.3 Option 1 - *Plex Movies - API* Table
 
-## Data Tables
+##### Dependency
 
-### 1 Basic Tables
+- **Plex Libraries** Table;
+- **Load Movie Content** Custom Function
 
-#### Tables 
+##### Steps
+1. Reference from **Plex Libraries** Table above;
+1. Filter **Type** = '*movie*' and **Scanner** = '*Plex Movie*';
+1. Invoke **Load Movie Content** Function from Library *URL* field;
+1. Add **Runtime** column and calculate base on *Duration* field, and format result into HH:MM:SS format by removing *Date* and *AM*;
 
-- **Date** Table
+    >Text.From(#datetime(1970, 1, 1, 0, 0, 0) + #duration(0, 0, 0, [Duration]/1000))
+1. Combine PlexServer, Item Key and X-Plex-Token into **MetadatURL**;
 
-- **Year** Table
+    >= Text.Combine({PlexServer, [key], "?X-Plex-Token=",#"X-Plex-Token"})
 
-- **LastRefreshed** Table
+```css
+let
+    Source = #"Plex Library",
+    #"Filtered Rows" = Table.SelectRows(Source, each ([Type] = "movie") and ([Scanner] = "Plex Movie")),
+    #"Removed Duplicates" = Table.Distinct(#"Filtered Rows", {"URL"}),
+    #"Invoked Custom Function" = Table.AddColumn(#"Removed Duplicates", "Contents", each LoadMovieContents([URL])),
+    #"Expanded Contents" = Table.ExpandTableColumn(#"Invoked Custom Function", "Contents", {"Duration", "Bitrate", "AspectRatio", "AudioChannels", "AudioCodec", "VideoCodec", "Resolution", "FrameRate", "AudioProfile", "VideoProfile", "key", "Studio", "Title", "ContentRating", "Summary", "AudienceRating", "Year", "Tagline", "IMDBduration", "OriginallyAvailableAt", "Collection", "ViewCount", "TitleSort", "OriginalTitle"}, {"Duration", "Bitrate", "AspectRatio", "AudioChannels", "AudioCodec", "VideoCodec", "Resolution", "FrameRate", "AudioProfile", "VideoProfile", "key", "Studio", "Title", "ContentRating", "Summary", "AudienceRating", "Year", "Tagline", "IMDBduration", "OriginallyAvailableAt", "Collection", "ViewCount", "TitleSort", "OriginalTitle"}),
+    #"Removed Header Columns" = Table.RemoveColumns(#"Expanded Contents",{"Agent", "Scanner", "Language", "Hidden", "URL", "Folder"}),
+    #"Added Runtime" = Table.AddColumn(#"Removed Header Columns", "Runtime", each Text.From(#datetime(1970, 1, 1, 0, 0, 0) + #duration(0, 0, 0, [Duration]/1000))),
+    #"Replaced Errors" = Table.ReplaceErrorValues(#"Added Runtime", {{"Runtime", ""}}),
+    #"Replaced Value" = Table.ReplaceValue(#"Replaced Errors","1/1/1970 12","1/1/1970 0",Replacer.ReplaceText,{"Runtime"}),
+    #"Remove Date from Runtime" = Table.ReplaceValue(#"Replaced Value","1/1/1970 ","",Replacer.ReplaceText,{"Runtime"}),
+    #"Remove AM from Runtime" = Table.ReplaceValue(#"Remove Date from Runtime"," AM","",Replacer.ReplaceText,{"Runtime"}),
+    #"Trimmed Text" = Table.TransformColumns(#"Remove AM from Runtime",{{"Runtime", Text.Trim, type text}}),
+    #"Added Conditional Column" = Table.AddColumn(#"Trimmed Text", "Original Title", each if [OriginalTitle] = null then [Title] else [OriginalTitle]),
+    #"Inserted Year TItle" = Table.AddColumn(#"Added Conditional Column", "Year Title", each Text.Combine({Text.From([Year], "en-US"), " | ", [Original Title]}), type text),
+    #"Inserted Metadata URL" = Table.AddColumn(#"Inserted Year TItle", "MetadataURL", each Text.Combine({PlexServer, [key], "?X-Plex-Token=",#"X-Plex-Token"}), type text),
+    #"Changed Type" = Table.TransformColumnTypes(#"Inserted Metadata URL",{{"AspectRatio", Currency.Type}, {"AudioChannels", Int64.Type}, {"AudienceRating", Currency.Type}, {"Year", Int64.Type}, {"OriginallyAvailableAt", type date}, {"ViewCount", Int64.Type}, {"Duration", Int64.Type}, {"Bitrate", Int64.Type}})
+in
+    #"Changed Type"
+```
+#### 2.2 Option 2 - *Plex Movies - Python* Table
 
-### 2 *IMDB Top 250 List* Current Table
+##### Paramter
+- **X-Plex-Token** 
+- **PlexServer**
+
+##### Dependency
+- pandas
+    > pip install pandas
+
+- plexapi
+    > pip install plexapi
+
+##### Steps
+1. Get Data from Python Script below;
+1. Replace the Variables using Parameters and phase it to a Python Script;
+1. Add **Resolution** column from **Video**;
+1. Add **IMDB_URL** column using **IMDB_ID**;
+1. Change **PlexMetadata_ID**, **IMDB_ID**, **TMDB_ID**, **TVDB_ID** to `text`.
+
+##### Python Code
+    ```python
+    from plexapi.server import PlexServer
+    import requests
+    from requests.adapters import HTTPAdapter
+    from urllib3.util import Retry
+    import pandas as pd
+    
+    # Fill in your Plex server details.
+    PLEX_URL = [PlexServer] # e.g., 'http://192.168.0.1:32400' or 'https://192.168.0.1:32400'
+    PLEX_TOKEN = [X-Plex-Token]
+    
+    class InsecureHttpAdapter(HTTPAdapter):
+        """An adapter that disables SSL certification validation."""
+        
+        def cert_verify(self, *args, **kwargs):
+            return None
+    
+        def init_poolmanager(self, connections, maxsize, block=False, **pool_kwargs):
+            pool_kwargs['assert_hostname'] = False
+            super(InsecureHttpAdapter, self).init_poolmanager(connections, maxsize, block, **pool_kwargs)
+    
+    
+    def get_insecure_requests_session():
+        # Check if using HTTPS in PlexServer, and bypass SSL cerfification certification
+        session = requests.Session()
+        retry = Retry(total=3, backoff_factor=0.1, status_forcelist=[500, 502, 503, 504])
+        adapter = InsecureHttpAdapter(max_retries=retry)
+        session.mount('https://', adapter)
+        return session
+            
+    def main():
+        # Connect to Plex server.
+        session = None
+        if PLEX_URL.lower().startswith("https"):
+            session = get_insecure_requests_session()
+        
+        plex = PlexServer(PLEX_URL, PLEX_TOKEN, session=session)
+        
+        # Fetch all movies from the library and filter based on type and scanner.
+        all_sections = plex.library.sections()
+        movie_sections = [section for section in all_sections if section.type == 'movie' and section.scanner == 'Plex Movie']
+        movie_list = [movie for section in movie_sections for movie in section.all()]
+    
+        # Prepare DataFrame columns
+        columns = ["PlexMetadata ID", "Title", "Sort Title", "Original Title", "Library", "Genres", "Content Rating", "Collection", "Studio", "Director", "Cast", "Summary", "Country", "IMDB ID", "TMDB ID", "TVDB ID", "View Count", "Audience Rate", "Release Date", "Year", "Added Date", "IMDB Duration (mins)", "Duration (mins)", "Aspect Ratio", "Frame Rate","Container", "Video Codec", "Audio Codec", "Audio Channels", "Audio", "Video", "Subtitles"]
+        
+        # Create an empty DataFrame with these columns
+        df = pd.DataFrame(columns=columns, dtype=object)
+    
+        # Add movie details to the DataFrame, currently only return the first 10 records from library
+        movie_count = 0
+        for movie in movie_list:
+            if movie_count >= 10:
+                break
+            row = print_movie_details(movie)
+            df.loc[len(df)] = pd.Series(row, index=df.columns)
+            movie_count += 1
+    
+        return df
+    
+    def print_movie_details(movie):
+    
+        # Extract IMDB, TMDB, and TVDB IDs from movie info.
+        ids = {'imdb': None, 'tmdb': None, 'tvdb': None}
+        for guid_obj in movie.guids:
+            guid_str = str(guid_obj.id).lower()
+            for key in ids.keys():
+                if f'{key}://' in guid_str:
+                    ids[key] = guid_str.split(f'{key}://')[-1]
+    
+        media = movie.media[0] if movie.media else None           
+        
+        # Prepare movie details in tab-separated format.
+        row = [
+            str(movie.ratingKey),
+            str(movie.title),
+            str(movie.titleSort) if movie.titleSort else movie.title,
+            str(movie.originalTitle) if movie.originalTitle else movie.title,
+            str(movie.librarySectionTitle),
+            ', '.join(str(genre.tag) for genre in movie.genres),
+            movie.contentRating or '',
+            ', '.join(str(col.tag) for col in movie.collections) if movie.collections else '',
+            movie.studio or '',
+            ', '.join(str(director.tag) for director in movie.directors),
+            ', '.join(str(role.tag) for role in movie.roles),
+            (movie.summary.replace('\n', ' ').replace('\r', '').replace('\t', ' ')[:150] + "...") if movie.summary else '',
+            ', '.join(str(country.tag) for country in movie.countries),
+            ids['imdb'] or '',
+            ids['tmdb'] or '',
+            ids['tvdb'] or '',
+            str(movie.viewCount) if movie.viewCount else '0',
+            str(movie.audienceRating) if movie.audienceRating else '',
+            str(movie.originallyAvailableAt) if movie.originallyAvailableAt else '',
+            str(movie.year) if movie.year else '',
+            str(movie.addedAt) if movie.addedAt else '',
+            str(round(movie.duration / 60000)) if movie.duration else '',
+            str(round(media.duration / 60000)) if media and media.duration else '',
+            f"{media.aspectRatio}" if media and media.aspectRatio else '',
+            f"{media.videoFrameRate}" if media and media.videoFrameRate else '',
+            f"{media.container}" if media and media.container else '',
+            f"{media.videoCodec}" if media and media.videoCodec else '',
+            f"{media.audioCodec}" if media and media.audioCodec else '',
+            f"{media.audioChannels}" if media and media.audioChannels else '',
+            ', '.join([f"{str(stream.displayTitle)}" for part in movie.media[0].parts for stream in part.streams if stream.streamType == 2]) if movie.media and movie.media[0].parts else '',
+            ', '.join([f"{str(stream.displayTitle)}" for part in movie.media[0].parts for stream in part.streams if stream.streamType == 1]) if movie.media and movie.media[0].parts else '',
+            ', '.join([f"{str(stream.displayTitle)}" for part in movie.media[0].parts for stream in part.streams if stream.streamType == 3]) if movie.media and movie.media[0].parts else ''
+        ]
+        
+        
+        # Return the movie details as a list
+        return row
+    
+    if __name__ == "__main__":
+        result_df = main()
+    
+    result_df
+    ```
+
+#### 2.3 Option 3 - *Plex Movies - CSV* Table
+
+##### Paramter
+- **X-Plex-Token** 
+- **PlexServer**
+
+##### Dependency
+- pandas
+    > pip install pandas
+
+- plexapi
+    > pip install plexapi
+
+##### Steps
+1. Update the 3 Variable below and run the Python Script locally to export the file as csv format;
+1. Import the csv file into Power BI;
+1. Add **Resolution** column from **Video**;
+1. Add **IMDB_URL** column using **IMDB_ID**;
+1. Change **PlexMetadata_ID**, **IMDB_ID**, **TMDB_ID**, **TVDB_ID** to `text`.
+
+##### Python Code
+    ```python
+    from plexapi.server import PlexServer
+    import requests
+    from requests.adapters import HTTPAdapter
+    from urllib3.util import Retry
+    import pandas as pd
+    
+    # Fill in your Plex server details.
+    PLEX_URL = [PlexServer] # e.g., 'http://192.168.0.1:32400' or 'https://192.168.0.1:32400'
+    PLEX_TOKEN = [X-Plex-Token]
+    EXPORT_FILE = [Filename.csv] #e.g., 'Plex_movie_details.csv'
+    
+    class InsecureHttpAdapter(HTTPAdapter):
+        """An adapter that disables SSL certification validation."""
+        
+        def cert_verify(self, *args, **kwargs):
+            return None
+    
+        def init_poolmanager(self, connections, maxsize, block=False, **pool_kwargs):
+            pool_kwargs['assert_hostname'] = False
+            super(InsecureHttpAdapter, self).init_poolmanager(connections, maxsize, block, **pool_kwargs)
+    
+    
+    def get_insecure_requests_session():
+        # Check if using HTTPS in PlexServer, and bypass SSL cerfification certification
+        session = requests.Session()
+        retry = Retry(total=3, backoff_factor=0.1, status_forcelist=[500, 502, 503, 504])
+        adapter = InsecureHttpAdapter(max_retries=retry)
+        session.mount('https://', adapter)
+        return session
+            
+    def main():
+        # Connect to Plex server.
+        session = None
+        if PLEX_URL.lower().startswith("https"):
+            session = get_insecure_requests_session()
+        
+        plex = PlexServer(PLEX_URL, PLEX_TOKEN, session=session)
+        
+        # Fetch all movies from the library and filter based on type and scanner.
+        all_sections = plex.library.sections()
+        movie_sections = [section for section in all_sections if section.type == 'movie' and section.scanner == 'Plex Movie']
+        movie_list = [movie for section in movie_sections for movie in section.all()]
+    
+        # Prepare DataFrame columns
+        columns = ["PlexMetadata ID", "Title", "Sort Title", "Original Title", "Library", "Genres", "Content Rating", "Collection", "Studio", "Director", "Cast", "Summary", "Country", "IMDB ID", "TMDB ID", "TVDB ID", "View Count", "Audience Rate", "Release Date", "Year", "Added Date", "IMDB Duration (mins)", "Duration (mins)", "Aspect Ratio", "Frame Rate","Container", "Video Codec", "Audio Codec", "Audio Channels", "Audio", "Video", "Subtitles"]
+        
+        # Create an empty DataFrame with these columns
+        df = pd.DataFrame(columns=columns, dtype=object)
+    
+        # Add movie details to the DataFrame, currently only return the first 10 records from library
+        movie_count = 0
+        for movie in movie_list:
+            if movie_count >= 10:
+                break
+            row = print_movie_details(movie)
+            df.loc[len(df)] = pd.Series(row, index=df.columns)
+            movie_count += 1
+    
+        return df
+    
+    def print_movie_details(movie):
+    
+        # Extract IMDB, TMDB, and TVDB IDs from movie info.
+        ids = {'imdb': None, 'tmdb': None, 'tvdb': None}
+        for guid_obj in movie.guids:
+            guid_str = str(guid_obj.id).lower()
+            for key in ids.keys():
+                if f'{key}://' in guid_str:
+                    ids[key] = guid_str.split(f'{key}://')[-1]
+    
+        media = movie.media[0] if movie.media else None           
+        
+        # Prepare movie details in tab-separated format.
+        row = [
+            str(movie.ratingKey),
+            str(movie.title),
+            str(movie.titleSort) if movie.titleSort else movie.title,
+            str(movie.originalTitle) if movie.originalTitle else movie.title,
+            str(movie.librarySectionTitle),
+            ', '.join(str(genre.tag) for genre in movie.genres),
+            movie.contentRating or '',
+            ', '.join(str(col.tag) for col in movie.collections) if movie.collections else '',
+            movie.studio or '',
+            ', '.join(str(director.tag) for director in movie.directors),
+            ', '.join(str(role.tag) for role in movie.roles),
+            (movie.summary.replace('\n', ' ').replace('\r', '').replace('\t', ' ')[:150] + "...") if movie.summary else '',
+            ', '.join(str(country.tag) for country in movie.countries),
+            ids['imdb'] or '',
+            ids['tmdb'] or '',
+            ids['tvdb'] or '',
+            str(movie.viewCount) if movie.viewCount else '0',
+            str(movie.audienceRating) if movie.audienceRating else '',
+            str(movie.originallyAvailableAt) if movie.originallyAvailableAt else '',
+            str(movie.year) if movie.year else '',
+            str(movie.addedAt) if movie.addedAt else '',
+            str(round(movie.duration / 60000)) if movie.duration else '',
+            str(round(media.duration / 60000)) if media and media.duration else '',
+            f"{media.aspectRatio}" if media and media.aspectRatio else '',
+            f"{media.videoFrameRate}" if media and media.videoFrameRate else '',
+            f"{media.container}" if media and media.container else '',
+            f"{media.videoCodec}" if media and media.videoCodec else '',
+            f"{media.audioCodec}" if media and media.audioCodec else '',
+            f"{media.audioChannels}" if media and media.audioChannels else '',
+            ', '.join([f"{str(stream.displayTitle)}" for part in movie.media[0].parts for stream in part.streams if stream.streamType == 2]) if movie.media and movie.media[0].parts else '',
+            ', '.join([f"{str(stream.displayTitle)}" for part in movie.media[0].parts for stream in part.streams if stream.streamType == 1]) if movie.media and movie.media[0].parts else '',
+            ', '.join([f"{str(stream.displayTitle)}" for part in movie.media[0].parts for stream in part.streams if stream.streamType == 3]) if movie.media and movie.media[0].parts else ''
+        ]
+        
+        
+        # Return the movie details as a list
+        return row
+    
+    if __name__ == "__main__":
+        result_df = main()
+        result_df.to_csv(EXPORT_FILE, index=False, encoding='utf-8')
+    
+    ```
+
+### *IMDB Top 250 List* Current Table
 
 #### Data Sources
  [https://www.imdb.com/chart/top](https://www.imdb.com/chart/top)
@@ -260,6 +642,9 @@ in
 1. Run the Python Script to load the data
     1. From Pollmaster's list, find all the lists which start with **Oscar Highlights** and generate the URLs list
     1. Loop through URLs list and Run the *extract_movie_details* function to extract movie details
+
+##### Python Code
+
     ```python
     import pandas as pd
     import numpy as np
@@ -356,62 +741,6 @@ in
     #"Sorted Rows"
 ```
 
-### 5 *Plex Libraries* Table
-
-##### Parameter
-
-- **X-Plex-Token**: [Finding an authentication token / X-Plex-Token](https://support.plex.tv/articles/204059436-finding-an-authentication-token-x-plex-token/) 
-
-- **PlexServer**: Plex Server IP Address with Port Number e.g., `http://your_ip_address:32400` or `https://your_ip_address:32400`
-
-#### Steps
-1. Combine IP and X-Plex-Token into a Plex Libraries List URL, and retrive all libraries ('**Directory**');
-    >Xml.Tables(Web.Contents(Text.Combine({PlexServer,"/library/sections?X-Plex-Token=",#"X-Plex-Token"})))
-1. Drill down *Directory* into a table;
-1. Expand *Location* to Folder Path;
-1. Combine IP and X-Plex-Token into Plex Content Library URL;
-    >Uri.Combine(Text.Combine({IP,":32400/"}) as text, Text.Combine({"library/sections/",Text.From([#"Attribute:key"]),"/all?X-Plex-Token=",#"X-Plex-Token"}) as text)
-1. Split Location into columns and Parse as SMB format
-
-#### Power Query Sample Script
-```css
-let
-    Source = Xml.Tables(Web.Contents(Text.Combine({PlexServer,"/library/sections?X-Plex-Token=",#"X-Plex-Token"}))),
-    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Attribute:size", Int64.Type}, {"Attribute:allowSync", Int64.Type}, {"Attribute:title1", type text}}),
-    Directory = #"Changed Type"{0}[Directory],
-    #"Removed Other Columns" = Table.SelectColumns(Directory,{"Location", "Attribute:art", "Attribute:composite", "Attribute:key", "Attribute:type", "Attribute:title", "Attribute:agent", "Attribute:scanner", "Attribute:language", "Attribute:hidden"}),
-    #"Expanded Location" = Table.ExpandTableColumn(#"Removed Other Columns", "Location", {"Attribute:path"}, {"Location.Attribute:path"}),
-    #"Added Custom" = Table.AddColumn(#"Expanded Location", "URL", each Uri.Combine(
-    Text.Combine({IP,":32400/"}) as text,
-    Text.Combine({"library/sections/",Text.From([#"Attribute:key"]),"/all?X-Plex-Token=",#"X-Plex-Token"}) as text)
-as text),
-    #"Reordered Columns" = Table.ReorderColumns(#"Added Custom",{"Attribute:art", "Attribute:key", "Attribute:type", "Attribute:title", "Attribute:agent", "Attribute:scanner", "Attribute:language", "Attribute:hidden", "Location.Attribute:path", "URL"}),
-    #"Split Column by Delimiter" = Table.SplitColumn(#"Reordered Columns", "Location.Attribute:path", Splitter.SplitTextByDelimiter("/", QuoteStyle.Csv), {"Location.Attribute:path.1", "Location.Attribute:path.2", "Location.Attribute:path.3", "Location.Attribute:path.4", "Location.Attribute:path.5", "Location.Attribute:path.6"}),
-    #"Added Folder Column" = Table.AddColumn(#"Split Column by Delimiter", "Folder", each Text.From("\\") & IP & Text.From("\") & Text.Combine({[#"Location.Attribute:path.4"],[#"Location.Attribute:path.5"],[#"Location.Attribute:path.6"]},"\")),
-    #"Removed Columns" = Table.RemoveColumns(#"Added Folder Column",{"Location.Attribute:path.1", "Location.Attribute:path.2", "Location.Attribute:path.3", "Location.Attribute:path.4", "Location.Attribute:path.5", "Location.Attribute:path.6", "Attribute:art"}),
-    #"Renamed Columns" = Table.RenameColumns(#"Removed Columns",{{"Attribute:key", "Key"}, {"Attribute:type", "Type"}, {"Attribute:title", "Library"}, {"Attribute:agent", "Agent"}, {"Attribute:scanner", "Scanner"}, {"Attribute:language", "Language"}, {"Attribute:hidden", "Hidden"}})
-in
-    #"Renamed Columns"
-```
-
-### 4 *Plex Movies Content* Table
-
-#### Dependency
-
-- **Plex Libraries** Table
-
-- **Load Movie Content** Custom Function
-
-#### Steps
-1. Reference from **Plex Libraries** Table above;
-1. Filter **Type** = '*movie*' and **Scanner** = '*Plex Movie*';
-1. Invoke **Load Movie Content** Function from Library *URL* field;
-1. Add **Runtime** column and calculate base on *Duration* field, and format result into HH:MM:SS format by removing *Date* and *AM*;
-
-    >Text.From(#datetime(1970, 1, 1, 0, 0, 0) + #duration(0, 0, 0, [Duration]/1000))
-1. Combine IP, Item Key and X-Plex-Token into **MetadatURL**;
-
-    >Table.AddColumn(#"Trimmed Text", "MetadataURL", each Text.Combine({"http://",IP,":32400", [key], "?X-Plex-Token=",#"X-Plex-Token"}), type text)
 
 ----------
 
@@ -425,6 +754,9 @@ in
 
 ## Reference
 
+
+----------
+
 ### Power Query Reference
 - [Learn more about Power Query functions](https://docs.microsoft.com/powerquery-m/understanding-power-query-m-functions)
 - [Fuzzy Matching](https://learn.microsoft.com/en-us/power-query/fuzzy-matching)
@@ -435,7 +767,7 @@ in
 - [Plex Media Server API Documentation](https://www.plexopedia.com/plex-media-server/api/)
 - [Plex Media Server URL Command](https://support.plex.tv/articles/201638786-plex-media-server-url-commands/)
  
-    - List Base Server Capabilities: http://[*IP*]:32400/?X-Plex-Token=[*X-Plex-Token*]
-    - List Defined Libraries: http://[*IP*]:32400/library/sections/?X-Plex-Token=[*X-Plex-Token*]
-    - List Library Contents: http://[*IP*]:32400/library/sections/[*Movies Library ID*]/all?X-Plex-Token=[*X-Plex-Token*]
-    - List Detail of an Item: http://[*IP*]:32400/library/metadata/[*Item Key ID*]?X-Plex-Token=[*X-Plex-Token*]
+    - List Base Server Capabilities: [PlexServer]/?X-Plex-Token=[*X-Plex-Token*]
+    - List Defined Libraries: [PlexServer]/library/sections/?X-Plex-Token=[*X-Plex-Token*]
+    - List Library Contents: [PlexServer]/library/sections/{*Movies Library Key*}/all?X-Plex-Token=[*X-Plex-Token*]
+    - List Detail of an Item: [PlexServer]/library/metadata/{*Item ratingKey*}?X-Plex-Token=[*X-Plex-Token*]
