@@ -21,7 +21,6 @@ keyword: [IMDB, Plex API, parameter, web connector, Python, pandas, bs4, custom 
 |**StarDate**  | Start Date for the report| Required, Type as `Date`  |    |
 |**X-Plex-Token**  |token key to access Plex Server endpoints or XML|Required, Type as `Text`  |[Finding an authentication token / X-Plex-Token](https://support.plex.tv/articles/204059436-finding-an-authentication-token-x-plex-token/)  | 
 |**PlexServer**  |Plex Server IP Address with Port Number e.g., `http://your_ip_address:32400` or `https://your_ip_address:32400`|Required, Type as `Text`  |    |
-|
 
 ----------
 
@@ -49,7 +48,7 @@ There are couple of options to load the movie contents from Plex Server:
     
     > Movie MetaData: [PlexServer]/library/metadata/{ratingKey}?X-Plex-Token=[X-Plex-Token]
 
-1. Load data using Python [PlexAPI](https://pypi.org/project/PlexAPI/) [Project GitHu](https://github.com/pkkid/python-plexapi), which is **unofficial** Python bindings for the Plex API; 
+1. Load data using Python [PlexAPI](https://pypi.org/project/PlexAPI/) [Project GitHub](https://github.com/pkkid/python-plexapi), which is **unofficial** Python bindings for the Plex API; 
 
 1. Run the Python job using [PlexAPI](https://pypi.org/project/PlexAPI/) above and export result in csv file, then use it as datasource in Power BI.
 
@@ -60,7 +59,6 @@ Here below is the Pros / Cons for each options:
 |Option 1    |Load data from Plex Server using Plex API directly  |- Direct access: Bypasses the need for any third-party libraries or tools. <br/>- Real-time data: Fetches the most up-to-date data directly from the server.  |- More complex setup: Requires manual handling of HTTP requests and parsing API responses.<br/> - Some metadata, e.g. IMDB_ID, Audio, Video, Subtitles are stored in Movie Metadata not in Library Section, need a seperate custom function to fetch data from each item|
 |Option 2    |Load data using Python PlexAPI library in python script  |- Easier implementation: The library simplifies interactions with the Plex API.<br/>- Better error handling: The library is more likely to handle errors and edge cases gracefully.<br/>- Community support: Updates to the library will accommodate changes in the Plex API.  |- Dependency on external library: Need to ensure the library stays up-to-date and compatible with system.<br/>- Slower execution: Using a library cause slightly slower compared to direct API calls, depending on its implementation.  |
 |Option 3    |Use Python PlexAPI and export result in csv file, then use it as data source in Power BI  |- Separation of concerns: Data extraction and processing are separated, making it easier to manage and troubleshoot.<br/>- CSV compatibility: CSV files can be easily used by various tools and platforms, providing flexibility in data analysis and visualization.  |- Not real-time: The data will only be as recent as the last time you exported the CSV file.<br/>- Additional steps: Exporting to a CSV file and importing into Power BI adds extra overhead to workflow.<br/>- Potential storage issues: Depending on the size of the dataset, you may face storage limitations or performance issues when dealing with large CSV files.  |
-|
 
 Consider about the volumn of Plex Library as well as the required columns, I am using Option 3 as primary datasource in the sample, but keep the Queries for Option 1 and Option 2 (set limit to 20 records) in the PBIX for reference.
 
@@ -73,11 +71,11 @@ Consider about the volumn of Plex Library as well as the required columns, I am 
 
 ##### Steps
 1. Combine IP and X-Plex-Token into a Plex Libraries List URL, and retrive all libraries ('**Directory**');
-    >Xml.Tables(Web.Contents(Text.Combine({PlexServer,"/library/sections?X-Plex-Token=",#"X-Plex-Token"})))
+    > = Xml.Tables(Web.Contents(Text.Combine({PlexServer,"/library/sections?X-Plex-Token=",#"X-Plex-Token"})))
 1. Drill down *Directory* into a table;
 1. Expand *Location* to Folder Path;
 1. Combine IP and X-Plex-Token into Plex Content Library URL;
-    >Uri.Combine(Text.Combine({IP,":32400/"}) as text, Text.Combine({"library/sections/",Text.From([#"Attribute:key"]),"/all?X-Plex-Token=",#"X-Plex-Token"}) as text)
+    > = Uri.Combine(Text.Combine({IP,":32400/"}) as text, Text.Combine({"library/sections/",Text.From([#"Attribute:key"]),"/all?X-Plex-Token=",#"X-Plex-Token"}) as text)
 1. Split Location into columns and Parse as SMB File Folder format
 
 ##### Power Query Sample Script
@@ -108,7 +106,7 @@ NOTE: it only returns result from [Library Section](https://www.plexopedia.com/p
 ###### Parameter
 
 - **X-Plex-Token**; 
-- **LibraryURL**: Required, Format like `[PLEX_URL]/library/sections/{key}/all?X-Plex-Token=[PLEX_TOKEN]` (can be copied from **Plex Libraries** Table above)
+- **LibraryURL**: Required, Format like `[PlexServer]/library/sections/{key}/all?X-Plex-Token=[X-Plex-Token]` (can be copied from **Plex Libraries** Table above)
 
 ###### Steps
 
@@ -148,10 +146,10 @@ in
 1. Invoke **Load Movie Content** Function from Library *URL* field;
 1. Add **Runtime** column and calculate base on *Duration* field, and format result into HH:MM:SS format by removing *Date* and *AM*;
 
-    >Text.From(#datetime(1970, 1, 1, 0, 0, 0) + #duration(0, 0, 0, [Duration]/1000))
+    > = Text.From(#datetime(1970, 1, 1, 0, 0, 0) + #duration(0, 0, 0, [Duration]/1000))
 1. Combine PlexServer, Item Key and X-Plex-Token into **MetadatURL**;
 
-    >= Text.Combine({PlexServer, [key], "?X-Plex-Token=",#"X-Plex-Token"})
+    > = Text.Combine({PlexServer, [key], "?X-Plex-Token=",#"X-Plex-Token"})
 
 ```css
 let
