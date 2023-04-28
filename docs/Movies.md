@@ -1,7 +1,7 @@
 ---
 title: Movie collections analysis
 author: Johnney Cao
-date updated: 2023-4-13
+date updated: 2023-4-27
 keyword: [IMDB, Plex API, parameter, web connector, Python, pandas, bs4, custom function, Image URL, Web URL, html color, table reference, conditional format]
 ---
 
@@ -26,7 +26,7 @@ keyword: [IMDB, Plex API, parameter, web connector, Python, pandas, bs4, custom 
 
 ## Data Tables
 
-### 1 Basic Tables
+### 1. Basic Tables
 
 #### Tables 
 
@@ -36,7 +36,7 @@ keyword: [IMDB, Plex API, parameter, web connector, Python, pandas, bs4, custom 
 
 - **LastRefreshed** Table
 
-### 2 Plex Tables
+### 2. Plex Tables
 
 There are couple of options to load the movie contents from Plex Server:
 
@@ -62,7 +62,7 @@ Here below is the Pros / Cons for each options:
 
 Consider about the volumn of Plex Library as well as the required columns, I am using Option 3 as primary datasource in the sample, but keep the Queries for Option 1 and Option 2 (set limit to 20 records) in the PBIX for reference.
 
-#### 2.1.1 Option 1 - *Plex Libraries* Table
+#### 2.1. Option 1 - *Plex Libraries* Table
 
 ##### Parameter
 
@@ -72,36 +72,36 @@ Consider about the volumn of Plex Library as well as the required columns, I am 
 ##### Steps
 1. Combine IP and X-Plex-Token into a Plex Libraries List URL, and retrive all libraries ('**Directory**');
     > = Xml.Tables(Web.Contents(Text.Combine({PlexServer,"/library/sections?X-Plex-Token=",#"X-Plex-Token"})))
-1. Drill down *Directory* into a table;
-1. Expand *Location* to Folder Path;
+1. Drill down **Directory** into a table;
+1. Expand **Location** to Folder Path;
 1. Combine IP and X-Plex-Token into Plex Content Library URL;
     > = Uri.Combine(Text.Combine({IP,":32400/"}) as text, Text.Combine({"library/sections/",Text.From([#"Attribute:key"]),"/all?X-Plex-Token=",#"X-Plex-Token"}) as text)
 1. Split Location into columns and Parse as SMB File Folder format
 
 ##### Power Query Sample Script
 ```css
-let
-    Source = Xml.Tables(Web.Contents(Text.Combine({PlexServer,"/library/sections?X-Plex-Token=",#"X-Plex-Token"}))),
-    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Attribute:size", Int64.Type}, {"Attribute:allowSync", Int64.Type}, {"Attribute:title1", type text}}),
-    Directory = #"Changed Type"{0}[Directory],
-    #"Removed Other Columns" = Table.SelectColumns(Directory,{"Location", "Attribute:art", "Attribute:composite", "Attribute:key", "Attribute:type", "Attribute:title", "Attribute:agent", "Attribute:scanner", "Attribute:language", "Attribute:hidden"}),
-    #"Expanded Location" = Table.ExpandTableColumn(#"Removed Other Columns", "Location", {"Attribute:path"}, {"Location.Attribute:path"}),
-    #"Added Custom" = Table.AddColumn(#"Expanded Location", "URL", each Uri.Combine(
-    PlexServer,
-    Text.Combine({"/library/sections/",Text.From([#"Attribute:key"]),"/all?X-Plex-Token=",#"X-Plex-Token"}) as text)
-as text),
-    #"Reordered Columns" = Table.ReorderColumns(#"Added Custom",{"Attribute:art", "Attribute:key", "Attribute:type", "Attribute:title", "Attribute:agent", "Attribute:scanner", "Attribute:language", "Attribute:hidden", "Location.Attribute:path", "URL"}),
-    #"Split Column by Delimiter" = Table.SplitColumn(#"Reordered Columns", "Location.Attribute:path", Splitter.SplitTextByDelimiter("/", QuoteStyle.Csv), {"Location.Attribute:path.1", "Location.Attribute:path.2", "Location.Attribute:path.3", "Location.Attribute:path.4", "Location.Attribute:path.5", "Location.Attribute:path.6"}),
-    #"Inserted Folder Name" = Table.AddColumn(#"Split Column by Delimiter", "Folder", each Text.Combine({Text.BetweenDelimiters(PlexServer, "http://", ":32400"), "\", [#"Location.Attribute:path.4"], "\", [#"Location.Attribute:path.5"]}), type text),
-    #"Clean Up Columns" = Table.RemoveColumns(#"Inserted Folder Name",{"Location.Attribute:path.1", "Location.Attribute:path.2", "Location.Attribute:path.3", "Location.Attribute:path.4", "Location.Attribute:path.5", "Location.Attribute:path.6", "Attribute:art"}),
-    #"Renamed Columns" = Table.RenameColumns(#"Clean Up Columns",{{"Attribute:key", "Key"}, {"Attribute:type", "Type"}, {"Attribute:title", "Library"}, {"Attribute:agent", "Agent"}, {"Attribute:scanner", "Scanner"}, {"Attribute:language", "Language"}, {"Attribute:hidden", "Hidden"}})
-in
-    #"Renamed Columns"
+    let
+        Source = Xml.Tables(Web.Contents(Text.Combine({PlexServer,"/library/sections?X-Plex-Token=",#"X-Plex-Token"}))),
+        #"Changed Type" = Table.TransformColumnTypes(Source,{{"Attribute:size", Int64.Type}, {"Attribute:allowSync", Int64.Type}, {"Attribute:title1", type text}}),
+        Directory = #"Changed Type"{0}[Directory],
+        #"Removed Other Columns" = Table.SelectColumns(Directory,{"Location", "Attribute:art", "Attribute:composite", "Attribute:key", "Attribute:type", "Attribute:title", "Attribute:agent", "Attribute:scanner", "Attribute:language", "Attribute:hidden"}),
+        #"Expanded Location" = Table.ExpandTableColumn(#"Removed Other Columns", "Location", {"Attribute:path"}, {"Location.Attribute:path"}),
+        #"Added Custom" = Table.AddColumn(#"Expanded Location", "URL", each Uri.Combine(
+        PlexServer,
+        Text.Combine({"/library/sections/",Text.From([#"Attribute:key"]),"/all?X-Plex-Token=",#"X-Plex-Token"}) as text)
+    as text),
+        #"Reordered Columns" = Table.ReorderColumns(#"Added Custom",{"Attribute:art", "Attribute:key", "Attribute:type", "Attribute:title", "Attribute:agent", "Attribute:scanner", "Attribute:language", "Attribute:hidden", "Location.Attribute:path", "URL"}),
+        #"Split Column by Delimiter" = Table.SplitColumn(#"Reordered Columns", "Location.Attribute:path", Splitter.SplitTextByDelimiter("/", QuoteStyle.Csv), {"Location.Attribute:path.1", "Location.Attribute:path.2", "Location.Attribute:path.3", "Location.Attribute:path.4", "Location.Attribute:path.5", "Location.Attribute:path.6"}),
+        #"Inserted Folder Name" = Table.AddColumn(#"Split Column by Delimiter", "Folder", each Text.Combine({Text.BetweenDelimiters(PlexServer, "http://", ":32400"), "\", [#"Location.Attribute:path.4"], "\", [#"Location.Attribute:path.5"]}), type text),
+        #"Clean Up Columns" = Table.RemoveColumns(#"Inserted Folder Name",{"Location.Attribute:path.1", "Location.Attribute:path.2", "Location.Attribute:path.3", "Location.Attribute:path.4", "Location.Attribute:path.5", "Location.Attribute:path.6", "Attribute:art"}),
+        #"Renamed Columns" = Table.RenameColumns(#"Clean Up Columns",{{"Attribute:key", "Key"}, {"Attribute:type", "Type"}, {"Attribute:title", "Library"}, {"Attribute:agent", "Agent"}, {"Attribute:scanner", "Scanner"}, {"Attribute:language", "Language"}, {"Attribute:hidden", "Hidden"}})
+    in
+        #"Renamed Columns"
 ```
 
-#### 2.1.2 Option 1 - Custom Function - *Load Movie Contents*
+#### 2.1. Option 1 - *Load Movie Contents* Function
 
-NOTE: it only returns result from [Library Section](https://www.plexopedia.com/plex-media-server/api/library/movies/) not Movie Metadata, therefore no detail about **Audio**, **Video**, **Subtitles**, **IMDB_ID**, **TMDB_ID** or **TVDB_ID** information.
+NOTE: it only returns result from [Library Section](https://www.plexopedia.com/plex-media-server/api/library/movies/) not Movie Metadata, therefore no information about **Audio**, **Video**, **Subtitles**, **IMDB_ID**, **TMDB_ID** or **TVDB_ID**.
 
 ###### Parameter
 
@@ -110,35 +110,35 @@ NOTE: it only returns result from [Library Section](https://www.plexopedia.com/p
 
 ###### Steps
 
-1. Retrieve library detail from **LibraryURL** Parameter
-1. Expand **Video** into columns, and expand Video.Media and Video.Collection information
+1. Retrieve library detail from **LibraryURL** Parameter;
+1. Expand **Video** into columns, and expand Video.Media and Video.Collection information.
 
-#### Power Query Sample Script
+##### Power Query Sample Script
 ```css
-let
-    Source = (LibraryURL as any) => let
-    Source = Xml.Tables(Web.Contents(LibraryURL)),
-    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Attribute:size", Int64.Type}, {"Attribute:allowSync", Int64.Type}, {"Attribute:title1", type text}}),
-    #"Removed Other Columns" = Table.SelectColumns(#"Changed Type",{"Video", "Attribute:librarySectionTitle"}),
-    #"Reordered Columns" = Table.ReorderColumns(#"Removed Other Columns",{"Attribute:librarySectionTitle", "Video"}),
-    #"Expanded Video" = Table.ExpandTableColumn(#"Reordered Columns", "Video", {"Media", "Attribute:key", "Attribute:studio", "Attribute:type", "Attribute:title", "Attribute:contentRating", "Attribute:summary", "Attribute:audienceRating", "Attribute:year", "Attribute:tagline", "Attribute:duration", "Attribute:originallyAvailableAt", "Attribute:addedAt", "Attribute:updatedAt", "Collection", "Attribute:viewCount", "Attribute:chapterSource", "Attribute:titleSort", "Attribute:originalTitle"}, {"Video.Media", "Video.Attribute:key", "Video.Attribute:studio", "Video.Attribute:type", "Video.Attribute:title", "Video.Attribute:contentRating", "Video.Attribute:summary", "Video.Attribute:audienceRating", "Video.Attribute:year", "Video.Attribute:tagline", "Video.Attribute:duration", "Video.Attribute:originallyAvailableAt", "Video.Attribute:addedAt", "Video.Attribute:updatedAt", "Video.Collection", "Video.Attribute:viewCount", "Video.Attribute:chapterSource", "Video.Attribute:titleSort", "Video.Attribute:originalTitle"}),
-    #"Expanded Video.Media" = Table.ExpandTableColumn(#"Expanded Video", "Video.Media", {"Attribute:duration", "Attribute:bitrate", "Attribute:aspectRatio", "Attribute:audioChannels", "Attribute:audioCodec", "Attribute:videoCodec", "Attribute:videoResolution", "Attribute:videoFrameRate", "Attribute:audioProfile", "Attribute:videoProfile"}, {"Video.Media.Attribute:duration", "Video.Media.Attribute:bitrate", "Video.Media.Attribute:aspectRatio", "Video.Media.Attribute:audioChannels", "Video.Media.Attribute:audioCodec", "Video.Media.Attribute:videoCodec", "Video.Media.Attribute:videoResolution", "Video.Media.Attribute:videoFrameRate", "Video.Media.Attribute:audioProfile", "Video.Media.Attribute:videoProfile"}),
-    #"Expanded Video.Collection" = Table.ExpandTableColumn(#"Expanded Video.Media", "Video.Collection", {"Attribute:tag"}, {"Video.Collection.Attribute:tag"}),
-    #"Renamed Columns" = Table.RenameColumns(#"Expanded Video.Collection",{{"Attribute:librarySectionTitle", "Library"}, {"Video.Media.Attribute:duration", "Duration"}, {"Video.Media.Attribute:videoResolution", "Resolution"}, {"Video.Media.Attribute:videoFrameRate", "FrameRate"}, {"Video.Media.Attribute:audioProfile", "AudioProfile"}, {"Video.Media.Attribute:videoProfile", "VideoProfile"}, {"Video.Attribute:key", "key"}, {"Video.Attribute:studio", "Studio"}, {"Video.Attribute:type", "Type"}, {"Video.Attribute:title", "Title"}, {"Video.Attribute:contentRating", "ContentRating"}, {"Video.Attribute:summary", "Summary"}, {"Video.Attribute:audienceRating", "AudienceRating"}, {"Video.Attribute:year", "Year"}, {"Video.Attribute:tagline", "Tagline"}, {"Video.Attribute:duration", "IMDBduration"}, {"Video.Attribute:originallyAvailableAt", "OriginallyAvailableAt"}, {"Video.Collection.Attribute:tag", "Collection"}, {"Video.Attribute:titleSort", "TitleSort"}, {"Video.Attribute:originalTitle", "OriginalTitle"}, {"Video.Media.Attribute:bitrate", "Bitrate"}, {"Video.Media.Attribute:aspectRatio", "AspectRatio"}, {"Video.Media.Attribute:audioChannels", "AudioChannels"}, {"Video.Media.Attribute:audioCodec", "AudioCodec"}, {"Video.Media.Attribute:videoCodec", "VideoCodec"}, {"Video.Attribute:viewCount", "ViewCount"}}),
-    #"Removed Columns" = Table.RemoveColumns(#"Renamed Columns",{"Video.Attribute:addedAt", "Video.Attribute:updatedAt", "Video.Attribute:chapterSource"}),
-    #"Changed Type1" = Table.TransformColumnTypes(#"Removed Columns",{{"Library", type text}, {"Duration", Int64.Type}, {"Resolution", type text}, {"FrameRate", type text}, {"AudioProfile", type text}, {"VideoProfile", type text}, {"key", type text}, {"Studio", type text}, {"Type", type text}, {"Title", type text}, {"ContentRating", type text}, {"Summary", type text}, {"AudienceRating", type number}, {"Year", Int64.Type}, {"Tagline", type text}, {"IMDBduration", Int64.Type}, {"OriginallyAvailableAt", type date}, {"Collection", type text}, {"ViewCount", Int64.Type}, {"TitleSort", type text}, {"OriginalTitle", type text}})
-in
-    #"Changed Type1"
-in
-    Source
+    let
+        Source = (LibraryURL as any) => let
+        Source = Xml.Tables(Web.Contents(LibraryURL)),
+        #"Changed Type" = Table.TransformColumnTypes(Source,{{"Attribute:size", Int64.Type}, {"Attribute:allowSync", Int64.Type}, {"Attribute:title1", type text}}),
+        #"Removed Other Columns" = Table.SelectColumns(#"Changed Type",{"Video", "Attribute:librarySectionTitle"}),
+        #"Reordered Columns" = Table.ReorderColumns(#"Removed Other Columns",{"Attribute:librarySectionTitle", "Video"}),
+        #"Expanded Video" = Table.ExpandTableColumn(#"Reordered Columns", "Video", {"Media", "Attribute:key", "Attribute:studio", "Attribute:type", "Attribute:title", "Attribute:contentRating", "Attribute:summary", "Attribute:audienceRating", "Attribute:year", "Attribute:tagline", "Attribute:duration", "Attribute:originallyAvailableAt", "Attribute:addedAt", "Attribute:updatedAt", "Collection", "Attribute:viewCount", "Attribute:chapterSource", "Attribute:titleSort", "Attribute:originalTitle"}, {"Video.Media", "Video.Attribute:key", "Video.Attribute:studio", "Video.Attribute:type", "Video.Attribute:title", "Video.Attribute:contentRating", "Video.Attribute:summary", "Video.Attribute:audienceRating", "Video.Attribute:year", "Video.Attribute:tagline", "Video.Attribute:duration", "Video.Attribute:originallyAvailableAt", "Video.Attribute:addedAt", "Video.Attribute:updatedAt", "Video.Collection", "Video.Attribute:viewCount", "Video.Attribute:chapterSource", "Video.Attribute:titleSort", "Video.Attribute:originalTitle"}),
+        #"Expanded Video.Media" = Table.ExpandTableColumn(#"Expanded Video", "Video.Media", {"Attribute:duration", "Attribute:bitrate", "Attribute:aspectRatio", "Attribute:audioChannels", "Attribute:audioCodec", "Attribute:videoCodec", "Attribute:videoResolution", "Attribute:videoFrameRate", "Attribute:audioProfile", "Attribute:videoProfile"}, {"Video.Media.Attribute:duration", "Video.Media.Attribute:bitrate", "Video.Media.Attribute:aspectRatio", "Video.Media.Attribute:audioChannels", "Video.Media.Attribute:audioCodec", "Video.Media.Attribute:videoCodec", "Video.Media.Attribute:videoResolution", "Video.Media.Attribute:videoFrameRate", "Video.Media.Attribute:audioProfile", "Video.Media.Attribute:videoProfile"}),
+        #"Expanded Video.Collection" = Table.ExpandTableColumn(#"Expanded Video.Media", "Video.Collection", {"Attribute:tag"}, {"Video.Collection.Attribute:tag"}),
+        #"Renamed Columns" = Table.RenameColumns(#"Expanded Video.Collection",{{"Attribute:librarySectionTitle", "Library"}, {"Video.Media.Attribute:duration", "Duration"}, {"Video.Media.Attribute:videoResolution", "Resolution"}, {"Video.Media.Attribute:videoFrameRate", "FrameRate"}, {"Video.Media.Attribute:audioProfile", "AudioProfile"}, {"Video.Media.Attribute:videoProfile", "VideoProfile"}, {"Video.Attribute:key", "key"}, {"Video.Attribute:studio", "Studio"}, {"Video.Attribute:type", "Type"}, {"Video.Attribute:title", "Title"}, {"Video.Attribute:contentRating", "ContentRating"}, {"Video.Attribute:summary", "Summary"}, {"Video.Attribute:audienceRating", "AudienceRating"}, {"Video.Attribute:year", "Year"}, {"Video.Attribute:tagline", "Tagline"}, {"Video.Attribute:duration", "IMDBduration"}, {"Video.Attribute:originallyAvailableAt", "OriginallyAvailableAt"}, {"Video.Collection.Attribute:tag", "Collection"}, {"Video.Attribute:titleSort", "TitleSort"}, {"Video.Attribute:originalTitle", "OriginalTitle"}, {"Video.Media.Attribute:bitrate", "Bitrate"}, {"Video.Media.Attribute:aspectRatio", "AspectRatio"}, {"Video.Media.Attribute:audioChannels", "AudioChannels"}, {"Video.Media.Attribute:audioCodec", "AudioCodec"}, {"Video.Media.Attribute:videoCodec", "VideoCodec"}, {"Video.Attribute:viewCount", "ViewCount"}}),
+        #"Removed Columns" = Table.RemoveColumns(#"Renamed Columns",{"Video.Attribute:addedAt", "Video.Attribute:updatedAt", "Video.Attribute:chapterSource"}),
+        #"Changed Type1" = Table.TransformColumnTypes(#"Removed Columns",{{"Library", type text}, {"Duration", Int64.Type}, {"Resolution", type text}, {"FrameRate", type text}, {"AudioProfile", type text}, {"VideoProfile", type text}, {"key", type text}, {"Studio", type text}, {"Type", type text}, {"Title", type text}, {"ContentRating", type text}, {"Summary", type text}, {"AudienceRating", type number}, {"Year", Int64.Type}, {"Tagline", type text}, {"IMDBduration", Int64.Type}, {"OriginallyAvailableAt", type date}, {"Collection", type text}, {"ViewCount", Int64.Type}, {"TitleSort", type text}, {"OriginalTitle", type text}})
+    in
+        #"Changed Type1"
+    in
+        Source
 ```
 
-#### 2.1.3 Option 1 - *Plex Movies - API* Table
+#### 2.1. Option 1 - *Plex Movies - API* Raw Data Table
 
 ##### Dependency
 
 - **Plex Libraries** Table;
-- **Load Movie Content** Custom Function
+- **Load Movie Content** Custom Function.
 
 ##### Steps
 1. Reference from **Plex Libraries** Table above;
@@ -147,32 +147,34 @@ in
 1. Add **Runtime** column and calculate base on *Duration* field, and format result into HH:MM:SS format by removing *Date* and *AM*;
 
     > = Text.From(#datetime(1970, 1, 1, 0, 0, 0) + #duration(0, 0, 0, [Duration]/1000))
-1. Combine PlexServer, Item Key and X-Plex-Token into **MetadatURL**;
+1. Combine PlexServer, Item Key and X-Plex-Token into **MetadatURL**.
 
     > = Text.Combine({PlexServer, [key], "?X-Plex-Token=",#"X-Plex-Token"})
 
+##### Power Query Sample Script
 ```css
-let
-    Source = #"Plex Library",
-    #"Filtered Rows" = Table.SelectRows(Source, each ([Type] = "movie") and ([Scanner] = "Plex Movie")),
-    #"Removed Duplicates" = Table.Distinct(#"Filtered Rows", {"URL"}),
-    #"Invoked Custom Function" = Table.AddColumn(#"Removed Duplicates", "Contents", each LoadMovieContents([URL])),
-    #"Expanded Contents" = Table.ExpandTableColumn(#"Invoked Custom Function", "Contents", {"Duration", "Bitrate", "AspectRatio", "AudioChannels", "AudioCodec", "VideoCodec", "Resolution", "FrameRate", "AudioProfile", "VideoProfile", "key", "Studio", "Title", "ContentRating", "Summary", "AudienceRating", "Year", "Tagline", "IMDBduration", "OriginallyAvailableAt", "Collection", "ViewCount", "TitleSort", "OriginalTitle"}, {"Duration", "Bitrate", "AspectRatio", "AudioChannels", "AudioCodec", "VideoCodec", "Resolution", "FrameRate", "AudioProfile", "VideoProfile", "key", "Studio", "Title", "ContentRating", "Summary", "AudienceRating", "Year", "Tagline", "IMDBduration", "OriginallyAvailableAt", "Collection", "ViewCount", "TitleSort", "OriginalTitle"}),
-    #"Removed Header Columns" = Table.RemoveColumns(#"Expanded Contents",{"Agent", "Scanner", "Language", "Hidden", "URL", "Folder"}),
-    #"Added Runtime" = Table.AddColumn(#"Removed Header Columns", "Runtime", each Text.From(#datetime(1970, 1, 1, 0, 0, 0) + #duration(0, 0, 0, [Duration]/1000))),
-    #"Replaced Errors" = Table.ReplaceErrorValues(#"Added Runtime", {{"Runtime", ""}}),
-    #"Replaced Value" = Table.ReplaceValue(#"Replaced Errors","1/1/1970 12","1/1/1970 0",Replacer.ReplaceText,{"Runtime"}),
-    #"Remove Date from Runtime" = Table.ReplaceValue(#"Replaced Value","1/1/1970 ","",Replacer.ReplaceText,{"Runtime"}),
-    #"Remove AM from Runtime" = Table.ReplaceValue(#"Remove Date from Runtime"," AM","",Replacer.ReplaceText,{"Runtime"}),
-    #"Trimmed Text" = Table.TransformColumns(#"Remove AM from Runtime",{{"Runtime", Text.Trim, type text}}),
-    #"Added Conditional Column" = Table.AddColumn(#"Trimmed Text", "Original Title", each if [OriginalTitle] = null then [Title] else [OriginalTitle]),
-    #"Inserted Year TItle" = Table.AddColumn(#"Added Conditional Column", "Year Title", each Text.Combine({Text.From([Year], "en-US"), " | ", [Original Title]}), type text),
-    #"Inserted Metadata URL" = Table.AddColumn(#"Inserted Year TItle", "MetadataURL", each Text.Combine({PlexServer, [key], "?X-Plex-Token=",#"X-Plex-Token"}), type text),
-    #"Changed Type" = Table.TransformColumnTypes(#"Inserted Metadata URL",{{"AspectRatio", Currency.Type}, {"AudioChannels", Int64.Type}, {"AudienceRating", Currency.Type}, {"Year", Int64.Type}, {"OriginallyAvailableAt", type date}, {"ViewCount", Int64.Type}, {"Duration", Int64.Type}, {"Bitrate", Int64.Type}})
-in
-    #"Changed Type"
+    let
+        Source = #"Plex Library",
+        #"Filtered Rows" = Table.SelectRows(Source, each ([Type] = "movie") and ([Scanner] = "Plex Movie")),
+        #"Removed Duplicates" = Table.Distinct(#"Filtered Rows", {"URL"}),
+        #"Invoked Custom Function" = Table.AddColumn(#"Removed Duplicates", "Contents", each LoadMovieContents([URL])),
+        #"Expanded Contents" = Table.ExpandTableColumn(#"Invoked Custom Function", "Contents", {"Duration", "Bitrate", "AspectRatio", "AudioChannels", "AudioCodec", "VideoCodec", "Resolution", "FrameRate", "AudioProfile", "VideoProfile", "key", "Studio", "Title", "ContentRating", "Summary", "AudienceRating", "Year", "Tagline", "IMDBduration", "OriginallyAvailableAt", "Collection", "ViewCount", "TitleSort", "OriginalTitle"}, {"Duration", "Bitrate", "AspectRatio", "AudioChannels", "AudioCodec", "VideoCodec", "Resolution", "FrameRate", "AudioProfile", "VideoProfile", "key", "Studio", "Title", "ContentRating", "Summary", "AudienceRating", "Year", "Tagline", "IMDBduration", "OriginallyAvailableAt", "Collection", "ViewCount", "TitleSort", "OriginalTitle"}),
+        #"Removed Header Columns" = Table.RemoveColumns(#"Expanded Contents",{"Agent", "Scanner", "Language", "Hidden", "URL", "Folder"}),
+        #"Added Runtime" = Table.AddColumn(#"Removed Header Columns", "Runtime", each Text.From(#datetime(1970, 1, 1, 0, 0, 0) + #duration(0, 0, 0, [Duration]/1000))),
+        #"Replaced Errors" = Table.ReplaceErrorValues(#"Added Runtime", {{"Runtime", ""}}),
+        #"Replaced Value" = Table.ReplaceValue(#"Replaced Errors","1/1/1970 12","1/1/1970 0",Replacer.ReplaceText,{"Runtime"}),
+        #"Remove Date from Runtime" = Table.ReplaceValue(#"Replaced Value","1/1/1970 ","",Replacer.ReplaceText,{"Runtime"}),
+        #"Remove AM from Runtime" = Table.ReplaceValue(#"Remove Date from Runtime"," AM","",Replacer.ReplaceText,{"Runtime"}),
+        #"Trimmed Text" = Table.TransformColumns(#"Remove AM from Runtime",{{"Runtime", Text.Trim, type text}}),
+        #"Added Conditional Column" = Table.AddColumn(#"Trimmed Text", "Original Title", each if [OriginalTitle] = null then [Title] else [OriginalTitle]),
+        #"Inserted Year TItle" = Table.AddColumn(#"Added Conditional Column", "Year Title", each Text.Combine({Text.From([Year], "en-US"), " | ", [Original Title]}), type text),
+        #"Inserted Metadata URL" = Table.AddColumn(#"Inserted Year TItle", "MetadataURL", each Text.Combine({PlexServer, [key], "?X-Plex-Token=",#"X-Plex-Token"}), type text),
+        #"Changed Type" = Table.TransformColumnTypes(#"Inserted Metadata URL",{{"AspectRatio", Currency.Type}, {"AudioChannels", Int64.Type}, {"AudienceRating", Currency.Type}, {"Year", Int64.Type}, {"OriginallyAvailableAt", type date}, {"ViewCount", Int64.Type}, {"Duration", Int64.Type}, {"Bitrate", Int64.Type}})
+    in
+        #"Changed Type"
 ```
-#### 2.2 Option 2 - *Plex Movies - Python* Table
+
+#### 2.2. Option 2 - *Plex Movies - Python* Raw Data Table
 
 ##### Paramter
 - **X-Plex-Token** 
@@ -192,8 +194,8 @@ in
 1. Add **IMDB_URL** column using **IMDB_ID**;
 1. Change **PlexMetadata_ID**, **IMDB_ID**, **TMDB_ID**, **TVDB_ID** to `text`.
 
-##### Python Code
-    ```python
+##### Python Sample Code
+```python
     from plexapi.server import PlexServer
     import requests
     from requests.adapters import HTTPAdapter
@@ -201,9 +203,9 @@ in
     import pandas as pd
     
     # Fill in your Plex server details.
-    PLEX_URL = [PlexServer] # e.g., 'http://192.168.0.1:32400' or 'https://192.168.0.1:32400'
-    PLEX_TOKEN = [X-Plex-Token]
-    
+    PLEX_URL = ['Your Plex Server'] # e.g., 'http://{your_ip_address}:32400' or 'https://{your_ip_address}:32400'
+    PLEX_TOKEN = ['Your Plex Token'] 
+        
     class InsecureHttpAdapter(HTTPAdapter):
         """An adapter that disables SSL certification validation."""
         
@@ -309,9 +311,9 @@ in
         result_df = main()
     
     result_df
-    ```
+```
 
-#### 2.3 Option 3 - *Plex Movies - CSV* Table
+#### 2.3. Option 3 - *Plex Movies - CSV* Raw Data Table
 
 ##### Paramter
 - **X-Plex-Token** 
@@ -325,141 +327,106 @@ in
     > pip install plexapi
 
 ##### Steps
-1. Update the 3 Variable below and run the Python Script locally to export the file as csv format;
-1. Import the csv file into Power BI;
+1. Update the 3 Variables (PLEX_URL, PLEX_TOKEN, EXPORT_FILE) in sample script and run the Python Script locally to export the file in CSV format;
+1. Import the CSV file into Power BI;
 1. Add **Resolution** column from **Video**;
 1. Add **IMDB_URL** column using **IMDB_ID**;
 1. Change **PlexMetadata_ID**, **IMDB_ID**, **TMDB_ID**, **TVDB_ID** to `text`.
 
-##### Python Code
-    ```python
-    from plexapi.server import PlexServer
-    import requests
-    from requests.adapters import HTTPAdapter
-    from urllib3.util import Retry
-    import pandas as pd
-    
-    # Fill in your Plex server details.
-    PLEX_URL = [PlexServer] # e.g., 'http://192.168.0.1:32400' or 'https://192.168.0.1:32400'
-    PLEX_TOKEN = [X-Plex-Token]
-    EXPORT_FILE = [Filename.csv] #e.g., 'Plex_movie_details.csv'
-    
-    class InsecureHttpAdapter(HTTPAdapter):
-        """An adapter that disables SSL certification validation."""
-        
-        def cert_verify(self, *args, **kwargs):
-            return None
-    
-        def init_poolmanager(self, connections, maxsize, block=False, **pool_kwargs):
-            pool_kwargs['assert_hostname'] = False
-            super(InsecureHttpAdapter, self).init_poolmanager(connections, maxsize, block, **pool_kwargs)
-    
-    
-    def get_insecure_requests_session():
-        # Check if using HTTPS in PlexServer, and bypass SSL cerfification certification
-        session = requests.Session()
-        retry = Retry(total=3, backoff_factor=0.1, status_forcelist=[500, 502, 503, 504])
-        adapter = InsecureHttpAdapter(max_retries=retry)
-        session.mount('https://', adapter)
-        return session
-            
-    def main():
-        # Connect to Plex server.
-        session = None
-        if PLEX_URL.lower().startswith("https"):
-            session = get_insecure_requests_session()
-        
-        plex = PlexServer(PLEX_URL, PLEX_TOKEN, session=session)
-        
-        # Fetch all movies from the library and filter based on type and scanner.
-        all_sections = plex.library.sections()
-        movie_sections = [section for section in all_sections if section.type == 'movie' and section.scanner == 'Plex Movie']
-        movie_list = [movie for section in movie_sections for movie in section.all()]
-    
-        # Prepare DataFrame columns
-        columns = ["PlexMetadata ID", "Title", "Sort Title", "Original Title", "Library", "Genres", "Content Rating", "Collection", "Studio", "Director", "Cast", "Summary", "Country", "IMDB ID", "TMDB ID", "TVDB ID", "View Count", "Audience Rate", "Release Date", "Year", "Added Date", "IMDB Duration (mins)", "Duration (mins)", "Aspect Ratio", "Frame Rate","Container", "Video Codec", "Audio Codec", "Audio Channels", "Audio", "Video", "Subtitles"]
-        
-        # Create an empty DataFrame with these columns
-        df = pd.DataFrame(columns=columns, dtype=object)
-    
-        # Add movie details to the DataFrame, currently only return the first 10 records from library
-        movie_count = 0
-        for movie in movie_list:
-            if movie_count >= 10:
-                break
-            row = print_movie_details(movie)
-            df.loc[len(df)] = pd.Series(row, index=df.columns)
-            movie_count += 1
-    
-        return df
-    
-    def print_movie_details(movie):
-    
-        # Extract IMDB, TMDB, and TVDB IDs from movie info.
-        ids = {'imdb': None, 'tmdb': None, 'tvdb': None}
-        for guid_obj in movie.guids:
-            guid_str = str(guid_obj.id).lower()
-            for key in ids.keys():
-                if f'{key}://' in guid_str:
-                    ids[key] = guid_str.split(f'{key}://')[-1]
-    
-        media = movie.media[0] if movie.media else None           
-        
-        # Prepare movie details in tab-separated format.
-        row = [
-            str(movie.ratingKey),
-            str(movie.title),
-            str(movie.titleSort) if movie.titleSort else movie.title,
-            str(movie.originalTitle) if movie.originalTitle else movie.title,
-            str(movie.librarySectionTitle),
-            ', '.join(str(genre.tag) for genre in movie.genres),
-            movie.contentRating or '',
-            ', '.join(str(col.tag) for col in movie.collections) if movie.collections else '',
-            movie.studio or '',
-            ', '.join(str(director.tag) for director in movie.directors),
-            ', '.join(str(role.tag) for role in movie.roles),
-            (movie.summary.replace('\n', ' ').replace('\r', '').replace('\t', ' ')[:150] + "...") if movie.summary else '',
-            ', '.join(str(country.tag) for country in movie.countries),
-            ids['imdb'] or '',
-            ids['tmdb'] or '',
-            ids['tvdb'] or '',
-            str(movie.viewCount) if movie.viewCount else '0',
-            str(movie.audienceRating) if movie.audienceRating else '',
-            str(movie.originallyAvailableAt) if movie.originallyAvailableAt else '',
-            str(movie.year) if movie.year else '',
-            str(movie.addedAt) if movie.addedAt else '',
-            str(round(movie.duration / 60000)) if movie.duration else '',
-            str(round(media.duration / 60000)) if media and media.duration else '',
-            f"{media.aspectRatio}" if media and media.aspectRatio else '',
-            f"{media.videoFrameRate}" if media and media.videoFrameRate else '',
-            f"{media.container}" if media and media.container else '',
-            f"{media.videoCodec}" if media and media.videoCodec else '',
-            f"{media.audioCodec}" if media and media.audioCodec else '',
-            f"{media.audioChannels}" if media and media.audioChannels else '',
-            ', '.join([f"{str(stream.displayTitle)}" for part in movie.media[0].parts for stream in part.streams if stream.streamType == 2]) if movie.media and movie.media[0].parts else '',
-            ', '.join([f"{str(stream.displayTitle)}" for part in movie.media[0].parts for stream in part.streams if stream.streamType == 1]) if movie.media and movie.media[0].parts else '',
-            ', '.join([f"{str(stream.displayTitle)}" for part in movie.media[0].parts for stream in part.streams if stream.streamType == 3]) if movie.media and movie.media[0].parts else ''
-        ]
-        
-        
-        # Return the movie details as a list
-        return row
-    
-    if __name__ == "__main__":
-        result_df = main()
-        result_df.to_csv(EXPORT_FILE, index=False, encoding='utf-8')
-    
-    ```
+##### Python Sample Code
 
-### *IMDB Top 250 List* Current Table
+[Python Download Link](../_Asset%20Library/Source_Files/Plex_Movies.py)
 
-#### Data Sources
+#### 2.4. *Plex Movies* Master Table
+Note: Add the table to minimum impact to the databoard, and easily switch between different Raw Data Table options.
+
+##### Dependency
+
+- **Plex Moives** Raw Table;
+
+##### Steps
+1. Reference from one of the 3 **Plex Movies** Raw Data Tables above;
+1. Remove Duplicats from PlexMetadata Id.
+
+##### Power Query Sample Script
+```css
+let
+    Source = #"Plex Movies - CSV",
+    #"Removed Duplicates PlexMetadata ID" = Table.Distinct(Source, {"PlexMetadata ID"})
+in
+    #"Removed Duplicates PlexMetadata ID"
+```
+
+#### 2.5. *Plex IMDB* Master Table
+Note: Simiar to *Plex Movies* Master Table, used to 1:many with IMDB Data Table
+
+##### Dependency
+
+- **Plex Libraries** Raw Table;
+
+##### Steps
+1. Reference from one of the 3 **Plex Movies** Raw Data Tables above;
+1. Clean up the item which doesnot have IMDB_ID;
+1. Keep only IMDB related colummn;
+1. Remove Duplicats from PlexMetadata Id. 
+
+##### Power Query Sample Script
+```css
+let
+    Source = #"Plex Movies - CSV",
+    #"Remove Empty IMDB ID" = Table.SelectRows(Source, each [IMDB ID] <> null and [IMDB ID] <> ""),
+    #"Removed Other Columns" = Table.SelectColumns(#"Remove Empty IMDB ID",{"Title", "Original Title", "Genres", "Content Rating", "Collection", "Studio", "Director", "Cast", "Summary", "Country", "IMDB ID", "TMDB ID", "TVDB ID", "Audience Rate", "Release Date", "Year", "IMDB Duration (mins)", "Duration (mins)", "IMDB_URL"}),
+    #"Filtered Rows" = Table.SelectRows(#"Removed Other Columns", each [IMDB ID] <> null and [IMDB ID] <> ""),
+    #"Removed Duplicates" = Table.Distinct(#"Filtered Rows", {"IMDB ID"})
+in
+    #"Removed Duplicates"
+```
+
+#### 2.6 *Plex Movie* Casts, Genres, Audio, Video and SubTitles Tables
+Note: Extended tables for filtering
+
+##### Dependency
+
+- **Plex Moives** Master Table;
+
+##### Steps
+1. Reference from one of the **Plex Libraries** Master Data Table above;
+1. Keep PlexMetadata ID, Title, IMDB_ID, and extented columns only (e.g. **Casts**, **Genres**, **Audio**, **Video** and **SubTitles** Tables)
+1. Split the extended column by Delimiter into Rows
+1. Trim and clean the Text
+
+##### Power Query Sample Script
+Note: Use Cast as an example, rest are similar
+
+```css
+    let
+        Source = #"Plex Movies - CSV",
+        #"Removed Other Columns" = Table.SelectColumns(Source,{"PlexMetadata ID", "Title", "Cast", "IMDB ID"}),
+        #"Split Cast Column by Delimiter" = Table.ExpandListColumn(Table.TransformColumns(#"Removed Other Columns", {{"Cast", Splitter.SplitTextByDelimiter(",", QuoteStyle.Csv), let itemType = (type nullable text) meta [Serialized.Text = true] in type {itemType}}}), "Cast"),
+        #"Trimmed Text" = Table.TransformColumns(#"Split Cast Column by Delimiter",{{"Cast", Text.Trim, type text}}),
+        #"Cleaned Text" = Table.TransformColumns(#"Trimmed Text",{{"Cast", Text.Clean, type text}}),
+        #"Filtered Empty Cast" = Table.SelectRows(#"Cleaned Text", each [Cast] <> null and [Cast] <> "")
+    in
+        #"Filtered Empty Cast"
+```
+
+### 3 *IMDB* Tables
+
+#### *IMDB Top 250 List* Current Table
+
+##### Data Sources
  [https://www.imdb.com/chart/top](https://www.imdb.com/chart/top)
 
 *This data scraped from IMDB, and historical data can be found [here](https://www.imdb.com/user/ur48187336/lists).*
 
-#### Steps
+##### Steps
 1. Use python code below to pull data from [IMDB Top 250 Site](https://www.imdb.com/chart/top);
+1. Change **Rank** and **Year** to *Whole Number* and **Rating** to *Decimal Number*;
+1. Insert a merged column for **Year** and **Original Title**;
+1. Add **IMDB URL** and setup Data category (Ribbon bar -> Format -> Data catagory = *Web URL*);
+1. Setup Data category for **Image URL**  (Ribbon bar -> Format -> Data catagory = *Image URL*).
+
+##### Python Sample Code
     ```python
     import requests
     from bs4 import BeautifulSoup
@@ -509,12 +476,8 @@ in
     df
     
     ```
-1. Change **Rank** and **Year** to *Whole Number* and **Rating** to *Decimal Number*;
-1. Insert a merged column for **Year** and **Original Title**;
-1. Add **IMDB URL** and setup Data category (Ribbon bar -> Format -> Data catagory = *Web URL*);
-1. Setup Data category for **Image URL**  (Ribbon bar -> Format -> Data catagory = *Image URL*).
 
-#### Power Query Sample Script
+##### Power Query Sample Script
 ```css
 let
     Source = Python.Execute("import requests#(lf)from bs4 import BeautifulSoup#(lf)import pandas as pd#(lf)#(lf)# Send a GET request to the URL#(lf)url = ""https://www.imdb.com/chart/top""#(lf)response = requests.get(url)#(lf)#(lf)# Use BeautifulSoup to parse the HTML#(lf)soup = BeautifulSoup(response.text, 'html.parser')#(lf)#(lf)# Find the table with the data#(lf)table = soup.find(""tbody"", class_=""lister-list"")#(lf)#(lf)# Create a list to store the data#(lf)data = []#(lf)#(lf)# Loop through each row in the table#(lf)for tr in table.find_all(""tr""):#(lf)#(lf)    # Find the title and original title#(lf)    title = tr.find(""td"", class_=""titleColumn"").a.get_text()#(lf)    #(lf)    # Find the Rank#(lf)    rank = tr.find(""td"", class_=""titleColumn"").get_text().split(""."")[0]#(lf)#(lf)    # Find the IMDB ID#(lf)    imdb_id = tr.find(""td"", class_=""posterColumn"").a[""href""].split(""/"")[2]#(lf)    #(lf)    # Find the year#(lf)    year = tr.find(""span"", class_=""secondaryInfo"").get_text().strip(""()"")#(lf)    #(lf)    # Find the rating#(lf)    rating = tr.find(""strong"").get_text()#(lf)    #(lf)    # Find the image URL#(lf)    image_url = tr.find(""td"", class_=""posterColumn"").img[""src""]#(lf)#(lf)    # Add the data to the list#(lf)    data.append([rank, title, imdb_id, year, rating, image_url])#(lf)#(lf)# Convert the list to a pandas dataframe#(lf)df = pd.DataFrame(data, columns=[""Rank"", ""Original Title"", ""IMDB ID"", ""Year"", ""Rating"", ""Image URL""])#(lf)#(lf)# Return the dataframe as a table#(lf)df"),
@@ -526,9 +489,9 @@ in
     #"Inserted Year_TItle"
 ```
 
-### 3 *IMDB Top 250 Lists* - Historical Table (1996 to last year)
+#### 3 *IMDB Top 250 Lists* - Historical Table (1996 to last year)
 
-#### Data Sources
+##### Data Sources
  [pollmaster's List](https://www.imdb.com/user/ur48187336/lists)
 
 ##### Steps
