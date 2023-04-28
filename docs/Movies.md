@@ -149,7 +149,8 @@ NOTE: it only returns result from [Library Section](https://www.plexopedia.com/p
     > = Text.From(#datetime(1970, 1, 1, 0, 0, 0) + #duration(0, 0, 0, [Duration]/1000))
 1. Combine PlexServer, Item Key and X-Plex-Token into **MetadatURL**.
 
-    > = Text.Combine({PlexServer, [key], "?X-Plex-Token=",#"X-Plex-Token"})
+    > = Text.Combine({PlexServer, [key], "?X-Plex-Token=",#"X-Plex-Token"});
+1. Mark the table not "include in report refresh".
 
 ##### Power Query Sample Script
 ```css
@@ -192,7 +193,8 @@ NOTE: it only returns result from [Library Section](https://www.plexopedia.com/p
 1. Replace the Variables using Parameters and phase it to a Python Script;
 1. Add **Resolution** column from **Video**;
 1. Add **IMDB_URL** column using **IMDB_ID**;
-1. Change **PlexMetadata_ID**, **IMDB_ID**, **TMDB_ID**, **TVDB_ID** to `text`.
+1. Change **PlexMetadata_ID**, **IMDB_ID**, **TMDB_ID**, **TVDB_ID** to `text`;
+1. Mark the table not "include in report refresh".
 
 ##### Python Sample Code
 ```python
@@ -331,11 +333,24 @@ NOTE: it only returns result from [Library Section](https://www.plexopedia.com/p
 1. Import the CSV file into Power BI;
 1. Add **Resolution** column from **Video**;
 1. Add **IMDB_URL** column using **IMDB_ID**;
-1. Change **PlexMetadata_ID**, **IMDB_ID**, **TMDB_ID**, **TVDB_ID** to `text`.
+1. Change **PlexMetadata_ID**, **IMDB_ID**, **TMDB_ID**, **TVDB_ID** to `text`;
+1. Mark the table not "include in report refresh".
 
 ##### Python Sample Code
 
 [Python Download Link](../_Asset%20Library/Source_Files/Plex_Movies.py)
+
+##### Power Query Sample Script
+```css
+    let
+        Source = Csv.Document(File.Contents(Plex_CSV),[Delimiter=",", Columns=32, Encoding=65001, QuoteStyle=QuoteStyle.None]),
+        #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+        #"Inserted Resolution" = Table.AddColumn(#"Promoted Headers", "Resolution", each Text.BeforeDelimiter(Text.Upper([Video]), " "), type text),
+        #"Inserted IMDB_URL" = Table.AddColumn(#"Inserted Resolution", "IMDB_URL", each if [IMDB ID] <> null and [IMDB ID] <> "" then Text.Combine({"https://www.imdb.com/title/", [IMDB ID]}) else ""),
+        #"Changed Type" = Table.TransformColumnTypes(#"Inserted IMDB_URL",{{"PlexMetadata ID", type text}, {"Title", type text}, {"Original Title", type text}, {"Library", type text}, {"Genres", type text}, {"Content Rating", type text}, {"Collection", type text}, {"Studio", type text}, {"Director", type text}, {"Cast", type text}, {"Summary", type text}, {"Country", type text}, {"IMDB ID", type text}, {"TMDB ID", type text}, {"TVDB ID", type text}, {"Audience Rate", type number}, {"Release Date", type datetime}, {"Year", Int64.Type}, {"Duration (mins)", Int64.Type}, {"Aspect Ratio", type number}, {"Frame Rate", type text}, {"Container", type text}, {"Video Codec", type text}, {"Audio Codec", type text}, {"Audio Channels", Int64.Type}, {"Audio", type text}, {"Video", type text}, {"Subtitles", type text}, {"Resolution", type text}, {"IMDB_URL", type text}, {"Added Date", type datetime}, {"IMDB Duration (mins)", Int64.Type}})
+    in
+        #"Changed Type"
+```
 
 #### 2.4. *Plex Movies* Master Table
 Note: Add the table to minimum impact to the databoard, and easily switch between different Raw Data Table options.
@@ -410,7 +425,7 @@ Note: Use Cast as an example, rest are similar
         #"Filtered Empty Cast"
 ```
 
-### 3 *IMDB* Tables
+### 3 *IMDB* Tables - WIP
 
 #### *IMDB Top 250 List* Current Table
 
