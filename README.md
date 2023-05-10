@@ -34,7 +34,7 @@ This project welcomes contributions and suggestions.
     ![Screenshot](./_Asset%20Library/WorldBank_WorldMap_Screenshot.png)
 
 - [Analysis of Movie Collections](./docs/Movies.md) (WIP)
-
+    ![Screenshot](./_Asset%20Library/Movies_Dashboard.png)
     ![Screenshot](./_Asset%20Library/IMDB_Top250_Screenshot.png)
 
 ----------
