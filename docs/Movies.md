@@ -38,27 +38,27 @@ keyword: [IMDB, Plex API, parameter, web connector, Python, pandas, bs4, custom 
 
 ### 2. Plex Tables
 
-There are couple of options to load the movie contents from Plex Server:
+There are different options to load the movie contents from Plex Server:
 
-1. Load data from Plex Server using **official** [Plex API](https://www.plexopedia.com/plex-media-server/api/) directly, the API commands can be run from any Web browser, sample as below: 
+1. Load data from Plex Server using **official** [Plex API](https://www.plexopedia.com/plex-media-server/api/) directly, which can be run from any Web browser, sample as below: 
 
-    > Library List: [PlexServer]/library/sections?X-Plex-Token=[X-Plex-Token]
+    > Library List: [http(s)://your_ip_address:32400]/library/sections?X-Plex-Token=[X-Plex-Token]
     
-    > Library Section List: [PlexServer]/library/sections/{key}/all?X-Plex-Token=[X-Plex-Token]
+    > Library Section List: [http(s)://your_ip_address:32400]/library/sections/{key}/all?X-Plex-Token=[X-Plex-Token]
     
-    > Movie MetaData: [PlexServer]/library/metadata/{ratingKey}?X-Plex-Token=[X-Plex-Token]
+    > Movie MetaData: [http(s)://your_ip_address:32400]/library/metadata/{ratingKey}?X-Plex-Token=[X-Plex-Token]
 
 1. Load data using Python [PlexAPI](https://pypi.org/project/PlexAPI/) [Project GitHub](https://github.com/pkkid/python-plexapi), which is **unofficial** Python bindings for the Plex API; 
 
-1. Run the Python job using [PlexAPI](https://pypi.org/project/PlexAPI/) above and export result in csv file, then use it as datasource in Power BI.
+1. Run the Python job using [PlexAPI](https://pypi.org/project/PlexAPI/) above and export result in csv file, and import as datasource in Power BI.
 
 Here below is the Pros / Cons for each options:
 
 |Option  |Description  |Pros  |Cons  |
 |:-------:|:--------|:--------|:--------|
-|Option 1    |Load data from Plex Server using Plex API directly  |- Direct access: Bypasses the need for any third-party libraries or tools. <br/>- Real-time data: Fetches the most up-to-date data directly from the server.  |- More complex setup: Requires manual handling of HTTP requests and parsing API responses.<br/> - Some metadata, e.g. IMDB_ID, Audio, Video, Subtitles are stored in Movie Metadata not in Library Section, need a seperate custom function to fetch data from each item|
-|Option 2    |Load data using Python PlexAPI library in python script  |- Easier implementation: The library simplifies interactions with the Plex API.<br/>- Better error handling: The library is more likely to handle errors and edge cases gracefully.<br/>- Community support: Updates to the library will accommodate changes in the Plex API.  |- Dependency on external library: Need to ensure the library stays up-to-date and compatible with system.<br/>- Slower execution: Using a library cause slightly slower compared to direct API calls, depending on its implementation.  |
-|Option 3    |Use Python PlexAPI and export result in csv file, then use it as data source in Power BI  |- Separation of concerns: Data extraction and processing are separated, making it easier to manage and troubleshoot.<br/>- CSV compatibility: CSV files can be easily used by various tools and platforms, providing flexibility in data analysis and visualization.  |- Not real-time: The data will only be as recent as the last time you exported the CSV file.<br/>- Additional steps: Exporting to a CSV file and importing into Power BI adds extra overhead to workflow.<br/>- Potential storage issues: Depending on the size of the dataset, you may face storage limitations or performance issues when dealing with large CSV files.  |
+|Option 1    |Use Plex API directly  |- Direct access: Bypasses the need for any third-party libraries or tools. <br/>- Real-time data: Fetches the most up-to-date data directly from the server.  |- More complex setup: Requires manual handling of HTTP requests and parsing API responses.<br/> - Some metadata, e.g. IMDB_ID, Audio, Video, Subtitles are stored in Movie Metadata not in Library Section, need a seperate custom function to fetch data from each item|
+|Option 2    |Use Python PlexAPI library in python script  |- Easier implementation: The library simplifies interactions with the Plex API.<br/>- Better error handling: The library is more likely to handle errors and edge cases gracefully.<br/>- Community support: Updates to the library will accommodate changes in the Plex API.  |- Dependency on external library: Need to ensure the library stays up-to-date and compatible with system.<br/>- Slower execution: Using a library cause slightly slower compared to direct API calls, depending on its implementation.  |
+|Option 3    |Use Python PlexAPI, export in CSV file and import in Power BI  |- Separation of concerns: Data extraction and processing are separated, making it easier to manage and troubleshoot.<br/>- CSV compatibility: CSV files can be easily used by various tools and platforms, providing flexibility in data analysis and visualization.  |- Not real-time: The data will only be as recent as the last time you exported the CSV file.<br/>- Additional steps: Exporting to a CSV file and importing into Power BI adds extra overhead to workflow.<br/>- Potential storage issues: Depending on the size of the dataset, you may face storage limitations or performance issues when dealing with large CSV files.  |
 
 Consider about the volumn of Plex Library as well as the required columns, I am using Option 3 as primary datasource in the sample, but keep the Queries for Option 1 and Option 2 (set limit to 20 records) in the PBIX for reference.
 
@@ -241,19 +241,19 @@ NOTE: it only returns result from [Library Section](https://www.plexopedia.com/p
         movie_list = [movie for section in movie_sections for movie in section.all()]
     
         # Prepare DataFrame columns
-        columns = ["PlexMetadata ID", "Title", "Sort Title", "Original Title", "Library", "Genres", "Content Rating", "Collection", "Studio", "Director", "Cast", "Summary", "Country", "IMDB ID", "TMDB ID", "TVDB ID", "View Count", "Audience Rate", "Release Date", "Year", "Added Date", "IMDB Duration (mins)", "Duration (mins)", "Aspect Ratio", "Frame Rate","Container", "Video Codec", "Audio Codec", "Audio Channels", "Audio", "Video", "Subtitles"]
+        columns = ["PlexMetadata ID", "Movie GUID", "Title", "Sort Title", "Original Title", "Library", "Genres", "Content Rating", "Collection", "Studio", "Director", "Cast", "Summary", "Country", "Thumb Link", "IMDB ID", "TMDB ID", "TVDB ID", "View Count", "Audience Rate", "Release Date", "Year", "Added Date", "IMDB Duration (mins)", "Duration (mins)", "File", "Aspect Ratio", "Frame Rate","Container", "Video Codec", "Audio Codec", "Audio Channels", "Audio", "Video", "Subtitles"]
         
         # Create an empty DataFrame with these columns
         df = pd.DataFrame(columns=columns, dtype=object)
     
-        # Add movie details to the DataFrame, currently only return the first 10 records from library
-        movie_count = 0
+        # Add movie details to the DataFrame, unmark the 4 comments below to load all the movies. 
+    #    movie_count = 0
         for movie in movie_list:
-            if movie_count >= 10:
-                break
+    #        if movie_count >= 20:
+    #            break
             row = print_movie_details(movie)
             df.loc[len(df)] = pd.Series(row, index=df.columns)
-            movie_count += 1
+    #        movie_count += 1
     
         return df
     
@@ -268,10 +268,12 @@ NOTE: it only returns result from [Library Section](https://www.plexopedia.com/p
                     ids[key] = guid_str.split(f'{key}://')[-1]
     
         media = movie.media[0] if movie.media else None           
+        part = media.parts[0] if media.parts else None
         
         # Prepare movie details in tab-separated format.
         row = [
             str(movie.ratingKey),
+            str(movie.guid),
             str(movie.title),
             str(movie.titleSort) if movie.titleSort else movie.title,
             str(movie.originalTitle) if movie.originalTitle else movie.title,
@@ -284,6 +286,7 @@ NOTE: it only returns result from [Library Section](https://www.plexopedia.com/p
             ', '.join(str(role.tag) for role in movie.roles),
             (movie.summary.replace('\n', ' ').replace('\r', '').replace('\t', ' ')[:150] + "...") if movie.summary else '',
             ', '.join(str(country.tag) for country in movie.countries),
+            str(movie.thumb) if movie.thumb else '',
             ids['imdb'] or '',
             ids['tmdb'] or '',
             ids['tvdb'] or '',
@@ -294,6 +297,7 @@ NOTE: it only returns result from [Library Section](https://www.plexopedia.com/p
             str(movie.addedAt) if movie.addedAt else '',
             str(round(movie.duration / 60000)) if movie.duration else '',
             str(round(media.duration / 60000)) if media and media.duration else '',
+            f"{part.file}" if media and part and part.file else '',
             f"{media.aspectRatio}" if media and media.aspectRatio else '',
             f"{media.videoFrameRate}" if media and media.videoFrameRate else '',
             f"{media.container}" if media and media.container else '',
@@ -304,7 +308,6 @@ NOTE: it only returns result from [Library Section](https://www.plexopedia.com/p
             ', '.join([f"{str(stream.displayTitle)}" for part in movie.media[0].parts for stream in part.streams if stream.streamType == 1]) if movie.media and movie.media[0].parts else '',
             ', '.join([f"{str(stream.displayTitle)}" for part in movie.media[0].parts for stream in part.streams if stream.streamType == 3]) if movie.media and movie.media[0].parts else ''
         ]
-        
         
         # Return the movie details as a list
         return row
@@ -320,6 +323,7 @@ NOTE: it only returns result from [Library Section](https://www.plexopedia.com/p
 ##### Paramter
 - **X-Plex-Token** 
 - **PlexServer**
+- **Plex_CSV** - the export file from in Python code, which will be used when import into Power BI.
 
 ##### Dependency
 - pandas
@@ -342,14 +346,14 @@ NOTE: it only returns result from [Library Section](https://www.plexopedia.com/p
 
 ##### Power Query Sample Script
 ```css
-    let
-        Source = Csv.Document(File.Contents(Plex_CSV),[Delimiter=",", Columns=32, Encoding=65001, QuoteStyle=QuoteStyle.None]),
-        #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
-        #"Inserted Resolution" = Table.AddColumn(#"Promoted Headers", "Resolution", each Text.BeforeDelimiter(Text.Upper([Video]), " "), type text),
-        #"Inserted IMDB_URL" = Table.AddColumn(#"Inserted Resolution", "IMDB_URL", each if [IMDB ID] <> null and [IMDB ID] <> "" then Text.Combine({"https://www.imdb.com/title/", [IMDB ID]}) else ""),
-        #"Changed Type" = Table.TransformColumnTypes(#"Inserted IMDB_URL",{{"PlexMetadata ID", type text}, {"Title", type text}, {"Original Title", type text}, {"Library", type text}, {"Genres", type text}, {"Content Rating", type text}, {"Collection", type text}, {"Studio", type text}, {"Director", type text}, {"Cast", type text}, {"Summary", type text}, {"Country", type text}, {"IMDB ID", type text}, {"TMDB ID", type text}, {"TVDB ID", type text}, {"Audience Rate", type number}, {"Release Date", type datetime}, {"Year", Int64.Type}, {"Duration (mins)", Int64.Type}, {"Aspect Ratio", type number}, {"Frame Rate", type text}, {"Container", type text}, {"Video Codec", type text}, {"Audio Codec", type text}, {"Audio Channels", Int64.Type}, {"Audio", type text}, {"Video", type text}, {"Subtitles", type text}, {"Resolution", type text}, {"IMDB_URL", type text}, {"Added Date", type datetime}, {"IMDB Duration (mins)", Int64.Type}})
-    in
-        #"Changed Type"
+let
+    Source = Csv.Document(File.Contents(Plex_CSV),[Delimiter=",", Columns=36, Encoding=65001, QuoteStyle=QuoteStyle.None]),
+    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+    #"Inserted Resolution" = Table.AddColumn(#"Promoted Headers", "Resolution", each Text.BeforeDelimiter(Text.Upper([Video]), " "), type text),
+    #"Inserted IMDB_URL" = Table.AddColumn(#"Inserted Resolution", "IMDB_URL", each if [IMDB ID] <> null and [IMDB ID] <> "" then Text.Combine({"https://www.imdb.com/title/", [IMDB ID]}) else ""),
+    #"Changed Type" = Table.TransformColumnTypes(#"Inserted IMDB_URL",{{"PlexMetadata ID", type text}, {"Title", type text}, {"Original Title", type text}, {"Library", type text}, {"Genres", type text}, {"Content Rating", type text}, {"Collection", type text}, {"Studio", type text}, {"Director", type text}, {"Cast", type text}, {"Summary", type text}, {"Country", type text}, {"IMDB ID", type text}, {"TMDB ID", type text}, {"TVDB ID", type text}, {"Audience Rate", type number}, {"Release Date", type datetime}, {"Year", Int64.Type}, {"Duration (mins)", Int64.Type}, {"Aspect Ratio", type number}, {"Frame Rate", type text}, {"Container", type text}, {"Video Codec", type text}, {"Audio Codec", type text}, {"Audio Channels", Int64.Type}, {"Audio", type text}, {"Video", type text}, {"Subtitles", type text}, {"Resolution", type text}, {"IMDB_URL", type text}, {"Added Date", type datetime}, {"IMDB Duration (mins)", Int64.Type}})
+in
+    #"Changed Type"
 ```
 
 #### 2.4. *Plex Movies* Master Table
@@ -397,7 +401,7 @@ in
     #"Removed Duplicates"
 ```
 
-#### 2.6 *Plex Movie* Casts, Genres, Audio, Video and SubTitles Tables
+#### 2.6 *Plex Movie* Casts, Genres, Country, Audio, Video and SubTitles Tables
 Note: Extended tables for filtering
 
 ##### Dependency
@@ -406,7 +410,7 @@ Note: Extended tables for filtering
 
 ##### Steps
 1. Reference from one of the **Plex Libraries** Master Data Table above;
-1. Keep PlexMetadata ID, Title, IMDB_ID, and extented columns only (e.g. **Casts**, **Genres**, **Audio**, **Video** and **SubTitles** Tables)
+1. Keep PlexMetadata ID, Title, IMDB_ID, and extented columns only (e.g. **Casts**, **Genres**, **Country**, **Audio**, **Video** and **SubTitles** Tables)
 1. Split the extended column by Delimiter into Rows
 1. Trim and clean the Text
 
