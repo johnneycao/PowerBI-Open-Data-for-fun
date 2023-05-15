@@ -418,20 +418,20 @@ in
 *Note: Use Cast as an example, rest are similar*
 
 ```css
-    let
-        Source = #"Plex Movies - CSV",
-        #"Removed Other Columns" = Table.SelectColumns(Source,{"PlexMetadata ID", "Title", "Cast", "IMDB ID"}),
-        #"Split Cast Column by Delimiter" = Table.ExpandListColumn(Table.TransformColumns(#"Removed Other Columns", {{"Cast", Splitter.SplitTextByDelimiter(",", QuoteStyle.Csv), let itemType = (type nullable text) meta [Serialized.Text = true] in type {itemType}}}), "Cast"),
-        #"Trimmed Text" = Table.TransformColumns(#"Split Cast Column by Delimiter",{{"Cast", Text.Trim, type text}}),
-        #"Cleaned Text" = Table.TransformColumns(#"Trimmed Text",{{"Cast", Text.Clean, type text}}),
-        #"Filtered Empty Cast" = Table.SelectRows(#"Cleaned Text", each [Cast] <> null and [Cast] <> "")
-    in
-        #"Filtered Empty Cast"
+let
+    Source = #"Plex Movies - CSV",
+    #"Removed Other Columns" = Table.SelectColumns(Source,{"PlexMetadata ID", "Title", "Cast", "IMDB ID"}),
+    #"Split Cast Column by Delimiter" = Table.ExpandListColumn(Table.TransformColumns(#"Removed Other Columns", {{"Cast", Splitter.SplitTextByDelimiter(",", QuoteStyle.Csv), let itemType = (type nullable text) meta [Serialized.Text = true] in type {itemType}}}), "Cast"),
+    #"Trimmed Text" = Table.TransformColumns(#"Split Cast Column by Delimiter",{{"Cast", Text.Trim, type text}}),
+    #"Cleaned Text" = Table.TransformColumns(#"Trimmed Text",{{"Cast", Text.Clean, type text}}),
+    #"Filtered Empty Cast" = Table.SelectRows(#"Cleaned Text", each [Cast] <> null and [Cast] <> "")
+in
+    #"Filtered Empty Cast"
 ```
 
 ### 3 *IMDB* Tables
 
-#### 3.1 *IMDB Top 250 List* Current Table
+#### 3.1 *IMDB Top 250 Current*  Table
 
 ##### Data Sources
  [https://www.imdb.com/chart/top](https://www.imdb.com/chart/top)
@@ -441,7 +441,8 @@ in
 1. Change **Rank** and **Year** to *Whole Number* and **Rating** to *Decimal Number*;
 1. Insert a merged column for **Year** and **Original Title**;
 1. Add **IMDB URL** and setup Data category (Ribbon bar -> Format -> Data catagory = *Web URL*);
-1. Setup Data category for **Image URL**  (Ribbon bar -> Format -> Data catagory = *Image URL*).
+1. Setup Data category for **Image URL**  (Ribbon bar -> Format -> Data catagory = *Image URL*);
+1. Add column
 
 ##### Python Sample Code
 
@@ -492,21 +493,17 @@ for tr in table.find_all("tr"):
 
 # Convert the list to a pandas dataframe
 df = pd.DataFrame(data, columns=["Rank", "Title", "IMDB ID", "Year", "Rating", "Image URL"])
-
-# Return the dataframe as a table
-df    
 ```
 
 ##### Power Query Sample Script
 ```css
 let
-    Source = Python.Execute("import requests#(lf)from bs4 import BeautifulSoup#(lf)import pandas as pd#(lf)#(lf)# Send a GET request to the URL#(lf)url = ""https://www.imdb.com/chart/top""#(lf)response = requests.get(url)#(lf)#(lf)# Use BeautifulSoup to parse the HTML#(lf)soup = BeautifulSoup(response.text, 'html.parser')#(lf)#(lf)# Find the table with the data#(lf)table = soup.find(""tbody"", class_=""lister-list"")#(lf)#(lf)# Create a list to store the data#(lf)data = []#(lf)#(lf)# Loop through each row in the table#(lf)for tr in table.find_all(""tr""):#(lf)#(lf)    # Find the title and original title#(lf)    title = tr.find(""td"", class_=""titleColumn"").a.get_text()#(lf)    #(lf)    # Find the Rank#(lf)    rank = tr.find(""td"", class_=""titleColumn"").get_text().split(""."")[0]#(lf)#(lf)    # Find the IMDB ID#(lf)    imdb_id = tr.find(""td"", class_=""posterColumn"").a[""href""].split(""/"")[2]#(lf)    #(lf)    # Find the year#(lf)    year = tr.find(""span"", class_=""secondaryInfo"").get_text().strip(""()"")#(lf)    #(lf)    # Find the rating#(lf)    rating = tr.find(""strong"").get_text()#(lf)    #(lf)    # Find the image URL#(lf)    image_url = tr.find(""td"", class_=""posterColumn"").img[""src""]#(lf)#(lf)    # Add the data to the list#(lf)    data.append([rank, title, imdb_id, year, rating, image_url])#(lf)#(lf)# Convert the list to a pandas dataframe#(lf)df = pd.DataFrame(data, columns=[""Rank"", ""Original Title"", ""IMDB ID"", ""Year"", ""Rating"", ""Image URL""])#(lf)#(lf)# Return the dataframe as a table#(lf)df"),
+    Source = Python.Execute("import requests#(lf)from bs4 import BeautifulSoup#(lf)import pandas as pd#(lf)#(lf)# Send a GET request to the URL#(lf)url = ""https://www.imdb.com/chart/top""#(lf)response = requests.get(url)#(lf)#(lf)# Use BeautifulSoup to parse the HTML#(lf)soup = BeautifulSoup(response.text, 'html.parser')#(lf)#(lf)# Find the table with the data#(lf)table = soup.find(""tbody"", class_=""lister-list"")#(lf)#(lf)# Create a list to store the data#(lf)data = []#(lf)#(lf)# Loop through each row in the table#(lf)for tr in table.find_all(""tr""):#(lf)#(lf)    # Find the title and original title#(lf)    title = tr.find(""td"", class_=""titleColumn"").a.get_text()#(lf)    #(lf)    # Find the Rank#(lf)    rank = tr.find(""td"", class_=""titleColumn"").get_text().split(""."")[0]#(lf)#(lf)    # Find the IMDB ID#(lf)    imdb_id = tr.find(""td"", class_=""posterColumn"").a[""href""].split(""/"")[2]#(lf)    #(lf)    # Find the year#(lf)    year = tr.find(""span"", class_=""secondaryInfo"").get_text().strip(""()"")#(lf)    #(lf)    # Find the rating#(lf)    try:#(lf)        rating = tr.find(""strong"").get_text()#(lf)    except:#(lf)        rating = None#(lf)    #(lf)    # Find the image URL#(lf)    image_url = tr.find(""td"", class_=""posterColumn"").img[""src""]#(lf)#(lf)    # Add the data to the list#(lf)    data.append([rank, title, imdb_id, year, rating, image_url])#(lf)#(lf)# Convert the list to a pandas dataframe#(lf)df = pd.DataFrame(data, columns=[""Rank"", ""Title"", ""IMDB ID"", ""Year"", ""Rating"", ""Image URL""])"),
     df1 = Source{[Name="df"]}[Value],
     #"Changed Type" = Table.TransformColumnTypes(df1,{{"Year", Int64.Type}, {"Rating", type number}, {"Rank", Int64.Type}}),
-    #"Inserted IMDB_URL" = Table.AddColumn(#"Changed Type", "IMDB URL", each Text.Combine({"https://www.imdb.com/title/", [IMDB ID]}), type text),
-    #"Inserted Year_TItle" = Table.AddColumn(#"Inserted IMDB_URL", "Year Title", each Text.Combine({Text.From([Year], "en-US"), " / ", [Original Title]}), type text)
+    #"Inserted IMDB_URL" = Table.AddColumn(#"Changed Type", "IMDB URL", each Text.Combine({"https://www.imdb.com/title/", [IMDB ID]}), type text)
 in
-    #"Inserted Year_TItle"
+    #"Inserted IMDB_URL"
 ```
 
 #### 3.2 *IMDB Top List* - Top 250 Historical Table (1996 to last year) and Oscar Highlight (2019 till now)
@@ -516,10 +513,10 @@ in
  [pollmaster's List](https://www.imdb.com/user/ur48187336/lists)
 
 ##### Steps
-1. Run the Python Script to load the data
-    1. From Pollmaster's list, find all the lists which start with **IMDb Top 250** or **Oscar Highlights**, and generate the URLs list
-    1. Loop through URLs list and Run the *extract_movie_details* function to extract movie details
-1. Add custom fields for **RankingGroup** and **IMDB_ID**
+1. Run the Python Script to load the data;
+    1. From Pollmaster's list, find all the lists which start with **IMDb Top 250** or **Oscar Highlights**, and generate the URLs list;
+    1. Loop through URLs list and Run the *extract_movie_details* function to extract movie details;
+1. Add custom fields for **RankingGroup** and **IMDB_ID**.
 
 ##### Python Sample COde
     
