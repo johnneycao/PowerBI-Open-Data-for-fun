@@ -1,11 +1,11 @@
 ---
 title: Movie collections analysis
 author: Johnney Cao
-date updated: 2023-4-27
-keyword: [IMDB, Plex API, parameter, web connector, Python, pandas, bs4, custom function, Image URL, Web URL, html color, table reference, conditional format]
+date updated: 2023-5-21
+keyword: [IMDB, IMDB Top 250, Plex API, parameter, web connector, Python, pandas, bs4, custom function, Image URL, Web URL, table reference, conditional format, csv, Matrix table, dashboard, DAX]
 ---
 
-# Analysis of Movie Collections from IMDB Top 250 and Plex - WIP
+# Analysis of Movie Collections from IMDB Top 250 and Plex
 
 ----------
 
@@ -387,7 +387,44 @@ Note: Simiar to *Plex Movies* Master Table, used to 1:many with IMDB Data Table
 1. Reference from one of the 3 **Plex Movies** Raw Data Tables above;
 1. Clean up the item which doesnot have IMDB_ID;
 1. Keep only IMDB related colummn;
-1. Remove Duplicats from PlexMetadata Id. 
+1. Remove Duplicats from PlexMetadata Id;
+1. Add column for **In Most Popular**;
+    > In Most Popular = IF(COUNTROWS(FILTER('IMDB Charts', 'IMDB Charts'[List Name] = "Most Popular" && 'IMDB Charts'[IMDB ID] = 'Plex IMDB Master'[IMDB ID])) > 0,"TRUE","FALSE")
+1. Add column for **In Oscar Highlight**;
+    >In Oscar Highlight = IF(COUNTROWS(FILTER('IMDB Top Lists', LEFT('IMDB Top Lists'[List Name], 5) = "Oscar" && 'IMDB Top Lists'[IMDB ID] = 'Plex IMDB Master'[IMDB ID])) > 0,"TRUE","FALSE")
+1. Add column for **In Top 250**;
+    > In T250 = IF(OR(COUNTROWS(FILTER('IMDB Charts', 'IMDB Charts'[List Name] = "IMDB Top 250" &&  'IMDB Charts'[IMDB ID] = 'Plex IMDB Master'[IMDB ID])) > 0,COUNTROWS(FILTER('IMDB Top Lists', LEFT('IMDB Top Lists'[List Name], 4) = "IMDB" && 'IMDB Top Lists'[IMDB ID] = 'Plex IMDB Master'[IMDB ID])) > 0),"TRUE","FALSE")
+1. Add column for T250 Best Ranking
+    > T250 Best Ranking = 
+VAR CurrentRank =
+    CALCULATE(
+        MIN('IMDB Charts'[Rank]),
+        FILTER(
+            ALL('IMDB Charts'),
+            'IMDB Charts'[List Name] = "IMDB Top 250" && 'IMDB Charts'[IMDB ID] = EARLIER([IMDB ID])
+        ),
+        NOT(ISBLANK('IMDB Charts'[Rank]))
+    )
+VAR HistoryRank =
+    CALCULATE(
+        MIN('IMDB Top Lists'[Ranking]),
+        FILTER(
+            ALL('IMDB Top Lists'),
+            LEFT('IMDB Top Lists'[List Name], 4) = "IMDB" && 'IMDB Top Lists'[IMDB ID] = EARLIER([IMDB ID])
+        ),
+        NOT(ISBLANK('IMDB Top Lists'[Ranking]))
+    )
+RETURN
+    SWITCH(TRUE(),ISBLANK(CurrentRank) && ISBLANK(HistoryRank), BLANK(), ISBLANK(CurrentRank), HistoryRank, ISBLANK(HistoryRank), CurrentRank, MIN(CurrentRank, HistoryRank))
+1. Add column for T250 Current Ranking
+    > T250 Current Ranking = CALCULATE(
+        MIN('IMDB Charts'[Rank]),
+        FILTER(
+            ALL('IMDB Charts'),
+            'IMDB Charts'[List Name] = "IMDB Top 250" && 'IMDB Charts'[IMDB ID] = EARLIER([IMDB ID])
+        ),
+        NOT(ISBLANK('IMDB Charts'[Rank]))
+    )
 
 ##### Power Query Sample Script
 ```css
@@ -431,18 +468,48 @@ in
 
 ### 3 *IMDB* Tables
 
-#### 3.1 *IMDB Top 250 Current*  Table
+#### 3.1 *IMDB Charts*  Tables
+IMDB Top 250 Movies (Most recent), Top Rated English Movies (250) and Most Popular Movies (100)
 
 ##### Data Sources
- [https://www.imdb.com/chart/top](https://www.imdb.com/chart/top)
+ - [Most Popular Movies](https://www.imdb.com/chart/moviemeter)
+ - [IMDB Top 250 Movies](https://www.imdb.com/chart/top)
+ - [Top Rated English Movies](https://www.imdb.com/chart/top-english-movies) 
 
 ##### Steps
-1. Use python code below to pull data from [IMDB Top 250 Site](https://www.imdb.com/chart/top);
+1. Use python code below to pull data from data source lists above;
 1. Change **Rank** and **Year** to *Whole Number* and **Rating** to *Decimal Number*;
-1. Insert a merged column for **Year** and **Original Title**;
 1. Add **IMDB URL** and setup Data category (Ribbon bar -> Format -> Data catagory = *Web URL*);
 1. Setup Data category for **Image URL**  (Ribbon bar -> Format -> Data catagory = *Image URL*);
-1. Add column
+1. Add columns for **IMDB 250 Best Ranking** and **In Plex**.
+
+    Note: **IMDB 250 Best Ranking**: Find minimum value from both **IMDB Charts** (current IMDB Top 250) and **IMDB Tops Lists** (Historic IMDB Top 250) tables, and use the smaller value.
+
+    > IMDB 250 Best Ranking = 
+        VAR CurrentRank =
+            CALCULATE(
+                MIN('IMDB Charts'[Rank]),
+                FILTER(
+                    ALL('IMDB Charts'),
+                    'IMDB Charts'[List Name] = "IMDB Top 250" && 'IMDB Charts'[IMDB ID] = EARLIER([IMDB ID])
+                ),
+                NOT(ISBLANK('IMDB Charts'[Rank]))
+            )
+        VAR HistoryRank =
+            CALCULATE(
+                MIN('IMDB Top Lists'[Ranking]),
+                FILTER(
+                    ALL('IMDB Top Lists'),
+                    LEFT('IMDB Top Lists'[List Name], 4) = "IMDB" && 'IMDB Top Lists'[IMDB ID] = EARLIER([IMDB ID])
+                ),
+                NOT(ISBLANK('IMDB Top Lists'[Ranking]))
+            )
+        RETURN
+            SWITCH(TRUE(),ISBLANK(CurrentRank) && ISBLANK(HistoryRank), BLANK(), ISBLANK(CurrentRank), HistoryRank, ISBLANK(HistoryRank), CurrentRank, MIN(CurrentRank, HistoryRank))
+
+
+    > In Plex = IF(COUNTROWS(FILTER('Plex IMDB Master', 'Plex IMDB Master'[IMDB ID]=EARLIER([IMDB ID])))>0,TRUE,FALSE)
+
 
 ##### Python Sample Code
 
@@ -498,25 +565,30 @@ df = pd.DataFrame(data, columns=["Rank", "Title", "IMDB ID", "Year", "Rating", "
 ##### Power Query Sample Script
 ```css
 let
-    Source = Python.Execute("import requests#(lf)from bs4 import BeautifulSoup#(lf)import pandas as pd#(lf)#(lf)# Send a GET request to the URL#(lf)url = ""https://www.imdb.com/chart/top""#(lf)response = requests.get(url)#(lf)#(lf)# Use BeautifulSoup to parse the HTML#(lf)soup = BeautifulSoup(response.text, 'html.parser')#(lf)#(lf)# Find the table with the data#(lf)table = soup.find(""tbody"", class_=""lister-list"")#(lf)#(lf)# Create a list to store the data#(lf)data = []#(lf)#(lf)# Loop through each row in the table#(lf)for tr in table.find_all(""tr""):#(lf)#(lf)    # Find the title and original title#(lf)    title = tr.find(""td"", class_=""titleColumn"").a.get_text()#(lf)    #(lf)    # Find the Rank#(lf)    rank = tr.find(""td"", class_=""titleColumn"").get_text().split(""."")[0]#(lf)#(lf)    # Find the IMDB ID#(lf)    imdb_id = tr.find(""td"", class_=""posterColumn"").a[""href""].split(""/"")[2]#(lf)    #(lf)    # Find the year#(lf)    year = tr.find(""span"", class_=""secondaryInfo"").get_text().strip(""()"")#(lf)    #(lf)    # Find the rating#(lf)    try:#(lf)        rating = tr.find(""strong"").get_text()#(lf)    except:#(lf)        rating = None#(lf)    #(lf)    # Find the image URL#(lf)    image_url = tr.find(""td"", class_=""posterColumn"").img[""src""]#(lf)#(lf)    # Add the data to the list#(lf)    data.append([rank, title, imdb_id, year, rating, image_url])#(lf)#(lf)# Convert the list to a pandas dataframe#(lf)df = pd.DataFrame(data, columns=[""Rank"", ""Title"", ""IMDB ID"", ""Year"", ""Rating"", ""Image URL""])"),
+    Source = Python.Execute("import requests#(lf)from bs4 import BeautifulSoup#(lf)import pandas as pd#(lf)#(lf)# Function to scrape the data from a given URL and list name#(lf)def scrape_data(url, list_name):#(lf)    response = requests.get(url)#(lf)    soup = BeautifulSoup(response.text, 'html.parser')#(lf)    table = soup.find(""tbody"", class_=""lister-list"")#(lf)    data = []#(lf)#(lf)    for tr in table.find_all(""tr""):#(lf)        title = tr.find(""td"", class_=""titleColumn"").a.get_text()#(lf)        rank = tr.find(""td"", class_=""titleColumn"").get_text().split(""."")[0]#(lf)        imdb_id = tr.find(""td"", class_=""posterColumn"").a[""href""].split(""/"")[2]#(lf)        year = tr.find(""span"", class_=""secondaryInfo"").get_text().strip(""()"")#(lf)        try:#(lf)            rating = tr.find(""strong"").get_text()#(lf)        except AttributeError:#(lf)            rating = None#(lf)        image_url = tr.find(""td"", class_=""posterColumn"").img[""src""]#(lf)#(lf)        # Fetch additional attributes#(lf)        attributes = tr.find_all(""span"")#(lf)        rank_attribute = None#(lf)        imdb_rating_attribute = None#(lf)        user_votes_attribute = None#(lf)        num_votes_attribute = None#(lf)        user_rating_attribute = None#(lf)#(lf)        for attribute in attributes:#(lf)            attribute_name = attribute.get(""name"")#(lf)            if attribute_name == ""rk"":#(lf)                rank_attribute = attribute.get(""data-value"")#(lf)            elif attribute_name == ""ir"":#(lf)                imdb_rating_attribute = attribute.get(""data-value"")#(lf)            elif attribute_name == ""us"":#(lf)                user_votes_attribute = attribute.get(""data-value"")#(lf)            elif attribute_name == ""nv"":#(lf)                num_votes_attribute = attribute.get(""data-value"")#(lf)            elif attribute_name == ""ur"":#(lf)                user_rating_attribute = attribute.get(""data-value"")#(lf)#(lf)        data.append([#(lf)            rank,#(lf)            title,#(lf)            imdb_id,#(lf)            year,#(lf)            rating,#(lf)            image_url,#(lf)            list_name,#(lf)            rank_attribute,#(lf)            imdb_rating_attribute,#(lf)            user_votes_attribute,#(lf)            num_votes_attribute,#(lf)            user_rating_attribute#(lf)        ])#(lf)#(lf)    return data#(lf)#(lf)# Main code#(lf)data = []#(lf)#(lf)# Scrape data from IMDB Top 250#(lf)data.extend(scrape_data(""https://www.imdb.com/chart/top"", ""IMDB Top 250""))#(lf)#(lf)# Scrape data from Most Popular#(lf)data.extend(scrape_data(""https://www.imdb.com/chart/moviemeter/"", ""Most Popular""))#(lf)#(lf)# Scrape data from Most Top Rated English Movies#(lf)data.extend(scrape_data(""https://www.imdb.com/chart/top-english-movies"", ""Most Top Rated English Movies""))#(lf)#(lf)# Convert the list to a pandas dataframe#(lf)df = pd.DataFrame(data, columns=[#(lf)    ""Rank"",#(lf)    ""Title"",#(lf)    ""IMDB ID"",#(lf)    ""Year"",#(lf)    ""Rating"",#(lf)    ""Image URL"",#(lf)    ""List Name"",#(lf)    ""Rank Attribute"",#(lf)    ""IMDB Rating Attribute"",#(lf)    ""User Votes Attribute"",#(lf)    ""Number of Votes Attribute"",#(lf)    ""User Rating Attribute""#(lf)])#(lf)"),
     df1 = Source{[Name="df"]}[Value],
-    #"Changed Type" = Table.TransformColumnTypes(df1,{{"Year", Int64.Type}, {"Rating", type number}, {"Rank", Int64.Type}}),
-    #"Inserted IMDB_URL" = Table.AddColumn(#"Changed Type", "IMDB URL", each Text.Combine({"https://www.imdb.com/title/", [IMDB ID]}), type text)
+    #"Changed Type" = Table.TransformColumnTypes(df1,{{"Year", Int64.Type}, {"Rating", type number}, {"Rank", Int64.Type}, {"Title", type text}, {"IMDB ID", type text}, {"Image URL", type text}, {"List Name", type text}, {"Rank Attribute", Int64.Type}, {"IMDB Rating Attribute", type number}, {"User Votes Attribute", Int64.Type}, {"Number of Votes Attribute", Int64.Type}, {"User Rating Attribute", type number}}),
+    #"Replaced Errors" = Table.ReplaceErrorValues(#"Changed Type", {{"Rank", null}}),
+    #"Inserted IMDB_URL" = Table.AddColumn(#"Replaced Errors", "IMDB URL", each Text.Combine({"https://www.imdb.com/title/", [IMDB ID]}), type text)
 in
     #"Inserted IMDB_URL"
 ```
 
-#### 3.2 *IMDB Top List* - Top 250 Historical Table (1996 to last year) and Oscar Highlight (2019 till now)
+#### 3.2 *IMDB Top Lists* Table 
+Top 250 Historical Table (1996 to last year) and Oscar Highlight (2019 till now).
+
 *Note: Since it needs to load multiple lists and process each individually, the data retrieval process is expected to take more than 5 minutes to complete.*
 
 ##### Data Sources
- [pollmaster's List](https://www.imdb.com/user/ur48187336/lists)
+- [pollmaster's List](https://www.imdb.com/user/ur48187336/lists)
 
 ##### Steps
 1. Run the Python Script to load the data;
     1. From Pollmaster's list, find all the lists which start with **IMDb Top 250** or **Oscar Highlights**, and generate the URLs list;
     1. Loop through URLs list and Run the *extract_movie_details* function to extract movie details;
-1. Add custom fields for **RankingGroup** and **IMDB_ID**.
+1. Clean up the year column;
+1. Add custom fields for **RankingGroup** and **IMDB_ID**;
+1. Add columns for **IMDB 250 Best Ranking** and **In Plex**.
 
 ##### Python Sample COde
     
@@ -557,7 +629,7 @@ oscar_urls = process_urls(oscar_urls, 'Oscar Highlights')
 all_urls = pd.concat([imdb_urls, oscar_urls], ignore_index=True)
 
 # Define function to extract movie details from a single page
-def extract_movie_details(page_content, list_year):
+def extract_movie_details(page_content, ListYear):
     soup = BeautifulSoup(page_content, 'html.parser')
     Frame = soup.find_all("div", class_="lister-item mode-detail")
     details_list = []
@@ -592,10 +664,12 @@ def extract_movie_details(page_content, list_year):
             Gross = None
             
         a = Frame[i].find_all("p", class_="text-muted text-small")[1].text.split('|')
-        Director = a[0].strip().replace('\n', ' ')
-        Cast = a[1].strip().replace('\n', ' ')
+        Director = a[0].strip().replace('\n', ' ').replace('Director: ', '').replace('Directors: ', '')
+        Cast = a[1].strip().replace('\n', ' ').replace('Star: ', '').replace('Stars: ', '')
+
+        ImageLink = Frame[i].find("img", class_="loadlate")["src"]
         
-        details = [ArticleTitle, list_year, Ranking, IMDBlink, Title, Date, Certificate, RunTime, Genre, Rating, Score, Votes, Gross, Director, Cast]
+        details = [ArticleTitle, ListYear, Ranking, IMDBlink, Title, Date, Certificate, RunTime, Genre, Rating, Score, Votes, Gross, Director, Cast, ImageLink]
         details_list.append(details)
         
     return details_list
@@ -604,54 +678,109 @@ def extract_movie_details(page_content, list_year):
 details_list = []
 for i in range(len(all_urls)):
     list_name = all_urls.loc[i, 'list_name']
-    list_year = list_name.replace('IMDb Top 250 ', '').replace('Oscar Highlights ', '')
+    ListYear = list_name.replace('IMDb Top 250 ', '').replace('Oscar Highlights ', '')
     # Load page 1
     page = get(all_urls.loc[i, 'link'])
-    details_list.extend(extract_movie_details(page.content, list_year))
+    details_list.extend(extract_movie_details(page.content, ListYear))
     
     # Load page 2
     page = get(all_urls.loc[i, 'page2'])
-    details_list.extend(extract_movie_details(page.content, list_year))
+    details_list.extend(extract_movie_details(page.content, ListYear))
     
     # Load page 3
     page = get(all_urls.loc[i, 'page3'])
-    details_list.extend(extract_movie_details(page.content, list_year))
+    details_list.extend(extract_movie_details(page.content, ListYear))
 
 # Convert details to DataFrame
-columns=["ListName", "ListYear", "Ranking", "IMDBlink", "Title", "Year", "Certificate", "RunTime", "Genre", "Rating", "Score", "Votes", "Gross", "Director", "Cast"]
+columns=["List Name", "List Year", "Ranking", "IMDB URL", "Title", "Year", "Certificate", "RunTime", "Genre", "Rating", "Score", "Votes", "Gross", "Director", "Cast", "Image URL"]
 details_df = pd.DataFrame(details_list, columns=columns)
 ```
 
 ##### Power Query Sample Script
 ```css
 let
-    Source = Python.Execute("import requests#(lf)from bs4 import BeautifulSoup#(lf)import pandas as pd#(lf)#(lf)# Send a GET request to the URL#(lf)url = ""https://www.imdb.com/chart/top""#(lf)response = requests.get(url)#(lf)#(lf)# Use BeautifulSoup to parse the HTML#(lf)soup = BeautifulSoup(response.text, 'html.parser')#(lf)#(lf)# Find the table with the data#(lf)table = soup.find(""tbody"", class_=""lister-list"")#(lf)#(lf)# Create a list to store the data#(lf)data = []#(lf)#(lf)# Loop through each row in the table#(lf)for tr in table.find_all(""tr""):#(lf)#(lf)    # Find the title and original title#(lf)    title = tr.find(""td"", class_=""titleColumn"").a.get_text()#(lf)    #(lf)    # Find the Rank#(lf)    rank = tr.find(""td"", class_=""titleColumn"").get_text().split(""."")[0]#(lf)#(lf)    # Find the IMDB ID#(lf)    imdb_id = tr.find(""td"", class_=""posterColumn"").a[""href""].split(""/"")[2]#(lf)    #(lf)    # Find the year#(lf)    year = tr.find(""span"", class_=""secondaryInfo"").get_text().strip(""()"")#(lf)    #(lf)    # Find the rating#(lf)    try:#(lf)        rating = tr.find(""strong"").get_text()#(lf)    except:#(lf)        rating = None#(lf)    #(lf)    # Find the image URL#(lf)    image_url = tr.find(""td"", class_=""posterColumn"").img[""src""]#(lf)#(lf)    # Add the data to the list#(lf)    data.append([rank, title, imdb_id, year, rating, image_url])#(lf)#(lf)# Convert the list to a pandas dataframe#(lf)df = pd.DataFrame(data, columns=[""Rank"", ""Title"", ""IMDB ID"", ""Year"", ""Rating"", ""Image URL""])#(lf)#(lf)# Return the dataframe as a table#(lf)df"),
-    df1 = Source{[Name="df"]}[Value],
-    #"Changed Type" = Table.TransformColumnTypes(df1,{{"Year", Int64.Type}, {"Rating", type number}, {"Rank", Int64.Type}}),
-    #"Inserted IMDB_URL" = Table.AddColumn(#"Changed Type", "IMDB URL", each Text.Combine({"https://www.imdb.com/title/", [IMDB ID]}), type text)
+    Source = Python.Execute("from bs4 import BeautifulSoup#(lf)from requests import get#(lf)import pandas as pd#(lf)import re#(lf)#(lf)page = get('https://www.imdb.com/user/ur48187336/lists')#(lf)soup = BeautifulSoup(page.content, 'html.parser')  # Changed parser to 'html.parser'#(lf)content = soup.find(id=""main"")#(lf)urls = pd.DataFrame()#(lf)temp = pd.DataFrame()#(lf)#(lf)for i in range(len(content.find_all(""a"", class_=""list-name""))):#(lf)    link = content.find_all(""a"", class_=""list-name"")[i].get('href')#(lf)    list_name = content.find_all(""a"", class_=""list-name"")[i].text#(lf)    inf = [list_name, link]#(lf)    temp = pd.DataFrame([inf], columns=['list_name', 'link'])#(lf)    urls = pd.concat([urls, temp], ignore_index=True)#(lf)#(lf)imdb_urls = urls[urls['list_name'].str.startswith('IMDb Top 250')]#(lf)oscar_urls = urls[urls['list_name'].str.startswith('Oscar Highlights')]#(lf)#(lf)def process_urls(urls, list_prefix):#(lf)    new_urls = urls.copy()#(lf)    new_urls['year'] = new_urls['list_name'].apply(lambda x: list_prefix + str(x[len(list_prefix):]))  # Fixed indexing#(lf)    new_urls['link'] = new_urls['link'].apply(lambda x: 'https://www.imdb.com' + x)#(lf)    new_urls = new_urls.sort_values(['year']).reset_index(drop=True)#(lf)    new_urls['page2'] = new_urls['link'].apply(lambda x: x + ""?page=2"")#(lf)    new_urls['page3'] = new_urls['link'].apply(lambda x: x + ""?page=3"")#(lf)    return new_urls#(lf)#(lf)imdb_urls = process_urls(imdb_urls, 'IMDb Top 250')#(lf)oscar_urls = process_urls(oscar_urls, 'Oscar Highlights')#(lf)#(lf)all_urls = pd.concat([imdb_urls, oscar_urls], ignore_index=True)#(lf)#(lf)# Define function to extract movie details from a single page#(lf)def extract_movie_details(page_content, ListYear):#(lf)    soup = BeautifulSoup(page_content, 'html.parser')#(lf)    Frame = soup.find_all(""div"", class_=""lister-item mode-detail"")#(lf)    details_list = []#(lf)    #(lf)    for i in range(len(Frame)):#(lf)        ArticleTitle = soup.find(""h1"", class_=""header"").text.replace(""\n"", """")#(lf)        FirstLine = Frame[i].find(""h3"", class_=""lister-item-header"")#(lf)        Ranking = int(FirstLine.find(""span"").text.replace('.', ''))#(lf)        IMDBlink = ""https://www.imdb.com"" + FirstLine.find(""a"").get(""href"")#(lf)        Title = FirstLine.find(""a"").text#(lf)        Date = re.sub(r""[()]"", """", FirstLine.find_all(""span"")[-1].text)#(lf)        #(lf)        try:#(lf)            Certificate = Frame[i].find(""span"", class_=""certificate"").text#(lf)        except:#(lf)            Certificate = None#(lf)            #(lf)        RunTime = Frame[i].find(""span"", class_=""runtime"").text[:-4]#(lf)        Genre = Frame[i].find(""span"", class_=""genre"").text.rstrip().replace(""\n"", """")#(lf)        Rating = Frame[i].find(""span"", class_=""ipl-rating-star__rating"").text#(lf)        #(lf)        try:#(lf)            Score = Frame[i].find(""span"", class_=""metascore"").text.rstrip()#(lf)        except:#(lf)            Score = None#(lf)            #(lf)        Votes = Frame[i].find_all(""span"", attrs={""name"": ""nv""})[0].text#(lf)        #(lf)        try:#(lf)            Gross = Frame[i].find_all(""span"", attrs={""name"": ""nv""})[1].text#(lf)        except:#(lf)            Gross = None#(lf)            #(lf)        a = Frame[i].find_all(""p"", class_=""text-muted text-small"")[1].text.split('|')#(lf)        Director = a[0].strip().replace('\n', ' ').replace('Director: ', '').replace('Directors: ', '')#(lf)        Cast = a[1].strip().replace('\n', ' ').replace('Star: ', '').replace('Stars: ', '')#(lf)#(lf)        ImageLink = Frame[i].find(""img"", class_=""loadlate"")[""src""]#(lf)        #(lf)        details = [ArticleTitle, ListYear, Ranking, IMDBlink, Title, Date, Certificate, RunTime, Genre, Rating, Score, Votes, Gross, Director, Cast, ImageLink]#(lf)        details_list.append(details)#(lf)        #(lf)    return details_list#(lf)#(lf)# Loop through URLs and extract movie details#(lf)details_list = []#(lf)for i in range(len(all_urls)):#(lf)    list_name = all_urls.loc[i, 'list_name']#(lf)    ListYear = list_name.replace('IMDb Top 250 ', '').replace('Oscar Highlights ', '')#(lf)    # Load page 1#(lf)    page = get(all_urls.loc[i, 'link'])#(lf)    details_list.extend(extract_movie_details(page.content, ListYear))#(lf)    #(lf)    # Load page 2#(lf)    page = get(all_urls.loc[i, 'page2'])#(lf)    details_list.extend(extract_movie_details(page.content, ListYear))#(lf)    #(lf)    # Load page 3#(lf)    page = get(all_urls.loc[i, 'page3'])#(lf)    details_list.extend(extract_movie_details(page.content, ListYear))#(lf)#(lf)# Convert details to DataFrame#(lf)columns=[""List Name"", ""List Year"", ""Ranking"", ""IMDB URL"", ""Title"", ""Year"", ""Certificate"", ""RunTime"", ""Genre"", ""Rating"", ""Score"", ""Votes"", ""Gross"", ""Director"", ""Cast"", ""Image URL""]#(lf)details_df = pd.DataFrame(details_list, columns=columns)"),
+    details_df = Source{[Name="details_df"]}[Value],
+    #"Replaced Value" = Table.ReplaceValue(details_df," TV Movie","",Replacer.ReplaceText,{"Year"}),
+    #"Clean Up Year column" = Table.TransformColumns(#"Replaced Value", {{"Year", each Text.End(_, 4), type text}}),
+    #"Changed Type" = Table.TransformColumnTypes(#"Clean Up Year column",{{"List Name", type text}, {"List Year", Int64.Type}, {"Ranking", Int64.Type}, {"IMDB URL", type text}, {"Title", type text}, {"Year", Int64.Type}, {"Certificate", type text}, {"RunTime", Int64.Type}, {"Genre", type text}, {"Rating", type number}, {"Score", Int64.Type}, {"Votes", Int64.Type}, {"Gross", type text}, {"Director", type text}, {"Cast", type text} }),
+    #"Added RankingGroup" = Table.AddColumn(#"Changed Type", "Ranking Group", each if [Ranking] < 50 then 1 else if [Ranking] <100 then 2 else if [Ranking] < 150 then 3 else if [Ranking] < 200 then 4 else 5),
+    #"Changed RankingGroup Type" = Table.TransformColumnTypes(#"Added RankingGroup",{{"Ranking Group", Int64.Type}}),
+    #"Add IMDB ID" = Table.AddColumn(#"Changed RankingGroup Type", "IMDB ID", each Text.BetweenDelimiters([IMDB URL], "/", "/", 3, 0), type text),
+    #"Added List Category" = Table.AddColumn(#"Add IMDB ID", "Category", each Text.Reverse(Text.Middle(Text.Reverse([List Name]), 5)), type text)
 in
-    #"Inserted IMDB_URL"
+    #"Added List Category"
 ```
 
 ----------
 
 ## Relationship
+### Dependency Map
+![Screenshot](../_Asset%20Library/Movies_Dependencies.png)
+Tables | Relationship
+---- | -----
+**Plex Movies Genres** / **Plex Movies** |Many to 1
+**Plex Movies Cast** / **Plex Movies** |Many to 1
+**Plex Movies Country** / **Plex Movies** |Many to 1
+**Plex Movies Video** / **Plex Movies** |Many to 1
+**Plex Movies Audio** / **Plex Movies** |Many to 1
+**Plex Movies SubTitles** / **Plex Movies** |Many to 1
+**Plex Movies - CSV** / **Plex Movies** |1 to 1
+**Plex Movies** / **Plex IMDB Master** | Many to 1
+**Plex Movies Master** / **IMDB Master** |1 to 1
+**IMDB Top Lists** / **IMDB Master** | Many to 1
+**IMDB Charts** / **IMDB Master** | Many to 1
 
 ----------
 
-## Reports
+## Dashboard & Reports
+
+### 1. **Movie Collections** Page
+
+![Screenshot](../_Asset%20Library/Movies_Dashboard.png)
+
+- Cards - Total Movies, Collections, Studio, Library, IMDB Matched, TMDB Matched, TVDB Matched, Viewed, IMDB Top 250, Oscar Highlight, Genres, Country
+- Donut Chart - by Resolution, IMDB Top 250 Coverage
+- Funnel - by container, by Audio Channels, Video Codec, Audio Codec
+- Map - by Country
+- Stacked Column Chart - by Year and Rating Group
+
+### 2. **Plex Movie Library** Page
+
+![Screenshot](../_Asset%20Library/Plex_Movie_Library.png)
+
+- Decomposition tree - by Collection and Studio
+- Sankey - Audio Channels vs Audio Codec, Resolution vs Frame Rate
+- Table - Plex Movies
+
+### 3. **IMDB Pop List** Page
+
+![Screenshot](../_Asset%20Library/IMDB_Top_List.png)
+
+- Stacked Colum Chart - In Plex or not
+- Matrix table - IMDB Top 250 / MOst Top 250 Rated English Movies
+- Table - Most Popular
+
+### 4. **IMDB Top 250 Heatmap** Page
+
+![Screenshot](../_Asset%20Library/IMDB_Top250_Heatmap.png)
+
+- Matrix table - IMDB Top 250 Historic Data by Year
+
+### 5. **IMDB Top 250 Trends** Page
+
+![Screenshot](../_Asset%20Library/IMDB_Top250_Trend.gif)
+
+- Matrix table - IMDB Top 250 Historic Data by Released Year
 
 ----------
 
 ## Reference
 
-
 ----------
 
 ### Power Query Reference
 - [Learn more about Power Query functions](https://docs.microsoft.com/powerquery-m/understanding-power-query-m-functions)
-- [Fuzzy Matching](https://learn.microsoft.com/en-us/power-query/fuzzy-matching)
-
 
 ### Plex API
 - [Finding an authentication token / X-Plex-Token](https://support.plex.tv/articles/204059436-finding-an-authentication-token-x-plex-token/)

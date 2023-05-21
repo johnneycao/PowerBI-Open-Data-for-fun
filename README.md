@@ -1,7 +1,7 @@
 ---
 title: TOC and Reference
 author: Johnney Cao
-date updated: 2023-3-31
+date updated: 2023-5-21
 ---
 
 # Power BI Samples
@@ -33,7 +33,7 @@ This project welcomes contributions and suggestions.
 
     ![Screenshot](./_Asset%20Library/WorldBank_WorldMap_Screenshot.png)
 
-- [Analysis of Movie Collections](./docs/Movies.md) (WIP)
+- [Analysis of Movie Collections](./docs/Movies.md)
     ![Screenshot](./_Asset%20Library/Movies_Dashboard.png)
     ![Screenshot](./_Asset%20Library/IMDB_Top250_Trend.gif)
 
