@@ -2,7 +2,7 @@
 title: Movie collections analysis
 author: Johnney Cao
 date updated: 2023-5-21
-keyword: [IMDB, IMDB Top 250, Plex API, parameter, web connector, Python, pandas, bs4, custom function, Image URL, Web URL, table reference, conditional format, csv, Matrix table, dashboard, DAX]
+keyword: [IMDB, IMDB Top 250, Plex API, parameter, web connector, Python, pandas, bs4, custom function, Image URL, Web URL, table reference, conditional format, csv, Matrix table, dashboard, DAX, tooltips card]
 ---
 
 # Analysis of Movie Collections from IMDB Top 250 and Plex
@@ -773,6 +773,11 @@ Tables | Relationship
 
 - Matrix table - IMDB Top 250 Historic Data by Released Year
 
+### 6. *Plex Collection Card* tooltips Page
+![Screenshot](../_Asset%20Library/Plex_Collection_Card.png)
+
+### 7. *Plex Collection Card* tooltips Page
+![Screenshot](../_Asset%20Library/Plex_Movie_Card.png)
 ----------
 
 ## Reference
