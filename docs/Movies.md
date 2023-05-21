@@ -513,6 +513,8 @@ IMDB Top 250 Movies (Most recent), Top Rated English Movies (250) and Most Popul
 
 ##### Python Sample Code
 
+[Python Download Link](../_Asset%20Library/Source_Files/IMDB_Charts.py)
+
 ```python
 import requests
 from bs4 import BeautifulSoup
@@ -591,6 +593,8 @@ Top 250 Historical Table (1996 to last year) and Oscar Highlight (2019 till now)
 1. Add columns for **IMDB 250 Best Ranking** and **In Plex**.
 
 ##### Python Sample COde
+
+[Python Download Link](../_Asset%20Library/Source_Files/IMDB_Top_Lists.py)
     
 ```python
 from bs4 import BeautifulSoup
