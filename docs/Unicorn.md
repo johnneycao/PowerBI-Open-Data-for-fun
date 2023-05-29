@@ -1,7 +1,7 @@
 ---
 title: unicorn analysis
 author: Johnney Cao
-date updated: 2023-4-24
+date updated: 2023-5-29
 keyword: [Worldbank API, unicorn, parameter, web connector, xml, merge column, split column, html color, table reference, Refresh all slicers]
 ---
 
@@ -148,14 +148,18 @@ Tables | Relationship
 
 - Cards - Total Valuation ($B), Count of Company and Count of Investors
 - Map - Geo Graphic view by Count of company per city / country
-- Scatter Chart - Count of company per industry by Year
+- Scatter Chart - Count of company by industry
 - Stacked Bar Chart - Company Valuation
 - Funnel - Count of company by Year
 - Ribbon chart - Count of company by Country
 - Line and stacked column chart - Valuation vs Count of company by Country and Income Level
 - Stacked Bar Chart - Count of Company by Investor
 
-### 2. *Unicorn Card* tooltips Page
+### 2. *Unicorn Monthly Trend* Page
+![Screenshot](../_Asset%20Library/Unicorn_Trend.gif)
+- Scatter Chart - Company by Month
+
+### 3. *Unicorn Card* tooltips Page
 ![Screenshot](../_Asset%20Library/Unicorn_Card.png)
 ----------
 
