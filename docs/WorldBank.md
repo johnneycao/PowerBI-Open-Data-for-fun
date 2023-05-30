@@ -1,8 +1,8 @@
 ---
 title: GDP per capita analysis
 author: Johnney Cao
-date updated: 2023-4-24
-keyword: [Worldbank API, GDP, GNI, parameter, web connector, xml, expand table, expand table columns, html color, table reference, DAX, related table]
+date updated: 2023-5-30
+keyword: [Worldbank API, GDP, GNI, Life Expectancy, parameter, web connector, xml, expand table, expand table columns, html color, table reference, DAX, related table]
 ---
 
 # Analysis of GDP/GNI per capita in Countries Using Wordbank Data
@@ -218,8 +218,40 @@ let
 in
     #"Filtered Rows"
 ```
+### 8. WorldBank *Country Life Expectancy* Table
 
-### 8. WorldBank <em> Country Detail </em> Table
+#### Data Source
+> [http://api.worldbank.org/v2/country/all/indicator/SP.DYN.LE00.IN](http://api.worldbank.org/v2/country/all/indicator/SP.DYN.LE00.IN)
+
+License: *The World Bank Group makes data publicly available according to [open data standards](http://opendefinition.org/) and licenses datasets under the [Creative Commons Attribution 4.0 International license](https://creativecommons.org/licenses/by/4.0) (CC-BY 4.0).*
+
+#### Dependency
+- **Year** Table
+
+#### Steps
+1. Calculate the *startYear* and *endYear* from **Year** Table use 'List.Min' and 'List.Max' functions;
+1. Retrieve the data from [Worldbank Life Expectancy Data API](http://api.worldbank.org/v2/country/all/indicator/SP.DYN.LE00.IN) in XML format;
+1. Expand *indicator* and *country* 
+
+
+#### Power Query Sample Script
+```css
+let
+    startYear=Text.From(List.Min(YearTable[Year])),
+    endYear=Text.From(List.Max(YearTable[Year])),
+    Source = Xml.Tables(Web.Contents("http://api.worldbank.org/v2/country/all/indicator/SP.DYN.LE00.IN?date=" & startYear & ":" & endYear & "&format=xml&per_page=20000")),
+    data = Source{0}[data],
+    #"Expanded country" = Table.ExpandTableColumn(data, "country", {"Element:Text", "Attribute:id"}, {"Country Name", "country Code"}),
+    #"Renamed Columns" = Table.RenameColumns(#"Expanded country",{{"countryiso3code", "Country ISO"},{"value", "Age"}, {"date", "Year"}}),
+    #"Removed Columns" = Table.RemoveColumns(#"Renamed Columns",{"unit", "obs_status", "decimal", "indicator"}),
+    #"Changed Type" = Table.TransformColumnTypes(#"Removed Columns",{{"Age", type number}, {"Year", Int64.Type}}),
+    #"Filtered Rows" = Table.SelectRows(#"Changed Type", each [Country ISO] <> null and [Country ISO] <> ""),
+    #"Filtered Rows1" = Table.SelectRows(#"Filtered Rows", each [Age] <> null and [Age] <> "")
+in
+    #"Filtered Rows1"
+```
+
+### 9. WorldBank <em> Country Detail </em> Table
 
 #### Dependency
 - **Country GDP** Table
@@ -227,7 +259,7 @@ in
 - **Country Population** Table
 
 #### Steps
-1. Merge three table using **country code**, **Country ISO** and **Year** columns;
+1. Merge four tables using **country code**, **Country ISO** and **Year** columns;
 1. Expand **GNI Billion US$** and **Population** Columns;
 1. Filter out empty *Country ISO* records;
 1. Add *GDP per capita" using formula
@@ -242,7 +274,9 @@ let
     #"Merged Population" = Table.NestedJoin(Source, {"country Code", "Country ISO", "Year"}, CountryPopulation, {"country Code", "Country ISO", "Year"}, "CountryPopulation", JoinKind.FullOuter),
     #"Expanded CountryGNI" = Table.ExpandTableColumn(#"Merged Population", "CountryGNI", {"GNI (Billion US$)"}, {"GNI (Billion US$)"}),
     #"Expanded CountryPopulation" = Table.ExpandTableColumn(#"Expanded CountryGNI", "CountryPopulation", {"Population"}, {"Population"}),
-    #"Filtered Rows" = Table.SelectRows(#"Expanded CountryPopulation", each [Country ISO] <> null and [Country ISO] <> ""),
+    #"Merged Life Expectancy" = Table.NestedJoin(#"Expanded CountryPopulation", {"country Code", "Country ISO", "Year"}, CountryLifeExpectancy, {"country Code", "Country ISO", "Year"}, "CountryLifeExpectancy", JoinKind.LeftOuter),
+    #"Expanded CountryLifeExpectancy" = Table.ExpandTableColumn(#"Merged Life Expectancy", "CountryLifeExpectancy", {"Age"}, {" Life Expectancy Age"}),
+    #"Filtered Rows" = Table.SelectRows(#"Expanded CountryLifeExpectancy", each [Country ISO] <> null and [Country ISO] <> ""),
     #"Added Custom" = Table.AddColumn(#"Filtered Rows", "GDP per capita", each [#"GDP (Billion US$)"]* 1000000000 /[Population]),
     #"Merged CountryList" = Table.NestedJoin(#"Added Custom", {"country Code", "Country ISO"}, Country_WorldBank, {"iso2Code", "Attribute:id"}, "Country_WorldBank", JoinKind.LeftOuter),
     #"Expanded Country_WorldBank" = Table.ExpandTableColumn(#"Merged CountryList", "Country_WorldBank", {"region.Element:Text"}, {"Regions"}),
@@ -270,7 +304,7 @@ Tables | Relationship
 
 ## Reports
 
-### 1. **World** Page
+### 1. **WorldBank Dashborad** Page
 ![Screenshot](../_Asset%20Library/WorldBank_WorldMap_Screenshot.png)
 
 - Cards - Total Countries, Population, GDP and GNI as of last update
@@ -281,8 +315,12 @@ Tables | Relationship
 
 ### 2. **GDP** Page
 ![Screenshot](../_Asset%20Library/WorldBank_GDP_Screenshot.png)
-- Scatter chart - YoY GDP per Capita vs Population changes for Top 25 Countires
+- Scatter Chart - YoY GDP per Capita vs Population changes for Top 25 Countires
 - Table - List of all countries with ISO3code, Income Level, GDP, GNI, Population, GDP per capita, and sparklines for GDP and Population
+
+### 3. **Top 50 Life Expectancy Trend** Page
+![Screenshot](../_Asset%20Library/Worldbank_Life_Expectancy_Trend.gif)
+- Scatter Chart - Life Expectancy Age, GDP and Pupulation by Country, Income Level and Year
 
 ----------
 
