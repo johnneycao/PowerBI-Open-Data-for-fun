@@ -61,6 +61,7 @@ This project welcomes contributions and suggestions.
  
 ### Power BI Reference
 
+- [Power BI Playground](https://playground.powerbi.com/)
 - [Power BI on Microsoft Learn](https://learn.microsoft.com/en-us/training/powerplatform/power-bi)
 - [Transform, shape, and model data in Power BI](https://learn.microsoft.com/en-us/power-bi/transform-model/)
 - [Power Query M function reference](https://learn.microsoft.com/en-us/powerquery-m/power-query-m-function-reference)
